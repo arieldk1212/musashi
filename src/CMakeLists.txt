@@ -1,5 +1,7 @@
 list(APPEND sources
-main.cpp
+musashi.cpp
+
+game/game.cpp
 )
 
 add_library(src STATIC ${sources})
