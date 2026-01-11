@@ -1,5 +1,4 @@
 #include "game/game.h"
-#include <GLFW/glfw3.h>
 
 namespace game {
 
@@ -29,43 +28,61 @@ Game::Game(const std::string &window_title) : game_title_(window_title) {
 Game::~Game() { glfwTerminate(); }
 
 void Game::Run() {
-  GLFWwindow *window = glfwCreateWindow(kGameWidth, kGameHeight,
-                                        game_title_.c_str(), NULL, NULL);
+
+  Window window = Window(glfwCreateWindow(kGameWidth, kGameHeight,
+                                          game_title_.c_str(), NULL, NULL));
 
   if (window == nullptr) {
     glfwTerminate();
     throw std::runtime_error("Failed to create GLFW window");
   }
-  glfwMakeContextCurrent(window);
+  glfwMakeContextCurrent(window.get());
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     throw std::runtime_error("Failed to initialize GLAD");
   }
 
   glViewport(0, 0, kGameWidth, kGameHeight);
-  glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
+  glfwSetFramebufferSizeCallback(window.get(), FramebufferSizeCallback);
 
-  while (!glfwWindowShouldClose(window)) {
+  Shaders();
 
-    ProcessInput(window);
+  while (!glfwWindowShouldClose(window.get())) {
+
+    ProcessInput(window.get());
 
     glClearColor(0.2f, 0.3f, 0.3f, 0.1f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glfwSwapBuffers(window);
+    glfwSwapBuffers(window.get());
     glfwPollEvents();
   }
 }
 
-void Game::Vertex() {
+void Game::Shaders() {
 
   std::vector<float> vertices = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f,
                                  0.0f,  0.0f,  0.5f, 0.0f};
 
-  glGenBuffers(1, &VBO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glGenBuffers(1, &kVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, kVBO);
   glBufferData(GL_ARRAY_BUFFER, vertices.size(), vertices.data(),
                GL_STATIC_DRAW);
+
+  kVertexShader = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(kVertexShader, 1, &kVertexShaderSource, nullptr);
+  glCompileShader(kVertexShader);
+
+  int success;
+  char info_log[512];
+  glGetShaderiv(kVertexShader, GL_COMPILE_STATUS, &success);
+  if (!success) {
+    glGetShaderInfoLog(kVertexShader, 512, NULL, info_log);
+  }
+
+  kFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(kFragmentShader, 1, &kFragmentShaderSource, NULL);
+  glCompileShader(kFragmentShader);
 }
 
 }; // namespace game
