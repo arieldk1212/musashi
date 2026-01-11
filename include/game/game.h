@@ -1,20 +1,32 @@
 #ifndef MUSASHI_INCLUDE_GAME_WINDOW_H_
 #define MUSASHI_INCLUDE_GAME_WINDOW_H_
 
-#include <raylib.h>
+#include <glad/glad.h>
+
+#include <GLFW/glfw3.h>
+
+#include <print>
 #include <string>
+#include <vector>
 
 namespace game {
 
 constexpr int kGameWidth = 800;
-constexpr int kGameHeight = 450;
+constexpr int kGameHeight = 600;
+
+static unsigned int VBO;
+
+static void ProcessInput(GLFWwindow *window);
+static void FramebufferSizeCallback(GLFWwindow *window, int width, int height);
 
 class Game {
 public:
   Game(const std::string &window_title);
   ~Game();
 
-  virtual void Run();
+  void Run();
+
+  void Vertex();
 
 private:
   int fps_{60};

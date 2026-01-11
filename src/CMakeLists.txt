@@ -1,11 +1,25 @@
-list(APPEND sources
-musashi.cpp
-
-game/game.cpp
+add_library(musashi_core STATIC
+  game/game.cpp
 )
 
-add_library(src STATIC ${sources})
+target_include_directories(musashi_core
+  PUBLIC
+    ${PROJECT_SOURCE_DIR}/include
+)
 
-add_executable(musashi ${sources})
+target_link_libraries(musashi_core
+  PUBLIC
+    glad::glad
+    glfw
+    imgui::imgui
+    glm::glm
+)
 
-target_link_libraries(musashi PRIVATE src ${project_libraries})
+add_executable(musashi
+  musashi.cpp
+)
+
+target_link_libraries(musashi
+  PRIVATE
+    musashi_core
+)
