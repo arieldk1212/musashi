@@ -34,12 +34,14 @@ static const char *kFragmentShaderSource =
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
-    "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\0";
+    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "}\n\0";
 
-static unsigned int kVBO;
+static unsigned int kEBO;
+
 static unsigned int kVertexShader;
 static unsigned int kFragmentShader;
+static unsigned int kShaderProgram;
 
 static inline void ProcessInput(GLFWwindow *window);
 static inline void FramebufferSizeCallback(GLFWwindow *window, int width,
@@ -57,6 +59,9 @@ public:
 private:
   int fps_{60};
   std::string game_title_;
+  std::array<unsigned int, 2> vaos_;
+  std::array<unsigned int, 2> vbos_;
+  std::array<unsigned int, 2> shaders_;
 };
 
 }; // namespace game
