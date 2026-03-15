@@ -1,14 +1,13 @@
 #ifndef MUSASHI_INCLUDE_GAME_WINDOW_H_
 #define MUSASHI_INCLUDE_GAME_WINDOW_H_
 
-#include <glad/glad.h>
-
-#include <GLFW/glfw3.h>
-
 #include <memory>
 #include <print>
 #include <string>
-#include <vector>
+
+#include <glad/glad.h>
+//////////
+#include <GLFW/glfw3.h>
 
 namespace game {
 
@@ -18,8 +17,8 @@ template <auto F> struct delete_with {
 
 using Window = std::unique_ptr<GLFWwindow, delete_with<glfwDestroyWindow>>;
 
-constexpr int kGameWidth = 800;
-constexpr int kGameHeight = 600;
+static constexpr int kGameWidth = 800;
+static constexpr int kGameHeight = 600;
 
 static const char *kVertexShaderSource =
     "#version 330 core\n"

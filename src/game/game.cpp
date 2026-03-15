@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "game/game.h"
 
 namespace game {
