@@ -1,3 +1,4 @@
+#include <print>
 #include <vector>
 
 #include "game/game.h"
@@ -27,6 +28,7 @@ Game::Game(const std::string &window_title) : game_title_(window_title) {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 }
+
 Game::~Game() {
   glDeleteVertexArrays(2, vaos_.data());
   glDeleteBuffers(2, vbos_.data());

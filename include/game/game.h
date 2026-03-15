@@ -1,8 +1,8 @@
 #ifndef MUSASHI_INCLUDE_GAME_WINDOW_H_
 #define MUSASHI_INCLUDE_GAME_WINDOW_H_
 
+#include <array>
 #include <memory>
-#include <print>
 #include <string>
 
 #include <glad/glad.h>
@@ -52,7 +52,6 @@ public:
   ~Game();
 
   void Run();
-
   void Shaders();
 
 private:
