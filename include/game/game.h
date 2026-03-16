@@ -46,6 +46,12 @@ static inline void ProcessInput(GLFWwindow *window);
 static inline void FramebufferSizeCallback(GLFWwindow *window, int width,
                                            int height);
 
+static inline int GetMaxVertexAttributes() {
+  int nrAttributes;
+  glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+  return nrAttributes;
+}
+
 class Game {
 public:
   Game(const std::string &window_title);
