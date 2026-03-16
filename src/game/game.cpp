@@ -74,7 +74,7 @@ void Game::Run() {
     // int vertexColorLocation = glGetUniformLocation(kShaderProgram,
     // "ourColor"); glUniform4f(vertexColorLocation, 0.0f, greenValue,
     // 0.0f, 1.0f);
-    shader_->setFloat("ourColor", 1.0f);
+    shader_->setFloat("ourColorVertices", 1.0f);
 
     // render the triangle
     glBindVertexArray(vaos_[0]); // VAO if no need vaos_
