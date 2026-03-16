@@ -40,4 +40,10 @@
 # debug information files
 *.dwo
 
+<<<<<<< HEAD
 build
+=======
+build
+vcpkg_installed
+.cache
+>>>>>>> 0c5c218fcdf3c0486441f398e6a373ebdfd946d2
