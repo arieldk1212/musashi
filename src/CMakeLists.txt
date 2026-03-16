@@ -1,5 +1,6 @@
 add_library(musashi_core STATIC
   game/game.cpp
+  shaders/shader.cpp
 )
 
 target_include_directories(musashi_core

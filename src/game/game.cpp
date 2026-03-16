@@ -1,7 +1,8 @@
-#include <print>
+#include <filesystem>
 #include <vector>
 
 #include "game/game.h"
+#include "shaders/shader.h"
 
 namespace game {
 
@@ -53,6 +54,8 @@ void Game::Run() {
 
   glfwSetFramebufferSizeCallback(window.get(), FramebufferSizeCallback);
 
+  shader_ = std::make_unique<Shader>("../../include/shaders/vertexfile.glsl",
+                                     "../../include/shaders/fragmentfile.glsl");
   Shaders();
 
   while (!glfwWindowShouldClose(window.get())) {
@@ -62,14 +65,25 @@ void Game::Run() {
     glClearColor(0.2f, 0.3f, 0.3f, 0.1f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(kShaderProgram);
+    // glUseProgram(kShaderProgram);
+    shader_->use();
 
-    glBindVertexArray(vaos_[0]);
+    float timeValue = glfwGetTime();
+    float greenValue = sin(timeValue) / 2.0f + 0.5f;
+    // OLD CODE before shader class
+    // int vertexColorLocation = glGetUniformLocation(kShaderProgram,
+    // "ourColor"); glUniform4f(vertexColorLocation, 0.0f, greenValue,
+    // 0.0f, 1.0f);
+    shader_->setFloat("ourColor", 1.0f);
+
+    // render the triangle
+    glBindVertexArray(vaos_[0]); // VAO if no need vaos_
     glDrawArrays(GL_TRIANGLES, 0, 3);
-    glBindVertexArray(vaos_[1]);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glBindVertexArray(vaos_[1]);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+    // swap buffers and poll io events.
     glfwSwapBuffers(window.get());
     glfwPollEvents();
   }
@@ -77,39 +91,41 @@ void Game::Run() {
 
 void Game::Shaders() {
 
-  kVertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(kVertexShader, 1, &kVertexShaderSource, nullptr);
-  glCompileShader(kVertexShader);
+  // OLD CODE before shader class
+  // kVertexShader = glCreateShader(GL_VERTEX_SHADER);
+  // glShaderSource(kVertexShader, 1, &kVertexShaderSource, nullptr);
+  // glCompileShader(kVertexShader);
 
-  int success;
-  char info_log[512];
-  glGetShaderiv(kVertexShader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-    glGetShaderInfoLog(kVertexShader, 512, NULL, info_log);
-    std::println("ERROR::SHADER::VERTEX::COMPILATION_FAILED, {}", info_log);
-  }
+  // int success;
+  // char info_log[512];
+  // glGetShaderiv(kVertexShader, GL_COMPILE_STATUS, &success);
+  // if (!success) {
+  //   glGetShaderInfoLog(kVertexShader, 512, NULL, info_log);
+  //   std::println("ERROR::SHADER::VERTEX::COMPILATION_FAILED, {}", info_log);
+  // }
 
-  kFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(kFragmentShader, 1, &kFragmentShaderSource, NULL);
-  glCompileShader(kFragmentShader);
-  glGetShaderiv(kFragmentShader, GL_COMPILE_STATUS, &success);
+  // kFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+  // glShaderSource(kFragmentShader, 1, &kFragmentShaderSource, NULL);
+  // glCompileShader(kFragmentShader);
+  // glGetShaderiv(kFragmentShader, GL_COMPILE_STATUS, &success);
 
-  if (!success) {
-    glGetShaderInfoLog(kFragmentShader, 512, NULL, info_log);
-    std::println("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED, {}", info_log);
-  }
+  // if (!success) {
+  //   glGetShaderInfoLog(kFragmentShader, 512, NULL, info_log);
+  //   std::println("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED, {}",
+  //   info_log);
+  // }
 
-  kShaderProgram = glCreateProgram();
-  glAttachShader(kShaderProgram, kVertexShader);
-  glAttachShader(kShaderProgram, kFragmentShader);
-  glLinkProgram(kShaderProgram);
-  glGetProgramiv(kShaderProgram, GL_LINK_STATUS, &success);
-  if (!success) {
-    glGetProgramInfoLog(kShaderProgram, 512, NULL, info_log);
-    std::println("ERROR::SHADER::PROGRAM::LINKING_FAILED, {}", info_log);
-  }
-  glDeleteShader(kVertexShader);
-  glDeleteShader(kFragmentShader);
+  // kShaderProgram = glCreateProgram();
+  // glAttachShader(kShaderProgram, kVertexShader);
+  // glAttachShader(kShaderProgram, kFragmentShader);
+  // glLinkProgram(kShaderProgram);
+  // glGetProgramiv(kShaderProgram, GL_LINK_STATUS, &success);
+  // if (!success) {
+  //   glGetProgramInfoLog(kShaderProgram, 512, NULL, info_log);
+  //   std::println("ERROR::SHADER::PROGRAM::LINKING_FAILED, {}", info_log);
+  // }
+  // glDeleteShader(kVertexShader);
+  // glDeleteShader(kFragmentShader);
 
   std::vector<float> vertices = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f,
                                  0.0f,  0.0f,  0.5f, 0.0f};
@@ -122,23 +138,41 @@ void Game::Shaders() {
 
   std::vector<int> indices = {0, 1, 3, 1, 2, 3};
 
+  std::vector<float> vertices_colored = {
+      // dont forget to adjust the shader as well! glsl file.
+      // if we do that we need to increase the offset for the strides because we
+      // added another 3 floats to the VBO's memory
+      // X Y Z R G B -> total stride = 24, offset for vertices is 0, offset for
+      // color is 12.
+      0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // last three are color
+      -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // also here
+      0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f}; // and here
+
   glGenVertexArrays(2, vaos_.data());
   glGenBuffers(2, vbos_.data());
   // glGenBuffers(1, &kEBO);
 
   glBindVertexArray(vaos_[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, vbos_[0]);
-  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float),
-               &vertices.front(), GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-  glEnableVertexAttribArray(0);
 
-  glBindVertexArray(vaos_[1]);
-  glBindBuffer(GL_ARRAY_BUFFER, vbos_[1]);
-  glBufferData(GL_ARRAY_BUFFER, vertices_exercise.size() * sizeof(float),
-               &vertices_exercise.front(), GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+  glBindBuffer(GL_ARRAY_BUFFER, vbos_[0]);
+  glBufferData(GL_ARRAY_BUFFER, vertices_colored.size() * sizeof(float),
+               &vertices_colored.front(), GL_STATIC_DRAW);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
+  // we do that because we added colors to the vertices vector.
+  // dont forget to change to the right vector at glBufferData()!
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                        (void *)(3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
+
+  // to add another triangle:
+  // glBindVertexArray(vaos_[1]);
+  // glBindBuffer(GL_ARRAY_BUFFER, vbos_[1]);
+  // glBufferData(GL_ARRAY_BUFFER, vertices_exercise.size() * sizeof(float),
+  //              &vertices_exercise.front(), GL_STATIC_DRAW);
+  // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+  // glEnableVertexAttribArray(0);
 
   // glBufferData(GL_ARRAY_BUFFER, vertices_rect.size() * sizeof(float),
   //              vertices_rect.data(), GL_STATIC_DRAW);
@@ -149,6 +183,7 @@ void Game::Shaders() {
 
   // glBindVertexArray(0);
 
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // no fill of color
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 }
 }; // namespace game

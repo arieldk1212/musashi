@@ -1,5 +1,5 @@
-#ifndef MUSASHI_INCLUDE_IMGUI_GUI_H_
-#define MUSASHI_INCLUDE_IMGUI_GUI_H_
+#ifndef GUI_H_
+#define GUI_H_
 
 #include "imgui.h"
 
