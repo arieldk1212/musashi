@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <vector>
 
 #include "game/game.h"
@@ -33,7 +32,8 @@ Game::Game(const std::string &window_title) : game_title_(window_title) {
 Game::~Game() {
   glDeleteVertexArrays(2, vaos_.data());
   glDeleteBuffers(2, vbos_.data());
-  glDeleteProgram(kShaderProgram);
+  // glDeleteProgram(kShaderProgram);
+  shader_->delete_program();
   glfwTerminate();
 }
 
@@ -54,9 +54,13 @@ void Game::Run() {
 
   glfwSetFramebufferSizeCallback(window.get(), FramebufferSizeCallback);
 
-  shader_ = std::make_unique<Shader>("../../include/shaders/vertexfile.glsl",
-                                     "../../include/shaders/fragmentfile.glsl");
+  shader_ = std::make_unique<Shader>("../../include/shaders/vertex.glsl",
+                                     "../../include/shaders/fragment.glsl");
   Shaders();
+
+  texture_ =
+      std::make_unique<Texture>("../../assets/textures/wooden-container.jpg");
+  Textures();
 
   while (!glfwWindowShouldClose(window.get())) {
 
@@ -65,11 +69,10 @@ void Game::Run() {
     glClearColor(0.2f, 0.3f, 0.3f, 0.1f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // glUseProgram(kShaderProgram);
     shader_->use();
 
-    float timeValue = glfwGetTime();
-    float greenValue = sin(timeValue) / 2.0f + 0.5f;
+    // float timeValue = glfwGetTime();
+    // float greenValue = sin(timeValue) / 2.0f + 0.5f;
     // OLD CODE before shader class
     // int vertexColorLocation = glGetUniformLocation(kShaderProgram,
     // "ourColor"); glUniform4f(vertexColorLocation, 0.0f, greenValue,
@@ -90,43 +93,6 @@ void Game::Run() {
 }
 
 void Game::Shaders() {
-
-  // OLD CODE before shader class
-  // kVertexShader = glCreateShader(GL_VERTEX_SHADER);
-  // glShaderSource(kVertexShader, 1, &kVertexShaderSource, nullptr);
-  // glCompileShader(kVertexShader);
-
-  // int success;
-  // char info_log[512];
-  // glGetShaderiv(kVertexShader, GL_COMPILE_STATUS, &success);
-  // if (!success) {
-  //   glGetShaderInfoLog(kVertexShader, 512, NULL, info_log);
-  //   std::println("ERROR::SHADER::VERTEX::COMPILATION_FAILED, {}", info_log);
-  // }
-
-  // kFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  // glShaderSource(kFragmentShader, 1, &kFragmentShaderSource, NULL);
-  // glCompileShader(kFragmentShader);
-  // glGetShaderiv(kFragmentShader, GL_COMPILE_STATUS, &success);
-
-  // if (!success) {
-  //   glGetShaderInfoLog(kFragmentShader, 512, NULL, info_log);
-  //   std::println("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED, {}",
-  //   info_log);
-  // }
-
-  // kShaderProgram = glCreateProgram();
-  // glAttachShader(kShaderProgram, kVertexShader);
-  // glAttachShader(kShaderProgram, kFragmentShader);
-  // glLinkProgram(kShaderProgram);
-  // glGetProgramiv(kShaderProgram, GL_LINK_STATUS, &success);
-  // if (!success) {
-  //   glGetProgramInfoLog(kShaderProgram, 512, NULL, info_log);
-  //   std::println("ERROR::SHADER::PROGRAM::LINKING_FAILED, {}", info_log);
-  // }
-  // glDeleteShader(kVertexShader);
-  // glDeleteShader(kFragmentShader);
-
   std::vector<float> vertices = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f,
                                  0.0f,  0.0f,  0.5f, 0.0f};
 
@@ -186,4 +152,7 @@ void Game::Shaders() {
   // no fill of color
   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 }
+
+void Game::Textures() {}
+
 }; // namespace game
