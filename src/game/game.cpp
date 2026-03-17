@@ -54,6 +54,8 @@ Game::~Game() {
 
 void Game::Run() {
 
+  using Window = std::unique_ptr<GLFWwindow, delete_with<glfwDestroyWindow>>;
+
   Window window = Window(glfwCreateWindow(kGameWidth, kGameHeight,
                                           game_title_.c_str(), NULL, NULL));
 
@@ -128,12 +130,6 @@ void Game::Shaders() {
   std::vector<float> vertices = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f,
                                  0.0f,  0.0f,  0.5f, 0.0f};
 
-  std::vector<float> vertices_exercise = {0.0f, -0.5f, 0.0f, 0.9f, -0.5f,
-                                          0.0f, 0.45f, 0.5f, 0.0f};
-
-  std::vector<float> vertices_rect = {0.5f,  0.5f,  0.0f, 0.5f,  -0.5f, 0.0f,
-                                      -0.5f, -0.5f, 0.0f, -0.5f, 0.5f,  0.0f};
-
   std::vector<int> indices = {0, 1, 3, 1, 2, 3};
 
   std::vector<float> vertices_colored = {
@@ -181,7 +177,7 @@ void Game::Shaders() {
                         (void *)(6 * sizeof(float)));
   glEnableVertexAttribArray(2);
 
-  // to add another triangle:
+  // to add another triangle: we use the second location on the arrays
   // glBindVertexArray(vaos_[1]);
   // glBindBuffer(GL_ARRAY_BUFFER, vbos_[1]);
   // glBufferData(GL_ARRAY_BUFFER, vertices_exercise.size() * sizeof(float),

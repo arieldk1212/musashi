@@ -10,7 +10,7 @@ public:
 
   void AddTexture(std::filesystem::path texturePath, bool flip);
   int Size() const { return textures_.size(); }
-  unsigned int Get(int idx) { return textures_[idx]; }
+  unsigned int Get(int idx) const { return textures_[idx]; }
 
 private:
   std::vector<unsigned int> textures_;
