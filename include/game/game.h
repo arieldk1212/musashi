@@ -20,6 +20,7 @@ template <auto F> struct delete_with {
 
 using Window = std::unique_ptr<GLFWwindow, delete_with<glfwDestroyWindow>>;
 
+static float mixValue = 0.2f; // for opacity, 0.2 default
 static constexpr int kGameWidth = 800;
 static constexpr int kGameHeight = 600;
 

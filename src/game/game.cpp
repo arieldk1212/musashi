@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 
 #include "game/game.h"
@@ -12,6 +13,20 @@ void FramebufferSizeCallback(GLFWwindow *window, int width, int height) {
 void ProcessInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
+  }
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    mixValue += 0.001f; // change this value accordingly (might be too slow or
+                        // too fast based on system hardware)
+    if (mixValue >= 1.0f) {
+      mixValue = 1.0f;
+    }
+  }
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    mixValue -= 0.001f; // change this value accordingly (might be too slow or
+                        // too fast based on system hardware)
+    if (mixValue <= 0.0f) {
+      mixValue = 0.0f;
+    }
   }
 }
 
@@ -58,9 +73,17 @@ void Game::Run() {
                                      "../../include/shaders/fragment.glsl");
   Shaders();
 
-  texture_ =
-      std::make_unique<Texture>("../../assets/textures/wooden-container.jpg");
-  Textures();
+  texture_ = std::make_unique<Texture>();
+  texture_->AddTexture("../../assets/textures/wooden-container.jpg", false);
+  texture_->AddTexture("../../assets/textures/awesomeface.png", true);
+
+  shader_->use();
+  for (int i{0}; i < texture_->Size(); ++i) {
+    std::string texture = "ourTexture" + std::to_string(i);
+    // glUniform1i(glGetUniformLocation(shader_->ID, texture.c_str()),
+    //             i); // set it manually
+    shader_->setInt(texture, i); // can also do like this
+  }
 
   while (!glfwWindowShouldClose(window.get())) {
 
@@ -69,7 +92,16 @@ void Game::Run() {
     glClearColor(0.2f, 0.3f, 0.3f, 0.1f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    for (int i{0}; i < texture_->Size(); ++i) {
+      glActiveTexture(GL_TEXTURE0 + i);
+      glBindTexture(GL_TEXTURE_2D, texture_->Get(i));
+    }
+
+    shader_->setFloat("mixValue", mixValue);
+
     shader_->use();
+    glBindVertexArray(vaos_[0]);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     // float timeValue = glfwGetTime();
     // float greenValue = sin(timeValue) / 2.0f + 0.5f;
@@ -80,8 +112,8 @@ void Game::Run() {
     shader_->setFloat("ourColorVertices", 1.0f);
 
     // render the triangle
-    glBindVertexArray(vaos_[0]); // VAO if no need vaos_
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glBindVertexArray(vaos_[0]); // VAO if no need vaos_
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
     // glBindVertexArray(vaos_[1]);
     // glDrawArrays(GL_TRIANGLES, 0, 3);
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -114,23 +146,40 @@ void Game::Shaders() {
       -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // also here
       0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f}; // and here
 
+  // 1 row == first 3 positions, then 3 color, then 2 texture coords.
+  // 0,0 bottom left, 1,1 top right of texture coords.
+  // total stride = 3 + 3 + 2 = 8 * 4 (float) = 32
+  // positio offset = 0, color = 12, texture = 24
+  std::vector<float> vertices_texture = {
+      0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f,  1.0f, 0.5f, -0.5f, 0.0f,
+      0.0f, 1.0f, 0.0f,  1.0f, 0.0f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  1.0f,
+      0.0f, 0.0f, -0.5f, 0.5f, 0.0f, 1.0f,  1.0f,  0.0f, 0.0f, 1.0f};
+
   glGenVertexArrays(2, vaos_.data());
   glGenBuffers(2, vbos_.data());
-  // glGenBuffers(1, &kEBO);
+  glGenBuffers(1, &kEBO);
 
   glBindVertexArray(vaos_[0]);
 
   glBindBuffer(GL_ARRAY_BUFFER, vbos_[0]);
-  glBufferData(GL_ARRAY_BUFFER, vertices_colored.size() * sizeof(float),
-               &vertices_colored.front(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertices_texture.size() * sizeof(float),
+               vertices_texture.data(), GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, kEBO);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int),
+               indices.data(), GL_STATIC_DRAW);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
   // we do that because we added colors to the vertices vector.
   // dont forget to change to the right vector at glBufferData()!
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                         (void *)(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
+  // now for our new we add the texture in the stride
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                        (void *)(6 * sizeof(float)));
+  glEnableVertexAttribArray(2);
 
   // to add another triangle:
   // glBindVertexArray(vaos_[1]);
@@ -142,9 +191,6 @@ void Game::Shaders() {
 
   // glBufferData(GL_ARRAY_BUFFER, vertices_rect.size() * sizeof(float),
   //              vertices_rect.data(), GL_STATIC_DRAW);
-  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, kEBO);
-  // glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int),
-  //              indices.data(), GL_STATIC_DRAW);
   // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, kEBO);
 
   // glBindVertexArray(0);
