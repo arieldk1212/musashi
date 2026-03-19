@@ -1,5 +1,11 @@
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/trigonometric.hpp>
 #include <string>
 #include <vector>
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "game/game.h"
 #include "shaders/shader.h"
@@ -80,6 +86,15 @@ void Game::Run() {
   texture_->AddTexture("../../assets/textures/awesomeface.png", true);
 
   shader_->use();
+
+  // simple trnasformation
+  // glm::mat4 trans = glm::mat4(1.0f);
+  // trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+  // trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+  // auto transformLoc = glGetUniformLocation(shader_->ID, "transform");
+  // send 1 matrices, dont transpose the matrix
+  // glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
   for (int i{0}; i < texture_->Size(); ++i) {
     std::string texture = "ourTexture" + std::to_string(i);
     // glUniform1i(glGetUniformLocation(shader_->ID, texture.c_str()),
@@ -101,8 +116,26 @@ void Game::Run() {
 
     shader_->setFloat("mixValue", mixValue);
 
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+    trans =
+        glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+    unsigned int transformLoc = glGetUniformLocation(shader_->ID, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
     shader_->use();
     glBindVertexArray(vaos_[0]);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    trans = glm::mat4(1.0f); // reset it to identity matrix
+    trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
+    float scaleAmount = static_cast<float>(sin(glfwGetTime()));
+    trans = glm::scale(trans, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+    glUniformMatrix4fv(
+        transformLoc, 1, GL_FALSE,
+        &trans[0][0]); // this time take the matrix value array's first
+                       // element as its memory pointer value
+    // now we draw again
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     // float timeValue = glfwGetTime();
@@ -112,6 +145,10 @@ void Game::Run() {
     // "ourColor"); glUniform4f(vertexColorLocation, 0.0f, greenValue,
     // 0.0f, 1.0f);
     shader_->setFloat("ourColorVertices", 1.0f);
+
+    // auto transformLoc = glGetUniformLocation(shader_->ID, "transform");
+    // glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+    // shader_->setMat4("transform", trans);
 
     // render the triangle
     // glBindVertexArray(vaos_[0]); // VAO if no need vaos_
@@ -178,15 +215,18 @@ void Game::Shaders() {
   glEnableVertexAttribArray(2);
 
   // to add another triangle: we use the second location on the arrays
+  // transformation exercise
   // glBindVertexArray(vaos_[1]);
+
   // glBindBuffer(GL_ARRAY_BUFFER, vbos_[1]);
-  // glBufferData(GL_ARRAY_BUFFER, vertices_exercise.size() * sizeof(float),
-  //              &vertices_exercise.front(), GL_STATIC_DRAW);
+  // glBufferData(GL_ARRAY_BUFFER, vertices_texture.size() * sizeof(float),
+  //              &vertices_texture.front(), GL_STATIC_DRAW);
   // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
   // glEnableVertexAttribArray(0);
 
-  // glBufferData(GL_ARRAY_BUFFER, vertices_rect.size() * sizeof(float),
-  //              vertices_rect.data(), GL_STATIC_DRAW);
+  // glBufferData(GL_ARRAY_BUFFER, indices.size() * sizeof(float),
+  // indices.data(),
+  //              GL_STATIC_DRAW);
   // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, kEBO);
 
   // glBindVertexArray(0);
