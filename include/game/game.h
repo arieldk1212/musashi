@@ -22,34 +22,28 @@ static float mixValue = 0.2f; // for opacity, 0.2 default
 static constexpr int kGameWidth = 800;
 static constexpr int kGameHeight = 600;
 
-static unsigned int kEBO;
-
-static inline void ProcessInput(GLFWwindow *window);
-static inline void FramebufferSizeCallback(GLFWwindow *window, int width,
-                                           int height);
-
-static inline int GetMaxVertexAttributes() {
-  int nrAttributes;
-  glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-  return nrAttributes;
-}
-
 class Game {
 public:
   Game(const std::string &window_title);
   ~Game();
 
+  static inline void ProcessInput(GLFWwindow *window);
+  static inline void FramebufferSizeCallback(GLFWwindow *window, int width,
+                                             int height);
+  static inline int GetMaxVertexAttributes();
+
   void Run();
-  void Shaders();  // Init Shaders
-  void Textures(); // Init Textures
+  void Shaders(); // Init Shaders
 
 private:
-  int fps_{60};
+  unsigned int VAO_;
+  unsigned int VBO_;
+  unsigned int EBO_;
   std::string game_title_;
-  std::array<unsigned int, 2> vaos_;
-  std::array<unsigned int, 2> vbos_;
-  std::unique_ptr<Shader> shader_{nullptr};
-  std::unique_ptr<Texture> texture_{nullptr};
+  // std::array<unsigned int, 2> vaos_;
+  // std::array<unsigned int, 2> vbos_;
+  std::unique_ptr<Shader> shader_;
+  std::unique_ptr<Texture> texture_;
   // std::array<unsigned int, 2> shaders_;
 };
 
