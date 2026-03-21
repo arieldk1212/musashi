@@ -151,6 +151,13 @@ void Game::Run() {
     shader_->setInt(texture, i); // can also do like this
   }
 
+  std::vector<glm::vec3> cubePositions = {
+      glm::vec3(0.0f, 0.0f, 0.0f),    glm::vec3(2.0f, 5.0f, -15.0f),
+      glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
+      glm::vec3(2.4f, -0.4f, -3.5f),  glm::vec3(-1.7f, 3.0f, -7.5f),
+      glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
+      glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
+
   // simple trnasformation
   // glm::mat4 trans = glm::mat4(1.0f);
   // trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
@@ -198,38 +205,73 @@ void Game::Run() {
     // // now we draw again
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-    // !!3D!!
-    // proj * view * model * local;
-    // we first transform the model so it "looks" like its in the global world,
-    // laying on the ground
-    glm::mat4 model = glm::mat4(1.0f);
-    model =
-        glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0, 0.0f, 0.0f));
-    // then we create the view matrix, so we can take the camera backwards or
-    // the scene forward so that we can see the object
-    // we move the scene by moving it on the Z axis towards the negative value.
-    // took the scene forward so we can "see" the object.
-    glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-    // next we define the projection matrix, we use perspective projection
-    // becuase its a 3D app.
+    // // !!3D!!
+    // // proj * view * model * local;
+    // // we first transform the model so it "looks" like its in the global
+    // world,
+    // // laying on the ground
+    // glm::mat4 model = glm::mat4(1.0f);
+    // model =
+    //     glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0, 0.0f, 0.0f));
+    // // then we create the view matrix, so we can take the camera backwards or
+    // // the scene forward so that we can see the object
+    // // we move the scene by moving it on the Z axis towards the negative
+    // value.
+    // // took the scene forward so we can "see" the object.
+    // glm::mat4 view = glm::mat4(1.0f);
+    // view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    // // next we define the projection matrix, we use perspective projection
+    // // becuase its a 3D app.
+    // glm::mat4 projection = glm::mat4(1.0f);
+    // projection =
+    //     glm::perspective(glm::radians(45.0f),
+    //                      (float)kGameWidth / (float)kGameHeight, 0.1f,
+    //                      100.f);
+    // // then we need to pass it to our shaders, usually done each frame
+    // unsigned int modelLoc = glGetUniformLocation(shader_->ID, "model");
+    // unsigned int viewLoc = glGetUniformLocation(shader_->ID, "view");
+    // glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    // glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+    // shader_->setMat4("projection", projection);
+    // // now the model should be: a bit far back, titled towards the floor, a
+    // // little smaller.
+
+    glm::mat4 view = glm::mat4(
+        1.0f); // make sure to initialize matrix to identity matrix first
     glm::mat4 projection = glm::mat4(1.0f);
     projection =
-        glm::perspective(glm::radians(45.0f),
-                         (float)kGameWidth / (float)kGameHeight, 0.1f, 100.f);
-    // then we need to pass it to our shaders, usually done each frame
-    unsigned int modelLoc = glGetUniformLocation(shader_->ID, "model");
-    unsigned int viewLoc = glGetUniformLocation(shader_->ID, "view");
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
-    shader_->setMat4("projection", projection);
-    // now the model should be: a bit far back, titled towards the floor, a
-    // little smaller.
-
+        glm::perspective(glm::radians(50.0f),
+                         (float)kGameWidth / (float)kGameHeight, 0.1f, 100.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
+    // pass transformation matrices to the shader
+    shader_->setMat4(
+        "projection",
+        projection); // note: currently we set the projection matrix each frame,
+                     // but since the projection matrix rarely changes it's
+                     // often best practice to set it outside the main loop only
+                     // once.
+    shader_->setMat4("view", view);
     glBindVertexArray(VAO_);
-    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    // glDrawArrays(GL_TRIANGLES, 0, 36);
+    for (unsigned int i = 0; i < 10; i++) {
+      // calculate the model matrix for each object and pass it to shader before
+      // drawing
+      glm::mat4 model = glm::mat4(1.0f);
+      model = glm::translate(model, cubePositions[i]);
+      float angle = 20.0f * i;
+      if (i % 2 == 1) {
+        model = glm::rotate(model, (float)glfwGetTime(),
+                            glm::vec3(1.0f, 0.3f, 0.5f));
+      } else {
+        model = glm::rotate(model, glm::radians(angle),
+                            glm::vec3(1.0f, 0.3f, 0.5f));
+      }
+      shader_->setMat4("model", model);
 
+      glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     // float timeValue = glfwGetTime();
     // float greenValue = sin(timeValue) / 2.0f + 0.5f;
     // OLD CODE before shader class
