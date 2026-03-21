@@ -1,7 +1,6 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include <array>
 #include <memory>
 #include <string>
 
@@ -38,13 +37,9 @@ public:
 private:
   unsigned int VAO_;
   unsigned int VBO_;
-  unsigned int EBO_;
   std::string game_title_;
-  // std::array<unsigned int, 2> vaos_;
-  // std::array<unsigned int, 2> vbos_;
   std::unique_ptr<Shader> shader_;
   std::unique_ptr<Texture> texture_;
-  // std::array<unsigned int, 2> shaders_;
 };
 
 }; // namespace game

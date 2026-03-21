@@ -9,16 +9,10 @@ void Texture::AddTexture(std::filesystem::path texturePath, bool flip) {
   unsigned int newTexture;
   stbi_set_flip_vertically_on_load(flip); // if it is flipped
 
-  glGenTextures(1,
-                &newTexture); // 1 is num of textures, and
-                              // stores it inside the second
-                              // parameter arr/single int.
-  // glActiveTexture(GL_TEXTURE0); // activated by default, if need more can
-  //                               // activate up to GL_TEXTURE15
+  glGenTextures(1, &newTexture);
   glBindTexture(GL_TEXTURE_2D, newTexture);
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-                  GL_REPEAT); // play with it and ST in vertices_texture
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
