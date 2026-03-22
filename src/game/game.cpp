@@ -1,16 +1,10 @@
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/trigonometric.hpp>
 #include <string>
 #include <vector>
 
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "game/game.h"
-#include "shaders/shader.h"
-#include "textures/texture.h"
 
 namespace game {
 
@@ -19,6 +13,8 @@ void Game::FramebufferSizeCallback(GLFWwindow *window, int width, int height) {
 }
 
 void Game::ProcessInput(GLFWwindow *window) {
+  float cameraSpeed = 2.5f * deltaTime;
+
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
   }
@@ -34,6 +30,16 @@ void Game::ProcessInput(GLFWwindow *window) {
       mixValue = 0.0f;
     }
   }
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    cameraPos += cameraSpeed * cameraFront;
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    cameraPos -= cameraSpeed * cameraFront;
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    cameraPos -=
+        glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) *
+                 cameraSpeed; // have to normalize
 }
 
 int Game::GetMaxVertexAttributes() {
@@ -67,8 +73,8 @@ void Game::Run() {
 
   using Window = std::unique_ptr<GLFWwindow, delete_with<glfwDestroyWindow>>;
 
-  Window window = Window(glfwCreateWindow(kGameWidth, kGameHeight,
-                                          game_title_.c_str(), NULL, NULL));
+  Window window = Window(glfwCreateWindow(
+      kGameWidth, kGameHeight, game_title_.c_str(), nullptr, nullptr));
 
   if (window == nullptr) {
     glfwTerminate();
@@ -107,7 +113,38 @@ void Game::Run() {
       glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
       glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
 
+  // // Camera
+  // glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f); // z positive for
+  // backwards glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f); glm::vec3
+  // cameraDirection = glm::normalize(
+  //     cameraPos -
+  //     cameraTarget); // it is basically pointing in the reverse
+  //                    // direction of what it is targeting, because vector
+  //                    // substraciton gives the the direction we want
+  // glm::vec3 up = glm::vec3(0.0f, 0.1f, 0.0f); // define up vector
+  // glm::vec3 cameraRight = glm::normalize(glm::cross(
+  //     up,
+  //     cameraDirection)); // then cross the up with and direction gives us the
+  //     a
+  //                        // direction that points in the positive x-axis
+  //                        (right)
+  //                        // (if we switch the order - negative x axis)
+  // glm::vec3 cameraUp = glm::cross(
+  //     cameraDirection, cameraRight); // now we can create the lookAt matrix
+
+  // glm::mat4 view;
+  // view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+
+  glm::mat4 projection =
+      glm::perspective(glm::radians(40.0f),
+                       (float)kGameWidth / (float)kGameHeight, 0.1f, 100.0f);
+  shader_->setMat4("projection", projection);
+
   while (!glfwWindowShouldClose(window.get())) {
+
+    float currentTime = static_cast<float>(glfwGetTime());
+    deltaTime = currentTime - lastFrame;
+    lastFrame = currentTime;
 
     ProcessInput(window.get());
 
@@ -122,14 +159,14 @@ void Game::Run() {
     shader_->setFloat("mixValue", mixValue);
 
     shader_->use();
-
-    glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 projection = glm::mat4(1.0f);
-    projection =
-        glm::perspective(glm::radians(50.0f),
-                         (float)kGameWidth / (float)kGameHeight, 0.1f, 100.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
-    shader_->setMat4("projection", projection);
+    // const float radius = 10.0f;
+    // float camX = sin(glfwGetTime()) * radius;
+    // float camZ = cos(glfwGetTime()) * radius;
+    glm::mat4 view;
+    // view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f,
+    // 0.0f),
+    //                    glm::vec3(0.0f, 1.0f, 0.0f));
+    view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
     shader_->setMat4("view", view);
 
     glBindVertexArray(VAO_);

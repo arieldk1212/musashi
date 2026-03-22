@@ -2,14 +2,12 @@
 #define GAME_H_
 
 #include <memory>
-#include <string>
 
-#include <glad/glad.h>
-
-#include <GLFW/glfw3.h>
-
-#include "shaders/shader.h"
+#include "shaders/shader.h" // glad before glfw
 #include "textures/texture.h"
+
+#define GL_SILENCE_DEPRECATION
+#include <GLFW/glfw3.h>
 
 namespace game {
 
@@ -20,6 +18,13 @@ template <auto F> struct delete_with {
 static float mixValue = 0.2f; // for opacity, 0.2 default
 static constexpr int kGameWidth = 800;
 static constexpr int kGameHeight = 600;
+
+static glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+static glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+static glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+static float deltaTime = 0.0f; // Time between current frame and last frame
+static float lastFrame = 0.0f;
 
 class Game {
 public:
