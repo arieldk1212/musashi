@@ -1,6 +1,8 @@
+#include <glm/ext/quaternion_geometric.hpp>
 #include <string>
 #include <vector>
 
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -48,6 +50,61 @@ int Game::GetMaxVertexAttributes() {
   return nrAttributes;
 }
 
+void Game::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
+  /**
+   * @brief steps to calc camera's direction vector
+    1. Calculate the mouse's offset since the last frame.
+    2. Add the offset values to the camera's yaw and pitch values.
+    3. Add some constraints to the minimum/maximum pitch values (sensitivity).
+    4. Calculate the direction vector.
+   */
+
+  xpos = static_cast<float>(xpos);
+  ypos = static_cast<float>(ypos);
+
+  if (firstMouse) {
+    lastX = xpos;
+    lastY = ypos;
+    firstMouse = false;
+  }
+
+  float offsetX = xpos - lastX;
+  float offsetY =
+      lastY - ypos; // reversed, y-coordinates range from bottom to top
+
+  lastX = xpos;
+  lastY = ypos;
+
+  const float sensitivity{0.1f};
+  offsetX *= sensitivity; // if we dont multiply, it will be too strong.
+  offsetY *= sensitivity;
+
+  yaw += offsetX;
+  pitch += offsetY;
+
+  if (pitch >
+      89.0f) { // we limit the user so he wont make a 360 spin (not human).
+    pitch = 89.0f;
+  }
+  if (pitch < -89.0f) {
+    pitch = -89.0f;
+  }
+
+  glm::vec3 front;
+  front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+  front.y = sin(glm::radians(pitch));
+  front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+  cameraFront = glm::normalize(front);
+}
+
+void Game::ScrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
+  fov -= (float)yoffset;
+  if (fov < 1.0f)
+    fov = 1.0f;
+  if (fov > 45.0f)
+    fov = 45.0f;
+}
+
 Game::Game(const std::string &window_title) : game_title_(window_title) {
   if (!glfwInit()) {
     throw std::runtime_error("Failed to initialize GLFW");
@@ -87,6 +144,14 @@ void Game::Run() {
   }
 
   glfwSetFramebufferSizeCallback(window.get(), FramebufferSizeCallback);
+
+  glfwSetCursorPosCallback(window.get(), MouseCallback);
+
+  glfwSetScrollCallback(window.get(), ScrollCallback);
+
+  glfwSetInputMode(window.get(), GLFW_CURSOR,
+                   GLFW_CURSOR_DISABLED); // mouse wont
+  // be visible and should not leave the screen
 
   glEnable(GL_DEPTH_TEST);
 
@@ -135,10 +200,27 @@ void Game::Run() {
   // glm::mat4 view;
   // view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
 
-  glm::mat4 projection =
-      glm::perspective(glm::radians(40.0f),
-                       (float)kGameWidth / (float)kGameHeight, 0.1f, 100.0f);
-  shader_->setMat4("projection", projection);
+  // if no need for FOV keep here, else move inside the loop
+  // glm::mat4 projection = glm::perspective(
+  //     glm::radians(fov), (float)kGameWidth / (float)kGameHeight, 0.1f,
+  //     100.0f);
+  // shader_->setMat4("projection", projection);
+
+  // WE DO THAT IN THE MOUSE CALL BACK FUNCTION
+  // glm::vec3 direction;
+  // we also multiply x and z with cos of pitch, because when calculation pitch,
+  // they are also inside the formula (as cos)
+  // with these calculation we can transform pitch (up, down) and yaw (right,
+  // left) values to 3D vector for looking around
+  // direction.x = cos(glm::radians(yaw)) *
+  //               cos(glm::radians(
+  //                   pitch)); // because z is on sin, x on cos, if we calc
+  //                   them
+  // direction.z = sin(glm::radians(yaw))
+  //     cos(glm::radians(pitch));           // sin because z is on sin
+  // direction.y = sin(glm::radians(pitch)); // sin because the cos is the xz
+  // axis yaw = -90.0f // by default because the world scene is towards the -z
+  // axis, so we make sure the camera points towards the negative
 
   while (!glfwWindowShouldClose(window.get())) {
 
@@ -168,6 +250,10 @@ void Game::Run() {
     //                    glm::vec3(0.0f, 1.0f, 0.0f));
     view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
     shader_->setMat4("view", view);
+    glm::mat4 projection =
+        glm::perspective(glm::radians(fov),
+                         (float)kGameWidth / (float)kGameHeight, 0.1f, 100.0f);
+    shader_->setMat4("projection", projection);
 
     glBindVertexArray(VAO_);
 
