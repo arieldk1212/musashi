@@ -2,6 +2,7 @@ add_library(musashi_core STATIC
   game/game.cpp
   shaders/shader.cpp
   textures/texture.cpp
+  camera.cpp
 
   ../vendor/stb_image.cpp
 )

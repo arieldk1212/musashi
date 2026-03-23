@@ -1,108 +1,22 @@
-#include <glm/ext/quaternion_geometric.hpp>
 #include <string>
-#include <vector>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "camera.h"
 #include "game/game.h"
 
 namespace game {
 
-void Game::FramebufferSizeCallback(GLFWwindow *window, int width, int height) {
-  glViewport(0, 0, width, height);
-}
-
-void Game::ProcessInput(GLFWwindow *window) {
-  float cameraSpeed = 2.5f * deltaTime;
-
-  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, true);
-  }
-  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-    mixValue += 0.001f;
-    if (mixValue >= 1.0f) {
-      mixValue = 1.0f;
-    }
-  }
-  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-    mixValue -= 0.001f;
-    if (mixValue <= 0.0f) {
-      mixValue = 0.0f;
-    }
-  }
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    cameraPos += cameraSpeed * cameraFront;
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    cameraPos -= cameraSpeed * cameraFront;
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    cameraPos -=
-        glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) *
-                 cameraSpeed; // have to normalize
-}
-
-int Game::GetMaxVertexAttributes() {
+int GetMaxVertexAttributes() {
   int nrAttributes;
   glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
   return nrAttributes;
 }
 
-void Game::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
-  /**
-   * @brief steps to calc camera's direction vector
-    1. Calculate the mouse's offset since the last frame.
-    2. Add the offset values to the camera's yaw and pitch values.
-    3. Add some constraints to the minimum/maximum pitch values (sensitivity).
-    4. Calculate the direction vector.
-   */
-
-  xpos = static_cast<float>(xpos);
-  ypos = static_cast<float>(ypos);
-
-  if (firstMouse) {
-    lastX = xpos;
-    lastY = ypos;
-    firstMouse = false;
-  }
-
-  float offsetX = xpos - lastX;
-  float offsetY =
-      lastY - ypos; // reversed, y-coordinates range from bottom to top
-
-  lastX = xpos;
-  lastY = ypos;
-
-  const float sensitivity{0.1f};
-  offsetX *= sensitivity; // if we dont multiply, it will be too strong.
-  offsetY *= sensitivity;
-
-  yaw += offsetX;
-  pitch += offsetY;
-
-  if (pitch >
-      89.0f) { // we limit the user so he wont make a 360 spin (not human).
-    pitch = 89.0f;
-  }
-  if (pitch < -89.0f) {
-    pitch = -89.0f;
-  }
-
-  glm::vec3 front;
-  front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-  front.y = sin(glm::radians(pitch));
-  front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-  cameraFront = glm::normalize(front);
-}
-
-void Game::ScrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
-  fov -= (float)yoffset;
-  if (fov < 1.0f)
-    fov = 1.0f;
-  if (fov > 45.0f)
-    fov = 45.0f;
+void FramebufferSizeCallback(GLFWwindow *window, int width, int height) {
+  glViewport(0, 0, width, height);
 }
 
 Game::Game(const std::string &window_title) : game_title_(window_title) {
@@ -126,6 +40,81 @@ Game::~Game() {
   glfwTerminate();
 }
 
+void Game::ProcessInput(GLFWwindow *window) {
+  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, true);
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    kMixValue += 0.001f;
+    if (kMixValue >= 1.0f) {
+      kMixValue = 1.0f;
+    }
+  }
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    kMixValue -= 0.001f;
+    if (kMixValue <= 0.0f) {
+      kMixValue = 0.0f;
+    }
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    camera_->ProcessKeyboard(CameraMovement::FORWARD, kDeltaTime);
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    camera_->ProcessKeyboard(CameraMovement::BACKWARD, kDeltaTime);
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    camera_->ProcessKeyboard(CameraMovement::LEFT, kDeltaTime);
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    camera_->ProcessKeyboard(CameraMovement::RIGHT, kDeltaTime);
+}
+
+void Game::MouseCallbackWrapper(GLFWwindow *window, double xpos, double ypos) {
+  Game *instance = static_cast<Game *>(glfwGetWindowUserPointer(window));
+  if (instance) {
+    instance->MouseCallback(window, xpos, ypos);
+  }
+}
+
+void Game::ScrollCallbackWrapper(GLFWwindow *window, double xoffset,
+                                 double yoffset) {
+  Game *instance = static_cast<Game *>(glfwGetWindowUserPointer(window));
+  if (instance) {
+    instance->ScrollCallback(window, xoffset, yoffset);
+  }
+}
+
+void Game::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
+  /**
+   * @brief steps to calc camera_'s direction vector
+    1. Calculate the mouse's offset since the last frame.
+    2. Add the offset values to the camera_'s yaw and pitch values.
+    3. Add some constraints to the minimum/maximum pitch values (sensitivity).
+    4. Calculate the direction vector.
+   */
+
+  xpos = static_cast<float>(xpos);
+  ypos = static_cast<float>(ypos);
+
+  if (kFirstMouse) {
+    kLastX = xpos;
+    kLastY = ypos;
+    kFirstMouse = false;
+  }
+
+  float xoffset = xpos - kLastX;
+  float yoffset =
+      kLastY - ypos; // reversed, y-coordinates range from bottom to top
+
+  kLastX = xpos;
+  kLastY = ypos;
+
+  camera_->ProcessMouseMovement(xoffset, yoffset);
+}
+
+void Game::ScrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
+  camera_->ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
 void Game::Run() {
 
   using Window = std::unique_ptr<GLFWwindow, delete_with<glfwDestroyWindow>>;
@@ -137,18 +126,16 @@ void Game::Run() {
     glfwTerminate();
     throw std::runtime_error("Failed to create GLFW window");
   }
-  glfwMakeContextCurrent(window.get());
 
+  glfwMakeContextCurrent(window.get());
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     throw std::runtime_error("Failed to initialize GLAD");
   }
 
+  glfwSetWindowUserPointer(window.get(), this); // for wrappers
   glfwSetFramebufferSizeCallback(window.get(), FramebufferSizeCallback);
-
-  glfwSetCursorPosCallback(window.get(), MouseCallback);
-
-  glfwSetScrollCallback(window.get(), ScrollCallback);
-
+  glfwSetCursorPosCallback(window.get(), MouseCallbackWrapper);
+  glfwSetScrollCallback(window.get(), ScrollCallbackWrapper);
   glfwSetInputMode(window.get(), GLFW_CURSOR,
                    GLFW_CURSOR_DISABLED); // mouse wont
   // be visible and should not leave the screen
@@ -165,6 +152,8 @@ void Game::Run() {
   texture_->AddTexture("../../assets/textures/awesomeface.png", true);
 
   shader_->use();
+
+  camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 2.0f));
 
   for (int i{0}; i < texture_->Size(); ++i) {
     std::string texture = "ourTexture" + std::to_string(i);
@@ -220,13 +209,13 @@ void Game::Run() {
   //     cos(glm::radians(pitch));           // sin because z is on sin
   // direction.y = sin(glm::radians(pitch)); // sin because the cos is the xz
   // axis yaw = -90.0f // by default because the world scene is towards the -z
-  // axis, so we make sure the camera points towards the negative
+  // axis, so we make sure the camera_ points towards the negative
 
   while (!glfwWindowShouldClose(window.get())) {
 
     float currentTime = static_cast<float>(glfwGetTime());
-    deltaTime = currentTime - lastFrame;
-    lastFrame = currentTime;
+    kDeltaTime = currentTime - kLastFrame;
+    kLastFrame = currentTime;
 
     ProcessInput(window.get());
 
@@ -238,20 +227,16 @@ void Game::Run() {
       glBindTexture(GL_TEXTURE_2D, texture_->Get(i));
     }
 
-    shader_->setFloat("mixValue", mixValue);
+    shader_->setFloat("kMixValue", kMixValue);
 
     shader_->use();
-    // const float radius = 10.0f;
-    // float camX = sin(glfwGetTime()) * radius;
-    // float camZ = cos(glfwGetTime()) * radius;
+
     glm::mat4 view;
-    // view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f,
-    // 0.0f),
-    //                    glm::vec3(0.0f, 1.0f, 0.0f));
-    view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+    view = camera_->GetViewMatrix();
     shader_->setMat4("view", view);
+
     glm::mat4 projection =
-        glm::perspective(glm::radians(fov),
+        glm::perspective(glm::radians(camera_->Zoom),
                          (float)kGameWidth / (float)kGameHeight, 0.1f, 100.0f);
     shader_->setMat4("projection", projection);
 
@@ -315,10 +300,9 @@ void Game::Shaders() {
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
-  // we do that because we added colors to the vertices vector.
-  // dont forget to change to the right vector at glBufferData()!
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                         (void *)(3 * sizeof(float)));
+
   glEnableVertexAttribArray(1);
 }
 
