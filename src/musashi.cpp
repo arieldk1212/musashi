@@ -1,9 +1,9 @@
-#include "game/game.h"
+#include "App/App.h"
 
 int main() {
 
-  game::Game game{"Musashi"};
-  game.Run();
-  
+  Musashi::App app{"Musashi"};
+  app.Run();
+
   return 0;
 }

@@ -1,6 +1,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "camera.h"
+#include "Camera.h"
+
+namespace Musashi {
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
     : Position(position), WorldUp(up), Yaw(yaw), Pitch(pitch) {
@@ -69,3 +71,5 @@ void Camera::ProcessMouseScroll(float yoffset) {
     Zoom = 45.0f;
   }
 }
+
+} // namespace Musashi

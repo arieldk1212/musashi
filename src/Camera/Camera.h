@@ -6,6 +6,8 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
+namespace Musashi {
+
 enum class CameraMovement : uint8_t { FORWARD, BACKWARD, RIGHT, LEFT };
 
 // Default Values
@@ -55,5 +57,7 @@ private:
     Up = glm::normalize(glm::cross(Right, Front));
   }
 };
+
+} // namespace Musashi
 
 #endif

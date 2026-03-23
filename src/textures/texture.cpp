@@ -3,7 +3,9 @@
 #include "stb_image.h"
 #include <glad/glad.h>
 
-#include "textures/texture.h"
+#include "Texture.h"
+
+namespace Musashi {
 
 void Texture::AddTexture(std::filesystem::path texturePath, bool flip) {
   unsigned int newTexture;
@@ -39,3 +41,5 @@ void Texture::AddTexture(std::filesystem::path texturePath, bool flip) {
   textures_.push_back(newTexture);
   std::println("Added texture successfully");
 }
+
+} // namespace Musashi

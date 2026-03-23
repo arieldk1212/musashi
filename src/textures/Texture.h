@@ -4,6 +4,8 @@
 #include <filesystem>
 #include <vector>
 
+namespace Musashi {
+
 class Texture {
 public:
   Texture() = default;
@@ -15,5 +17,7 @@ public:
 private:
   std::vector<unsigned int> textures_;
 };
+
+} // namespace Musashi
 
 #endif

@@ -5,8 +5,10 @@
 #include <iostream>
 #include <string>
 
-#include "glm/glm.hpp"
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+
+namespace Musashi {
 
 class Shader {
 public:
@@ -52,5 +54,7 @@ private:
     }
   }
 };
+
+} // namespace Musashi
 
 #endif

@@ -1,15 +1,15 @@
 add_library(musashi_core STATIC
-  game/game.cpp
-  shaders/shader.cpp
-  textures/texture.cpp
-  camera.cpp
+  App/App.cpp
+  Shaders/Shader.cpp
+  Textures/Texture.cpp
+  Camera/Camera.cpp
 
   ../vendor/stb_image.cpp
 )
 
 target_include_directories(musashi_core
   PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/vendor
 )
 
@@ -22,7 +22,7 @@ target_link_libraries(musashi_core
 )
 
 add_executable(musashi
-  musashi.cpp
+  Musashi.cpp
 )
 
 target_link_libraries(musashi

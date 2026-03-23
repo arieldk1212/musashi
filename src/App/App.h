@@ -1,16 +1,16 @@
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef APP_H_
+#define APP_H_
 
 #include <memory>
 
-#include "camera.h"
-#include "shaders/shader.h" // glad before glfw
-#include "textures/texture.h"
+#include "Camera/Camera.h"
+#include "Shaders/Shader.h" // glad before glfw
+#include "Textures/Texture.h"
 
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-namespace game {
+namespace Musashi {
 
 template <auto F> struct delete_with {
   template <typename T> void operator()(T *x) { F(x); }
@@ -32,10 +32,10 @@ static bool kFirstMouse{true};
 static float kDeltaTime{0.0f}; // Time between current frame and last frame
 static float kLastFrame{0.0f};
 
-class Game {
+class App {
 public:
-  Game(const std::string &window_title);
-  ~Game();
+  App(const std::string &window_title);
+  ~App();
 
   void ProcessInput(GLFWwindow *window);
 
@@ -59,6 +59,6 @@ private:
   std::unique_ptr<Texture> texture_;
 };
 
-}; // namespace game
+}; // namespace Musashi
 
 #endif

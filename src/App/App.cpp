@@ -4,10 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "camera.h"
-#include "game/game.h"
+#include "App.h"
+#include "Camera/Camera.h"
 
-namespace game {
+namespace Musashi {
 
 int GetMaxVertexAttributes() {
   int nrAttributes;
@@ -19,7 +19,7 @@ void FramebufferSizeCallback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
 }
 
-Game::Game(const std::string &window_title) : game_title_(window_title) {
+App::App(const std::string &window_title) : game_title_(window_title) {
   if (!glfwInit()) {
     throw std::runtime_error("Failed to initialize GLFW");
   }
@@ -33,14 +33,14 @@ Game::Game(const std::string &window_title) : game_title_(window_title) {
 #endif
 }
 
-Game::~Game() {
+App::~App() {
   glDeleteVertexArrays(1, &VAO_);
   glDeleteBuffers(1, &VBO_);
   shader_->delete_program();
   glfwTerminate();
 }
 
-void Game::ProcessInput(GLFWwindow *window) {
+void App::ProcessInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
   }
@@ -68,22 +68,22 @@ void Game::ProcessInput(GLFWwindow *window) {
     camera_->ProcessKeyboard(CameraMovement::RIGHT, kDeltaTime);
 }
 
-void Game::MouseCallbackWrapper(GLFWwindow *window, double xpos, double ypos) {
-  Game *instance = static_cast<Game *>(glfwGetWindowUserPointer(window));
+void App::MouseCallbackWrapper(GLFWwindow *window, double xpos, double ypos) {
+  App *instance = static_cast<App *>(glfwGetWindowUserPointer(window));
   if (instance) {
     instance->MouseCallback(window, xpos, ypos);
   }
 }
 
-void Game::ScrollCallbackWrapper(GLFWwindow *window, double xoffset,
-                                 double yoffset) {
-  Game *instance = static_cast<Game *>(glfwGetWindowUserPointer(window));
+void App::ScrollCallbackWrapper(GLFWwindow *window, double xoffset,
+                                double yoffset) {
+  App *instance = static_cast<App *>(glfwGetWindowUserPointer(window));
   if (instance) {
     instance->ScrollCallback(window, xoffset, yoffset);
   }
 }
 
-void Game::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
+void App::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
   /**
    * @brief steps to calc camera_'s direction vector
     1. Calculate the mouse's offset since the last frame.
@@ -111,11 +111,11 @@ void Game::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
   camera_->ProcessMouseMovement(xoffset, yoffset);
 }
 
-void Game::ScrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
+void App::ScrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
   camera_->ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
-void Game::Run() {
+void App::Run() {
 
   using Window = std::unique_ptr<GLFWwindow, delete_with<glfwDestroyWindow>>;
 
@@ -142,8 +142,8 @@ void Game::Run() {
 
   glEnable(GL_DEPTH_TEST);
 
-  shader_ = std::make_unique<Shader>("../../include/shaders/vertex.glsl",
-                                     "../../include/shaders/fragment.glsl");
+  shader_ = std::make_unique<Shader>("../../assets/shaders/vert.glsl",
+                                     "../../assets/shaders/frag.glsl");
   texture_ = std::make_unique<Texture>();
 
   Shaders();
@@ -263,7 +263,7 @@ void Game::Run() {
   }
 }
 
-void Game::Shaders() {
+void App::Shaders() {
   std::vector<float> vertices_cube = {
       -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,
       0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
@@ -306,4 +306,4 @@ void Game::Shaders() {
   glEnableVertexAttribArray(1);
 }
 
-}; // namespace game
+}; // namespace Musashi
