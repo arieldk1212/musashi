@@ -105,4 +105,8 @@ void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const {
                      &mat[0][0]);
 }
 
+void Shader::setVec3(const std::string &name, const glm::vec3 &vec) const {
+  glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &vec[0]);
+}
+
 } // namespace Musashi

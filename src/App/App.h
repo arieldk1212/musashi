@@ -19,8 +19,8 @@ template <auto F> struct delete_with {
 static int GetMaxVertexAttributes();
 static void FramebufferSizeCallback(GLFWwindow *window, int width, int height);
 
-static constexpr int kGameWidth = 800;
-static constexpr int kGameHeight = 600;
+static constexpr int kGameWidth{1000};
+static constexpr int kGameHeight{800};
 static float kLastX{static_cast<float>(kGameWidth) /
                     2}; // width / 2 -> default mouse position x
 static float kLastY{static_cast<float>(kGameHeight) /
@@ -31,6 +31,8 @@ static float kMixValue{0.2f}; // for opacity, 0.2 default
 static bool kFirstMouse{true};
 static float kDeltaTime{0.0f}; // Time between current frame and last frame
 static float kLastFrame{0.0f};
+
+static glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 class App {
 public:
@@ -53,10 +55,12 @@ private:
 
   GLuint VAO_;
   GLuint VBO_;
+  GLuint LightVAO_;
   std::string game_title_;
   std::unique_ptr<Camera> camera_;
   std::unique_ptr<Shader> shader_;
   std::unique_ptr<Texture> texture_;
+  std::unique_ptr<Shader> light_shader_;
 };
 
 }; // namespace Musashi

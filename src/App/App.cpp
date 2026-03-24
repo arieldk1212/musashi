@@ -35,6 +35,7 @@ App::App(const std::string &window_title) : game_title_(window_title) {
 
 App::~App() {
   glDeleteVertexArrays(1, &VAO_);
+  glDeleteVertexArrays(1, &LightVAO_);
   glDeleteBuffers(1, &VBO_);
   shader_->delete_program();
   glfwTerminate();
@@ -84,14 +85,6 @@ void App::ScrollCallbackWrapper(GLFWwindow *window, double xoffset,
 }
 
 void App::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
-  /**
-   * @brief steps to calc camera_'s direction vector
-    1. Calculate the mouse's offset since the last frame.
-    2. Add the offset values to the camera_'s yaw and pitch values.
-    3. Add some constraints to the minimum/maximum pitch values (sensitivity).
-    4. Calculate the direction vector.
-   */
-
   xpos = static_cast<float>(xpos);
   ypos = static_cast<float>(ypos);
 
@@ -144,16 +137,20 @@ void App::Run() {
 
   shader_ = std::make_unique<Shader>("../../assets/shaders/vert.glsl",
                                      "../../assets/shaders/frag.glsl");
+  light_shader_ =
+      std::make_unique<Shader>("../../assets/shaders/source_vert.glsl",
+                               "../../assets/shaders/source_frag.glsl");
   texture_ = std::make_unique<Texture>();
 
   Shaders();
 
   texture_->AddTexture("../../assets/textures/wooden-container.jpg", false);
-  texture_->AddTexture("../../assets/textures/awesomeface.png", true);
+  // texture_->AddTexture("../../assets/textures/awesomeface.png", true);
 
-  shader_->use();
+  // light_shader_->use();
+  // shader_->use();
 
-  camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 2.0f));
+  camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 4.0f));
 
   for (int i{0}; i < texture_->Size(); ++i) {
     std::string texture = "ourTexture" + std::to_string(i);
@@ -167,50 +164,6 @@ void App::Run() {
       glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
       glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
 
-  // // Camera
-  // glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f); // z positive for
-  // backwards glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f); glm::vec3
-  // cameraDirection = glm::normalize(
-  //     cameraPos -
-  //     cameraTarget); // it is basically pointing in the reverse
-  //                    // direction of what it is targeting, because vector
-  //                    // substraciton gives the the direction we want
-  // glm::vec3 up = glm::vec3(0.0f, 0.1f, 0.0f); // define up vector
-  // glm::vec3 cameraRight = glm::normalize(glm::cross(
-  //     up,
-  //     cameraDirection)); // then cross the up with and direction gives us the
-  //     a
-  //                        // direction that points in the positive x-axis
-  //                        (right)
-  //                        // (if we switch the order - negative x axis)
-  // glm::vec3 cameraUp = glm::cross(
-  //     cameraDirection, cameraRight); // now we can create the lookAt matrix
-
-  // glm::mat4 view;
-  // view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
-
-  // if no need for FOV keep here, else move inside the loop
-  // glm::mat4 projection = glm::perspective(
-  //     glm::radians(fov), (float)kGameWidth / (float)kGameHeight, 0.1f,
-  //     100.0f);
-  // shader_->setMat4("projection", projection);
-
-  // WE DO THAT IN THE MOUSE CALL BACK FUNCTION
-  // glm::vec3 direction;
-  // we also multiply x and z with cos of pitch, because when calculation pitch,
-  // they are also inside the formula (as cos)
-  // with these calculation we can transform pitch (up, down) and yaw (right,
-  // left) values to 3D vector for looking around
-  // direction.x = cos(glm::radians(yaw)) *
-  //               cos(glm::radians(
-  //                   pitch)); // because z is on sin, x on cos, if we calc
-  //                   them
-  // direction.z = sin(glm::radians(yaw))
-  //     cos(glm::radians(pitch));           // sin because z is on sin
-  // direction.y = sin(glm::radians(pitch)); // sin because the cos is the xz
-  // axis yaw = -90.0f // by default because the world scene is towards the -z
-  // axis, so we make sure the camera_ points towards the negative
-
   while (!glfwWindowShouldClose(window.get())) {
 
     float currentTime = static_cast<float>(glfwGetTime());
@@ -219,7 +172,7 @@ void App::Run() {
 
     ProcessInput(window.get());
 
-    glClearColor(0.2f, 0.3f, 0.3f, 0.1f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for (int i{0}; i < texture_->Size(); ++i) {
@@ -227,36 +180,52 @@ void App::Run() {
       glBindTexture(GL_TEXTURE_2D, texture_->Get(i));
     }
 
-    shader_->setFloat("kMixValue", kMixValue);
+    // shader_->setFloat("kMixValue", kMixValue);
 
     shader_->use();
+    shader_->setVec3("ObjectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+    shader_->setVec3("LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
     glm::mat4 view;
-    view = camera_->GetViewMatrix();
-    shader_->setMat4("view", view);
-
     glm::mat4 projection =
         glm::perspective(glm::radians(camera_->Zoom),
                          (float)kGameWidth / (float)kGameHeight, 0.1f, 100.0f);
+    view = camera_->GetViewMatrix();
+    shader_->setMat4("view", view);
     shader_->setMat4("projection", projection);
 
+    glm::mat4 model = glm::mat4(1.0f);
+    shader_->setMat4("model", model);
+
     glBindVertexArray(VAO_);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    for (unsigned int i = 0; i < 10; i++) {
-      glm::mat4 model = glm::mat4(1.0f);
-      model = glm::translate(model, cubePositions[i]);
-      float angle = 20.0f * i;
-      if (i % 2 == 1) {
-        model = glm::rotate(model, (float)glfwGetTime(),
-                            glm::vec3(1.0f, 0.3f, 0.5f));
-      } else {
-        model = glm::rotate(model, glm::radians(angle),
-                            glm::vec3(1.0f, 0.3f, 0.5f));
-      }
-      shader_->setMat4("model", model);
+    // for (unsigned int i = 0; i < 10; i++) {
+    //   glm::mat4 model = glm::mat4(1.0f);
+    //   model = glm::translate(model, cubePositions[i]);
+    //   float angle = 20.0f * i;
+    //   if (i % 2 == 1) {
+    //     model = glm::rotate(model, (float)glfwGetTime(),
+    //                         glm::vec3(1.0f, 0.3f, 0.5f));
+    //   } else {
+    //     model = glm::rotate(model, glm::radians(angle),
+    //                         glm::vec3(1.0f, 0.3f, 0.5f));
+    //   }
+    //   shader_->setMat4("model", model);
 
-      glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
+    //   glDrawArrays(GL_TRIANGLES, 0, 36);
+    // }
+
+    light_shader_->use();
+    light_shader_->setMat4("projection", projection);
+    light_shader_->setMat4("view", view);
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, lightPos);
+    model = glm::scale(model, glm::vec3(0.2f)); // smaller cube
+    light_shader_->setMat4("model", model);
+
+    glBindVertexArray(LightVAO_);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
     glfwSwapBuffers(window.get());
     glfwPollEvents();
@@ -289,21 +258,32 @@ void App::Shaders() {
       0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
       -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
 
+  // for VAO_
   glGenVertexArrays(1, &VAO_);
   glGenBuffers(1, &VBO_);
-
-  glBindVertexArray(VAO_);
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO_);
   glBufferData(GL_ARRAY_BUFFER, vertices_cube.size() * sizeof(float),
                vertices_cube.data(), GL_STATIC_DRAW);
 
+  glBindVertexArray(VAO_);
+
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(0);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                         (void *)(3 * sizeof(float)));
+  glEnableVertexAttribArray(0);
 
-  glEnableVertexAttribArray(1);
+  // for LightVAO_
+  glGenVertexArrays(1, &LightVAO_);
+  glBindVertexArray(LightVAO_);
+
+  glBindBuffer(GL_ARRAY_BUFFER,
+               VBO_); // no need but we do it again for educational purposes
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+                        (void *)(3 * sizeof(float)));
+  glEnableVertexAttribArray(0);
 }
 
 }; // namespace Musashi
