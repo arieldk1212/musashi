@@ -19,8 +19,8 @@ template <auto F> struct delete_with {
 static int GetMaxVertexAttributes();
 static void FramebufferSizeCallback(GLFWwindow *window, int width, int height);
 
-static constexpr int kGameWidth = 800;
-static constexpr int kGameHeight = 600;
+static constexpr int kGameWidth{800};
+static constexpr int kGameHeight{600};
 static float kLastX{static_cast<float>(kGameWidth) /
                     2}; // width / 2 -> default mouse position x
 static float kLastY{static_cast<float>(kGameHeight) /
