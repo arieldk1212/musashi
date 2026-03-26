@@ -1,3 +1,4 @@
+#include <imgui.h>
 #include <string>
 
 #include <glm/glm.hpp>
@@ -6,6 +7,7 @@
 
 #include "App.h"
 #include "Camera/Camera.h"
+#include "Gui/imgui_init.h"
 
 namespace Musashi {
 
@@ -44,6 +46,11 @@ App::~App() {
 void App::ProcessInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    kShowImGui = true;
   }
 
   if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
@@ -164,6 +171,8 @@ void App::Run() {
       glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
       glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
 
+  Gui gui{window.get()};
+
   while (!glfwWindowShouldClose(window.get())) {
 
     float currentTime = static_cast<float>(glfwGetTime());
@@ -175,6 +184,8 @@ void App::Run() {
     glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    gui.SetFrame();
+
     for (int i{0}; i < texture_->Size(); ++i) {
       glActiveTexture(GL_TEXTURE0 + i);
       glBindTexture(GL_TEXTURE_2D, texture_->Get(i));
@@ -183,8 +194,9 @@ void App::Run() {
     // shader_->setFloat("kMixValue", kMixValue);
 
     shader_->use();
-    shader_->setVec3("ObjectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-    shader_->setVec3("LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+
+    shader_->setVec3("ObjectColor", objColor);
+    shader_->setVec3("LightColor", lightColor);
 
     glm::mat4 view;
     glm::mat4 projection =
@@ -200,22 +212,6 @@ void App::Run() {
     glBindVertexArray(VAO_);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    // for (unsigned int i = 0; i < 10; i++) {
-    //   glm::mat4 model = glm::mat4(1.0f);
-    //   model = glm::translate(model, cubePositions[i]);
-    //   float angle = 20.0f * i;
-    //   if (i % 2 == 1) {
-    //     model = glm::rotate(model, (float)glfwGetTime(),
-    //                         glm::vec3(1.0f, 0.3f, 0.5f));
-    //   } else {
-    //     model = glm::rotate(model, glm::radians(angle),
-    //                         glm::vec3(1.0f, 0.3f, 0.5f));
-    //   }
-    //   shader_->setMat4("model", model);
-
-    //   glDrawArrays(GL_TRIANGLES, 0, 36);
-    // }
-
     light_shader_->use();
     light_shader_->setMat4("projection", projection);
     light_shader_->setMat4("view", view);
@@ -226,6 +222,17 @@ void App::Run() {
 
     glBindVertexArray(LightVAO_);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    if (kShowImGui) {
+      ImGui::Begin("Musashi");
+      ImGui::Text("Lighting");
+      ImGui::SliderFloat("Opacity", &kMixValue, 0.5f, 2.0f);
+      ImGui::ColorEdit3("Object Color", glm::value_ptr(objColor));
+      ImGui::ColorEdit3("Light Color", glm::value_ptr(lightColor));
+      ImGui::End();
+    }
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(window.get());
     glfwPollEvents();
