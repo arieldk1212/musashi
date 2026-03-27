@@ -38,8 +38,8 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltatime) {
     Position += velocity * Right;
     break;
   }
-  Position.y =
-      0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
+  // Position.y =
+  // 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset,

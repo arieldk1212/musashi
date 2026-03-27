@@ -15,11 +15,12 @@ void main() {
   vec3 ambient = LightColor * ambientStrength;
 
   vec3 norm = normalize(NormalCoord);
-  vec3 lightDir =
-      normalize(LightPos - FragPos); // vec subtracting gives the distance
+  vec3 lightDir = normalize(
+      LightPos - FragPos); // vec subtracting gives the direction vector
   // we normalize because we want them to end as a unit vectors.
   // when dealing with lighting we always want to normalize the vectors since we
   // only care about the direction and not magnitude.
+  // ensure its 1.0
 
   // 0.0 because negative is useless in colors, therefore its 0, we use max and
   // 0 for lower bound.
