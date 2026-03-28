@@ -49,16 +49,15 @@ void App::ProcessInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, true);
   }
 
+  if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
+    kShowImGui = true;
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  }
+
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    // will need to change
-    if (kShowImGui && kEscPressedLastFrame) {
+    if (kShowImGui) {
       kShowImGui = false;
       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-      kEscPressedLastFrame = false;
-    } else {
-      glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-      kShowImGui = true;
-      kEscPressedLastFrame = true;
     }
   }
 
@@ -104,7 +103,9 @@ void App::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
   kLastX = xpos;
   kLastY = ypos;
 
-  camera_->ProcessMouseMovement(xoffset, yoffset);
+  if (!kShowImGui) {
+    camera_->ProcessMouseMovement(xoffset, yoffset);
+  }
 }
 
 void App::ScrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
@@ -204,7 +205,7 @@ void App::Run() {
                      glm::vec3(0.5f, 0.5f, 0.5f)); // darken diffuse light a bit
     shader_->setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
     shader_->setVec3("light.position", lightPos); // prob static
-    shader_->setVec3("ObjectColor", objectColor);
+    // shader_->setVec3("ObjectColor", objectColor);
     shader_->setVec3("ViewPos", camera_->Position);
 
     glm::mat4 projection =
@@ -254,6 +255,7 @@ void App::Shaders() {
       // COORDINATES  - aPos (3) | TEX CORD - aTexCoord (2) | NORMALS (3) | (can
       // also add color)
       // we will ignore the textures and only apply the normals.
+      // also better to represent it using glm::vec3
       -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f, -0.5f,
       0.0f,  0.0f,  -1.0f, 0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
       0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, -0.5f, 0.5f,  -0.5f,
