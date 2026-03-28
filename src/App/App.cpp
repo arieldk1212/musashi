@@ -184,10 +184,27 @@ void App::Run() {
       glBindTexture(GL_TEXTURE_2D, texture_->Get(i));
     }
 
+    glm::vec3 changingLightColor;
+    changingLightColor.x = sin(glfwGetTime() * 2.0f);
+    changingLightColor.y = sin(glfwGetTime() * 0.7f);
+    changingLightColor.z = sin(glfwGetTime() * 1.3f);
+
+    glm::vec3 diffuseColor = changingLightColor * glm::vec3(0.5f);
+    glm::vec3 ambientColor = changingLightColor * glm::vec3(0.2f);
+
     shader_->use();
-    shader_->setVec3("ObjectColor", objColor);
-    shader_->setVec3("LightColor", lightColor);
-    shader_->setVec3("LightPos", lightPos); // static
+    // shader_->setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+    // shader_->setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+    shader_->setVec3("material.diffuse", diffuseColor);
+    shader_->setVec3("material.ambient", ambientColor);
+    shader_->setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+    shader_->setFloat("material.shininess", 32.0f);
+    shader_->setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    shader_->setVec3("light.diffuse",
+                     glm::vec3(0.5f, 0.5f, 0.5f)); // darken diffuse light a bit
+    shader_->setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    shader_->setVec3("light.position", lightPos); // prob static
+    shader_->setVec3("ObjectColor", objectColor);
     shader_->setVec3("ViewPos", camera_->Position);
 
     glm::mat4 projection =
@@ -220,7 +237,7 @@ void App::Run() {
     if (kShowImGui) {
       ImGui::Begin("Musashi");
       ImGui::Text("Lighting");
-      ImGui::ColorEdit3("Object Color", glm::value_ptr(objColor));
+      ImGui::ColorEdit3("Object Color", glm::value_ptr(objectColor));
       ImGui::ColorEdit3("Light Color", glm::value_ptr(lightColor));
       ImGui::End();
     }
