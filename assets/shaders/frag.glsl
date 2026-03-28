@@ -1,9 +1,9 @@
 #version 330 core
 
 struct Material {
-  vec3 ambient;
-  vec3 diffuse;
-  vec3 specular;
+  sampler2D diffuse;
+  sampler2D specular;
+  sampler2D emission;
   float shininess;
 };
 
@@ -22,12 +22,13 @@ out vec4 FragColor;
 
 in vec3 FragPos;
 in vec3 NormalCoord;
+in vec2 TexCoord;
 
 uniform vec3 ObjectColor;
 uniform vec3 ViewPos;
 
 void main() {
-  vec3 ambient = light.ambient * material.ambient;
+  vec3 ambient = light.ambient * texture(material.diffuse, TexCoord).rgb;
 
   vec3 norm = normalize(NormalCoord);
   // vec subtracting gives the direction vector
@@ -39,7 +40,8 @@ void main() {
   // 0.0 because negative is useless in colors, therefore its 0, we use max and
   // 0 for lower bound.
   float diff = max(dot(norm, lightDir), 0.0);
-  vec3 diffuse = (diff * material.diffuse) * light.diffuse; // get the color
+  vec3 diffuse = light.diffuse * diff *
+                 texture(material.diffuse, TexCoord).rgb; // get the color
 
   vec3 viewDir = normalize(ViewPos - FragPos);
   // -lightDir because we want the dir from the light source towards the
@@ -50,9 +52,13 @@ void main() {
   // 32 is the shininess (scattering) value, we keep it at 32 to not be too
   // distracting
   float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-  vec3 specular = (material.specular * spec) * light.specular;
+  vec3 specular =
+      light.specular * spec * vec3(texture(material.specular, TexCoord));
+
+  vec3 emission =
+      texture(material.emission, TexCoord).rgb; // instead of vec3(...)
 
   // vec3 result = (ambient + diffuse + specular) * ObjectColor;
-  vec3 result = ambient + diffuse + specular;
+  vec3 result = ambient + diffuse + specular + emission;
   FragColor = vec4(result, 1.0);
 }

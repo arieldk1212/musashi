@@ -1,5 +1,5 @@
-#ifndef IMGUI_INIT_H_
-#define IMGUI_INIT_H_
+#ifndef GUI_H_
+#define GUI_H_
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"

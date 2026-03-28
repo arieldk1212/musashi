@@ -8,7 +8,7 @@
 
 #include "App.h"
 #include "Camera/Camera.h"
-#include "Gui/imgui_init.h"
+#include "Gui/Gui.h"
 
 namespace Musashi {
 
@@ -129,7 +129,7 @@ void App::Run() {
     throw std::runtime_error("Failed to initialize GLAD");
   }
 
-  glfwSetWindowUserPointer(window.get(), this); // for wrappers
+  glfwSetWindowUserPointer(window.get(), this); // for callback's wrapper
   glfwSetFramebufferSizeCallback(window.get(), FramebufferSizeCallback);
   glfwSetCursorPosCallback(window.get(), MouseCallbackWrapper);
   glfwSetScrollCallback(window.get(), ScrollCallbackWrapper);
@@ -150,6 +150,12 @@ void App::Run() {
 
   // texture_->AddTexture("../../assets/textures/wooden-container.jpg", false);
   // texture_->AddTexture("../../assets/textures/awesomeface.png", true);
+  // texture_->AddTexture("../../assets/textures/container2.png", false);
+  texture_->AddTexture("../../assets/textures/container2.png", false);
+  // texture_->AddTexture("../../assets/textures/lighting_maps_specular_color.png",
+  //                      false);
+  texture_->AddTexture("../../assets/textures/container2_specular.png", false);
+  texture_->AddTexture("../../assets/textures/matrix.jpg", false);
 
   camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 4.0f));
 
@@ -157,6 +163,10 @@ void App::Run() {
   //   std::string texture = "ourTexture" + std::to_string(i);
   //   shader_->setInt(texture, i);
   // }
+  shader_->use();                         // dont forget to use!
+  shader_->setInt("material.diffuse", 0); // if we have one special (texture)
+  shader_->setInt("material.specular", 1);
+  shader_->setInt("material.emission", 2);
 
   std::vector<glm::vec3> cubePositions = {
       glm::vec3(0.0f, 0.0f, 0.0f),    glm::vec3(2.0f, 5.0f, -15.0f),
@@ -180,24 +190,19 @@ void App::Run() {
 
     gui.SetFrame();
 
-    for (int i{0}; i < texture_->Size(); ++i) {
-      glActiveTexture(GL_TEXTURE0 + i);
-      glBindTexture(GL_TEXTURE_2D, texture_->Get(i));
-    }
-
     glm::vec3 changingLightColor;
     changingLightColor.x = sin(glfwGetTime() * 2.0f);
     changingLightColor.y = sin(glfwGetTime() * 0.7f);
     changingLightColor.z = sin(glfwGetTime() * 1.3f);
 
     glm::vec3 diffuseColor = changingLightColor * glm::vec3(0.5f);
-    glm::vec3 ambientColor = changingLightColor * glm::vec3(0.2f);
+    // glm::vec3 ambientColor = changingLightColor * glm::vec3(0.2f);
 
     shader_->use();
     // shader_->setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
     // shader_->setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
     shader_->setVec3("material.diffuse", diffuseColor);
-    shader_->setVec3("material.ambient", ambientColor);
+    // shader_->setVec3("material.ambient", ambientColor);
     shader_->setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
     shader_->setFloat("material.shininess", 32.0f);
     shader_->setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
@@ -217,6 +222,11 @@ void App::Run() {
 
     glm::mat4 model = glm::mat4(1.0f);
     shader_->setMat4("model", model);
+
+    for (int i{0}; i < texture_->Size(); ++i) {
+      glActiveTexture(GL_TEXTURE0 + i);
+      glBindTexture(GL_TEXTURE_2D, texture_->Get(i));
+    }
 
     glBindVertexArray(VAO_);
     glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -252,39 +262,45 @@ void App::Run() {
 
 void App::Shaders() {
   std::vector<float> vertices_cube = {
-      // COORDINATES  - aPos (3) | TEX CORD - aTexCoord (2) | NORMALS (3) | (can
+      // COORDINATES  - aPos (3) | NORMALS (3) | TEX CORD - aTexCoord (2) | (can
       // also add color)
       // we will ignore the textures and only apply the normals.
       // also better to represent it using glm::vec3
-      -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f, -0.5f,
-      0.0f,  0.0f,  -1.0f, 0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
-      0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, -0.5f, 0.5f,  -0.5f,
-      0.0f,  0.0f,  -1.0f, -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f,
+      -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.0f,  0.0f,  0.5f,  -0.5f,
+      -0.5f, 0.0f,  0.0f,  -1.0f, 1.0f,  0.0f,  0.5f,  0.5f,  -0.5f, 0.0f,
+      0.0f,  -1.0f, 1.0f,  1.0f,  0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
+      1.0f,  1.0f,  -0.5f, 0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, 0.0f,  1.0f,
+      -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.0f,  0.0f,
 
-      -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.5f,  -0.5f, 0.5f,
-      0.0f,  0.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-      0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  -0.5f, 0.5f,  0.5f,
-      0.0f,  0.0f,  1.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,
+      -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.5f,  -0.5f,
+      0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  0.0f,
+      0.0f,  1.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+      1.0f,  1.0f,  -0.5f, 0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+      -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-      -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  -0.5f, 0.5f,  -0.5f,
-      -1.0f, 0.0f,  0.0f,  -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,
-      -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,
-      -1.0f, 0.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,
+      -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,
+      -0.5f, -1.0f, 0.0f,  0.0f,  1.0f,  1.0f,  -0.5f, -0.5f, -0.5f, -1.0f,
+      0.0f,  0.0f,  0.0f,  1.0f,  -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,
+      0.0f,  1.0f,  -0.5f, -0.5f, 0.5f,  -1.0f, 0.0f,  0.0f,  0.0f,  0.0f,
+      -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
 
-      0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.5f,  0.5f,  -0.5f,
-      1.0f,  0.0f,  0.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,
-      0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,  0.5f,  -0.5f, 0.5f,
-      1.0f,  0.0f,  0.0f,  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+      0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.5f,  0.5f,
+      -0.5f, 1.0f,  0.0f,  0.0f,  1.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,
+      0.0f,  0.0f,  0.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,
+      0.0f,  1.0f,  0.5f,  -0.5f, 0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+      0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-      -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.5f,  -0.5f, -0.5f,
-      0.0f,  -1.0f, 0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,
-      0.5f,  -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,  -0.5f, -0.5f, 0.5f,
-      0.0f,  -1.0f, 0.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,
+      -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.0f,  1.0f,  0.5f,  -0.5f,
+      -0.5f, 0.0f,  -1.0f, 0.0f,  1.0f,  1.0f,  0.5f,  -0.5f, 0.5f,  0.0f,
+      -1.0f, 0.0f,  1.0f,  0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,
+      1.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,  0.0f,  0.0f,
+      -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.0f,  1.0f,
 
-      -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,  0.5f,  0.5f,  -0.5f,
-      0.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-      0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,
-      0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f};
+      -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.5f,  0.5f,
+      -0.5f, 0.0f,  1.0f,  0.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,
+      1.0f,  0.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+      1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+      -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,  0.0f,  1.0f};
 
   // for VAO_
   glGenVertexArrays(1, &VAO_);
@@ -296,11 +312,14 @@ void App::Shaders() {
 
   glBindVertexArray(VAO_);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                         (void *)(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                        (void *)(6 * sizeof(float)));
+  glEnableVertexAttribArray(2);
 
   // for LightVAO_
   glGenVertexArrays(1, &LightVAO_);
@@ -309,8 +328,9 @@ void App::Shaders() {
   glBindBuffer(GL_ARRAY_BUFFER,
                VBO_); // no need but we do it again for educational purposes
 
-  // we use only the first 3 therefore the stride is 6 for source shaders.
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+  // we use only the first 3 therefore the stride is 6 for source shaders (or to
+  // something else if you add more)
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
 }
 
