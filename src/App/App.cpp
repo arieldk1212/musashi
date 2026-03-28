@@ -1,3 +1,4 @@
+#include <cmath>
 #include <imgui.h>
 #include <string>
 
@@ -58,19 +59,6 @@ void App::ProcessInput(GLFWwindow *window) {
       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
       kShowImGui = true;
       kEscPressedLastFrame = true;
-    }
-  }
-
-  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-    kMixValue += 0.001f;
-    if (kMixValue >= 1.0f) {
-      kMixValue = 1.0f;
-    }
-  }
-  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-    kMixValue -= 0.001f;
-    if (kMixValue <= 0.0f) {
-      kMixValue = 0.0f;
     }
   }
 
@@ -159,18 +147,15 @@ void App::Run() {
 
   Shaders();
 
-  texture_->AddTexture("../../assets/textures/wooden-container.jpg", false);
+  // texture_->AddTexture("../../assets/textures/wooden-container.jpg", false);
   // texture_->AddTexture("../../assets/textures/awesomeface.png", true);
-
-  // light_shader_->use();
-  // shader_->use();
 
   camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 4.0f));
 
-  for (int i{0}; i < texture_->Size(); ++i) {
-    std::string texture = "ourTexture" + std::to_string(i);
-    shader_->setInt(texture, i);
-  }
+  // for (int i{0}; i < texture_->Size(); ++i) {
+  //   std::string texture = "ourTexture" + std::to_string(i);
+  //   shader_->setInt(texture, i);
+  // }
 
   std::vector<glm::vec3> cubePositions = {
       glm::vec3(0.0f, 0.0f, 0.0f),    glm::vec3(2.0f, 5.0f, -15.0f),
@@ -203,6 +188,7 @@ void App::Run() {
     shader_->setVec3("ObjectColor", objColor);
     shader_->setVec3("LightColor", lightColor);
     shader_->setVec3("LightPos", lightPos); // static
+    shader_->setVec3("ViewPos", camera_->Position);
 
     glm::mat4 projection =
         glm::perspective(glm::radians(camera_->Zoom),
@@ -217,6 +203,8 @@ void App::Run() {
     glBindVertexArray(VAO_);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
+    lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
+    lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
     light_shader_->use();
     light_shader_->setVec3("LightColor", lightColor);
     light_shader_->setMat4("projection", projection);
@@ -232,7 +220,6 @@ void App::Run() {
     if (kShowImGui) {
       ImGui::Begin("Musashi");
       ImGui::Text("Lighting");
-      ImGui::SliderFloat("Opacity", &kMixValue, 0.5f, 2.0f);
       ImGui::ColorEdit3("Object Color", glm::value_ptr(objColor));
       ImGui::ColorEdit3("Light Color", glm::value_ptr(lightColor));
       ImGui::End();

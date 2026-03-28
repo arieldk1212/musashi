@@ -26,8 +26,6 @@ static float kLastX{static_cast<float>(kGameWidth) /
 static float kLastY{static_cast<float>(kGameHeight) /
                     2}; // height / 2 -> default mouse position y
 
-static float kMixValue{0.2f}; // for opacity, 0.2 default
-
 static bool kFirstMouse{true};
 static float kDeltaTime{0.0f}; // Time between current frame and last frame
 static float kLastFrame{0.0f};
