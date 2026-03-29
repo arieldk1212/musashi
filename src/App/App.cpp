@@ -151,11 +151,14 @@ void App::Run() {
   // texture_->AddTexture("../../assets/textures/wooden-container.jpg", false);
   // texture_->AddTexture("../../assets/textures/awesomeface.png", true);
   // texture_->AddTexture("../../assets/textures/container2.png", false);
-  texture_->AddTexture("../../assets/textures/container2.png", false);
+  auto containerTexture =
+      texture_->AddTexture("../../assets/textures/container2.png", false);
   // texture_->AddTexture("../../assets/textures/lighting_maps_specular_color.png",
   //                      false);
-  texture_->AddTexture("../../assets/textures/container2_specular.png", false);
-  texture_->AddTexture("../../assets/textures/matrix.jpg", false);
+  auto containerSpecularTexture = texture_->AddTexture(
+      "../../assets/textures/container2_specular.png", false);
+  // auto matrixTexture =
+  //     texture_->AddTexture("../../assets/textures/matrix.jpg", false);
 
   camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 4.0f));
 
@@ -163,10 +166,12 @@ void App::Run() {
   //   std::string texture = "ourTexture" + std::to_string(i);
   //   shader_->setInt(texture, i);
   // }
-  shader_->use();                         // dont forget to use!
-  shader_->setInt("material.diffuse", 0); // if we have one special (texture)
+  shader_->use(); // dont forget to use!
+  shader_->setInt("material.diffuse",
+                  0); // if we have one special (texture)
   shader_->setInt("material.specular", 1);
-  shader_->setInt("material.emission", 2);
+  shader_->setFloat("light.constant", 1.0f);
+  // shader_->setInt("material.emission", matrixTexture); // matrix texture
 
   std::vector<glm::vec3> cubePositions = {
       glm::vec3(0.0f, 0.0f, 0.0f),    glm::vec3(2.0f, 5.0f, -15.0f),
@@ -190,28 +195,37 @@ void App::Run() {
 
     gui.SetFrame();
 
-    glm::vec3 changingLightColor;
-    changingLightColor.x = sin(glfwGetTime() * 2.0f);
-    changingLightColor.y = sin(glfwGetTime() * 0.7f);
-    changingLightColor.z = sin(glfwGetTime() * 1.3f);
+    // glm::vec3 changingLightColor;
+    // changingLightColor.x = sin(glfwGetTime() * 2.0f);
+    // changingLightColor.y = sin(glfwGetTime() * 0.7f);
+    // changingLightColor.z = sin(glfwGetTime() * 1.3f);
 
-    glm::vec3 diffuseColor = changingLightColor * glm::vec3(0.5f);
+    // glm::vec3 diffuseColor = changingLightColor * glm::vec3(0.5f);
     // glm::vec3 ambientColor = changingLightColor * glm::vec3(0.2f);
 
     shader_->use();
-    // shader_->setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-    // shader_->setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-    shader_->setVec3("material.diffuse", diffuseColor);
-    // shader_->setVec3("material.ambient", ambientColor);
-    shader_->setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-    shader_->setFloat("material.shininess", 32.0f);
+    // shader_->setVec3("light.position", lightPos); // prob static
+    // shader_->setVec3("light.direction", lightDirection);
+    shader_->setVec3("ViewPos", camera_->Position);
+
+    // to calculate the flashlight (spotlights)
+    shader_->setVec3("light.position", camera_->Position); // prob static
+    shader_->setVec3("light.direction", camera_->Front);
+    shader_->setFloat(
+        "light.cutOff",
+        glm::cos(glm::radians(12.5f))); // optimized to calc the cos here
+
     shader_->setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
     shader_->setVec3("light.diffuse",
                      glm::vec3(0.5f, 0.5f, 0.5f)); // darken diffuse light a bit
     shader_->setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-    shader_->setVec3("light.position", lightPos); // prob static
-    // shader_->setVec3("ObjectColor", objectColor);
-    shader_->setVec3("ViewPos", camera_->Position);
+    shader_->setFloat("light.linear", 0.09f);
+    shader_->setFloat("light.quadratic", 0.032f);
+
+    // shader_->setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+    // shader_->setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+    // shader_->setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+    shader_->setFloat("material.shininess", 32.0f);
 
     glm::mat4 projection =
         glm::perspective(glm::radians(camera_->Zoom),
@@ -229,8 +243,18 @@ void App::Run() {
     }
 
     glBindVertexArray(VAO_);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    for (unsigned int i = 0; i < 10; i++) {
+      glm::mat4 model = glm::mat4(1.0f);
+      model = glm::translate(model, cubePositions[i]);
+      float angle = 20.0f * i;
+      model =
+          glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+      shader_->setMat4("model", model);
 
+      glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+
+    // light object is weird with directional light, dont render.
     lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
     lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
     light_shader_->use();

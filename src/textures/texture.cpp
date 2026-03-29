@@ -7,7 +7,7 @@
 
 namespace Musashi {
 
-void Texture::AddTexture(std::filesystem::path texturePath, bool flip) {
+unsigned int Texture::AddTexture(std::filesystem::path texturePath, bool flip) {
   unsigned int newTexture;
   stbi_set_flip_vertically_on_load(flip); // if it is flipped
 
@@ -40,6 +40,8 @@ void Texture::AddTexture(std::filesystem::path texturePath, bool flip) {
 
   textures_.push_back(newTexture);
   std::println("Added texture successfully");
+
+  return newTexture;
 }
 
 } // namespace Musashi

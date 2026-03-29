@@ -33,6 +33,7 @@ static float kLastFrame{0.0f};
 static bool kShowImGui{false};
 
 static glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+static glm::vec3 lightDirection(-0.2f, -1.0f, -0.3f);
 
 static glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
 static glm::vec3 lightColor(1.0f, 1.0f, 1.0f);

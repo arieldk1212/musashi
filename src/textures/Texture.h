@@ -10,7 +10,7 @@ class Texture {
 public:
   Texture() = default;
 
-  void AddTexture(std::filesystem::path texturePath, bool flip);
+  unsigned int AddTexture(std::filesystem::path texturePath, bool flip);
   int Size() const { return textures_.size(); }
   unsigned int Get(int idx) const { return textures_[idx]; }
 
