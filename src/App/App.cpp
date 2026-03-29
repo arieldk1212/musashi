@@ -214,10 +214,11 @@ void App::Run() {
     shader_->setFloat(
         "light.cutOff",
         glm::cos(glm::radians(12.5f))); // optimized to calc the cos here
+    shader_->setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 
-    shader_->setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    shader_->setVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
     shader_->setVec3("light.diffuse",
-                     glm::vec3(0.5f, 0.5f, 0.5f)); // darken diffuse light a bit
+                     glm::vec3(0.8f, 0.8f, 0.8f)); // darken diffuse light a bit
     shader_->setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
     shader_->setFloat("light.linear", 0.09f);
     shader_->setFloat("light.quadratic", 0.032f);
