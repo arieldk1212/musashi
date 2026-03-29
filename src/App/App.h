@@ -3,9 +3,9 @@
 
 #include <memory>
 
-#include "Camera/Camera.h"
-#include "Shaders/Shader.h" // glad before glfw
-#include "Textures/Texture.h"
+#include "Renderer/Camera.h"
+#include "Renderer/Shader.h" // glad before glfw
+#include "Renderer/Texture.h"
 
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>

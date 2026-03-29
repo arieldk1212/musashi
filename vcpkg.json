@@ -2,6 +2,7 @@
   "dependencies": [
     "glad",
     "glfw3",
+    "glm",
     {
       "name": "imgui",
       "features": [
@@ -9,6 +10,6 @@
         "opengl3-binding"
       ]
     },
-    "glm"
+    "assimp"
   ]
 }

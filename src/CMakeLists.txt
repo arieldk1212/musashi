@@ -1,8 +1,8 @@
 add_library(musashi_core STATIC
   App/App.cpp
-  Shaders/Shader.cpp
-  Textures/Texture.cpp
-  Camera/Camera.cpp
+  Renderer/Shader.cpp
+  Renderer/Texture.cpp
+  Renderer/Camera.cpp
 
   ../vendor/stb_image.cpp
 )
@@ -19,6 +19,7 @@ target_link_libraries(musashi_core
     glfw
     imgui::imgui
     glm::glm
+    assimp::assimp
 )
 
 add_executable(musashi

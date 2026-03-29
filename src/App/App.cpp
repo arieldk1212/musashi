@@ -7,7 +7,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "App.h"
-#include "Camera/Camera.h"
 #include "Gui/Gui.h"
 
 namespace Musashi {
