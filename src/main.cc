@@ -1,4 +1,4 @@
-#include "dead_verse/game.h"
+#include "game/game.h"
 
 int main() {
   musashi::App app{"Musashi"};

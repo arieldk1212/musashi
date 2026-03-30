@@ -25,9 +25,9 @@ target_include_directories(engine PUBLIC ${PROJECT_SOURCE_DIR}/src/engine ${PROJ
 target_link_libraries(engine PUBLIC glfw imgui assimp glad glm::glm spdlog)
 
 # dead verse - game
-file(GLOB_RECURSE GAME_SOURCES "dead_verse/*.cc")
+file(GLOB_RECURSE GAME_SOURCES "game/*.cc")
 add_library(game STATIC ${GAME_SOURCES})
-target_include_directories(game PUBLIC ${PROJECT_SOURCE_DIR}/src/dead_verse ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/src/engine)
+target_include_directories(game PUBLIC ${PROJECT_SOURCE_DIR}/src/game ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/src/engine)
 target_link_libraries(game PUBLIC glfw imgui assimp glad glm::glm spdlog)
 
 # main
