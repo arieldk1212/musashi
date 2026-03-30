@@ -88,7 +88,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
   for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
     auto face = mesh->mFaces[i];
     for (unsigned int j = 0; j < face.mNumIndices; ++j) {
-      indices.push_back(face.mIndices[i]);
+      indices.push_back(face.mIndices[j]);
     }
   }
 
@@ -104,10 +104,10 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
 
     std::vector<Texture> normal_maps =
         LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
-    textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
+    textures.insert(textures.end(), normal_maps.begin(), normal_maps.end());
     std::vector<Texture> height_maps =
         LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-    textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
+    textures.insert(textures.end(), height_maps.begin(), height_maps.end());
   }
 
   return Mesh{vertices, indices, textures};
@@ -137,6 +137,7 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat,
       texture.type = std::move(type_name);
       texture.path = str.C_Str();
       textures.push_back(texture);
+      textures_loaded_.push_back(texture);
     }
   }
   return textures;

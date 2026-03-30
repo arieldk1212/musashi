@@ -44,8 +44,8 @@ void Mesh::Draw(Shader& shader) {
   // names can vary on different implementations, change accordingly
   uint32_t diffuse_nr{1};
   uint32_t specular_nr{1};
-  uint32_t normal_nr{0};
-  uint32_t height_nr{0};
+  uint32_t normal_nr{1};
+  uint32_t height_nr{1};
   for (unsigned int i = 0; i < textures_.size(); i++) {
     glActiveTexture(GL_TEXTURE0 +
                     i);  // activate proper texture unit before binding
@@ -70,7 +70,7 @@ void Mesh::Draw(Shader& shader) {
   // draw mesh
   glBindVertexArray(vao_);
   glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT,
-                 nullptr);  // changed from 0
+                 0);  // changed from 0
   glBindVertexArray(0);
 
   glActiveTexture(GL_TEXTURE0);
