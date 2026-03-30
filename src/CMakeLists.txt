@@ -3,6 +3,8 @@ add_library(musashi_core STATIC
   renderer/shader.cc
   renderer/texture.cc
   renderer/camera.cc
+  renderer/mesh.cc
+  renderer/model.cc
 
   ../vendor/stb_image.cc
 )

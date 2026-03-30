@@ -2,12 +2,11 @@
 
 namespace musashi {
 
-Mesh::Mesh(const std::vector<Vertex>& vertices,
-           const std::vector<uint32_t>& indices,
-           const std::vector<Texture>& textures)
-    : vertices_(vertices),
-      indices_(indices),
-      textures_(textures) {
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices,
+           std::vector<Texture> textures)
+    : vertices_(std::move(vertices)),
+      indices_(std::move(indices)),
+      textures_(std::move(textures)) {
   SetupMesh();
 }
 
@@ -45,6 +44,8 @@ void Mesh::Draw(Shader& shader) {
   // names can vary on different implementations, change accordingly
   uint32_t diffuse_nr{1};
   uint32_t specular_nr{1};
+  uint32_t normal_nr{0};
+  uint32_t height_nr{0};
   for (unsigned int i = 0; i < textures_.size(); i++) {
     glActiveTexture(GL_TEXTURE0 +
                     i);  // activate proper texture unit before binding
@@ -55,19 +56,24 @@ void Mesh::Draw(Shader& shader) {
       number = std::to_string(diffuse_nr++);
     } else if (name == "texture_specular") {
       number = std::to_string(specular_nr++);
+    } else if (name == "texture_normal") {
+      number = std::to_string(normal_nr++);
+    } else if (name == "texture_height") {
+      number = std::to_string(height_nr++);
     }
 
-    std::string mat{"material"};
-    mat.append(name).append(number);
-    shader.SetInt(mat, i);
+    name.append(number);
+    shader.SetInt(name, i);
     glBindTexture(GL_TEXTURE_2D, textures_[i].id);
   }
-  glActiveTexture(GL_TEXTURE0);
 
   // draw mesh
   glBindVertexArray(vao_);
-  glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT,
+                 nullptr);  // changed from 0
   glBindVertexArray(0);
+
+  glActiveTexture(GL_TEXTURE0);
 }
 
 };  // namespace musashi

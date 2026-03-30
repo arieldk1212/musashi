@@ -9,7 +9,7 @@
 #include <GLFW/glfw3.h>
 
 #include "renderer/shader.h"  // glad before glfw
-#include "renderer/texture.h"
+// #include "renderer/texture.h"
 
 namespace musashi {
 
@@ -65,7 +65,7 @@ class App {
   std::string game_title_;
   std::unique_ptr<Camera> camera_;
   std::unique_ptr<Shader> shader_;
-  std::unique_ptr<Texture> texture_;
+  // std::unique_ptr<Texture> texture_;
   std::unique_ptr<Shader> light_shader_;
 };
 
