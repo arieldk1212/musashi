@@ -22,6 +22,7 @@ set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/glfw)
 add_subdirectory(vendor/assimp)
+add_subdirectory(vendor/spdlog)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/vendor)

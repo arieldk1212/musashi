@@ -1,3 +1,5 @@
+// the api for the engine
+
 #ifndef APP_H_
 #define APP_H_
 

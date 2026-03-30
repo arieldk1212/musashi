@@ -18,10 +18,18 @@ target_include_directories(imgui PUBLIC
 )
 target_link_libraries(imgui PUBLIC glfw)
 
-# musashi
-file(GLOB_RECURSE SOURCES "*.cc")
-add_library(musashi_core STATIC ${SOURCES} ${PROJECT_SOURCE_DIR}/vendor/stb_image.cc)
-target_include_directories(musashi_core PUBLIC ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(musashi_core PUBLIC glfw imgui assimp glad glm::glm)
-add_executable(musashi musashi.cc)
-target_link_libraries(musashi PUBLIC musashi_core)
+# musashi - engine
+file(GLOB_RECURSE ENGINE_SOURCES "engine/*.cc")
+add_library(engine STATIC ${ENGINE_SOURCES} ${PROJECT_SOURCE_DIR}/vendor/stb_image.cc)
+target_include_directories(engine PUBLIC ${PROJECT_SOURCE_DIR}/src/engine ${PROJECT_SOURCE_DIR})
+target_link_libraries(engine PUBLIC glfw imgui assimp glad glm::glm spdlog)
+
+# dead verse - game
+file(GLOB_RECURSE GAME_SOURCES "dead_verse/*.cc")
+add_library(game STATIC ${GAME_SOURCES})
+target_include_directories(game PUBLIC ${PROJECT_SOURCE_DIR}/src/dead_verse ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/src/engine)
+target_link_libraries(game PUBLIC glfw imgui assimp glad glm::glm spdlog)
+
+# main
+add_executable(main main.cc)
+target_link_libraries(main PUBLIC engine game)

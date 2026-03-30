@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Musashi (LLDB)",
+            "name": "Debug Main (LLDB)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/src/musashi", 
+            "program": "${workspaceFolder}/build/src/main", 
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/src", 
