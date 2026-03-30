@@ -3,63 +3,65 @@
 
 #include <memory>
 
-#include "Renderer/Camera.h"
-#include "Renderer/Shader.h" // glad before glfw
-#include "Renderer/Texture.h"
+#include "renderer/camera.h"
 
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 
-namespace Musashi {
+#include "renderer/shader.h"  // glad before glfw
+#include "renderer/texture.h"
 
-template <auto F> struct delete_with {
-  template <typename T> void operator()(T *x) { F(x); }
+namespace musashi {
+
+template <auto F>
+struct DeleteWith {
+  template <typename T>
+  void operator()(T* x) {
+    F(x);
+  }
 };
 
-static int GetMaxVertexAttributes();
-static void FramebufferSizeCallback(GLFWwindow *window, int width, int height);
+constexpr int kGameWidth{1000};
+constexpr int kGameHeight{800};
 
-static constexpr int kGameWidth{1000};
-static constexpr int kGameHeight{800};
-static float kLastX{static_cast<float>(kGameWidth) /
-                    2}; // width / 2 -> default mouse position x
-static float kLastY{static_cast<float>(kGameHeight) /
-                    2}; // height / 2 -> default mouse position y
-
-static bool kFirstMouse{true};
-static float kDeltaTime{0.0f}; // Time between current frame and last frame
-static float kLastFrame{0.0f};
-
-static bool kShowImGui{false};
-
-static glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-static glm::vec3 lightDirection(-0.2f, -1.0f, -0.3f);
-
-static glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
-static glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+namespace extras {
+inline float last_x{static_cast<float>(kGameWidth) / 2};
+inline float last_y{static_cast<float>(kGameHeight) / 2};
+inline bool first_mouse{true};
+inline float delta_time{0.0f};
+inline float last_frame{0.0f};
+inline bool show_imgui{false};
+inline glm::vec3 light_pos(1.2f, 1.0f, 2.0f);
+inline glm::vec3 light_direction(-0.2f, -1.0f, -0.3f);
+inline glm::vec3 object_color(1.0f, 0.5f, 0.31f);
+inline glm::vec3 light_color(1.0f, 1.0f, 1.0f);
+}  // namespace extras
 
 class App {
-public:
-  App(const std::string &window_title);
+ public:
+  explicit App(std::string window_title);
   ~App();
 
-  void ProcessInput(GLFWwindow *window);
+  void ProcessInput(GLFWwindow* window);
 
-  static void MouseCallbackWrapper(GLFWwindow *window, double xpos,
+  static int GetMaxVertexAttributes();
+  static void FramebufferSizeCallback(GLFWwindow* window, int width,
+                                      int height);
+  static void MouseCallbackWrapper(GLFWwindow* window, double xpos,
                                    double ypos);
-  static void ScrollCallbackWrapper(GLFWwindow *window, double xoffset,
+  static void ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
                                     double yoffset);
 
   void Run();
   void Shaders();
 
-private:
-  void MouseCallback(GLFWwindow *window, double xpos, double ypos);
-  void ScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
+ private:
+  void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+  void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
-  GLuint VAO_;
-  GLuint VBO_;
-  GLuint LightVAO_;
+  GLuint VAO_{0};
+  GLuint VBO_{0};
+  GLuint LightVAO_{0};
   std::string game_title_;
   std::unique_ptr<Camera> camera_;
   std::unique_ptr<Shader> shader_;
@@ -67,6 +69,6 @@ private:
   std::unique_ptr<Shader> light_shader_;
 };
 
-}; // namespace Musashi
+};  // namespace musashi
 
 #endif

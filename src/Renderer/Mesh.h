@@ -1,17 +1,17 @@
 #ifndef MESH_H_
 #define MESH_H_
 
+#include "shader.h"
+
 #include <string>
 #include <vector>
 
-#include "Renderer/Shader.h"
-
-namespace Musashi {
+namespace musashi {
 
 struct Vertex {
-  glm::vec3 Position;
-  glm::vec3 Normal;
-  glm::vec3 TexCoords;
+  glm::vec3 position;
+  glm::vec3 normal;
+  glm::vec3 tex_coords;
 };
 
 struct Texture {
@@ -20,25 +20,24 @@ struct Texture {
 };
 
 class Mesh {
-public:
-  Mesh(const std::vector<Vertex> &vertices,
-       const std::vector<uint32_t> &indices,
-       const std::vector<Texture> &textures);
+ public:
+  Mesh(const std::vector<Vertex>& vertices,
+       const std::vector<uint32_t>& indices,
+       const std::vector<Texture>& textures);
 
-  std::vector<Vertex> vertices;
-  std::vector<uint32_t> indices;
-  std::vector<Texture> textures;
+  void Draw(Shader& shader);
 
-  void Draw(Shader &shader);
+ private:
+  void SetupMesh();
 
-private:
-  void setupMesh();
-
-  uint32_t vao_;
-  uint32_t vbo_;
-  uint32_t ebo_;
+  uint32_t vao_{0};
+  uint32_t vbo_{0};
+  uint32_t ebo_{0};
+  std::vector<Vertex> vertices_;
+  std::vector<uint32_t> indices_;
+  std::vector<Texture> textures_;
 };
 
-}; // namespace Musashi
+};  // namespace musashi
 
 #endif

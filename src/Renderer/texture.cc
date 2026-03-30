@@ -1,30 +1,33 @@
+#include "texture.h"
+
 #include <print>
 
-#include "stb_image.h"
 #include <glad/glad.h>
+#include <vendor/stb_image.h>
 
-#include "Texture.h"
+namespace musashi {
 
-namespace Musashi {
+unsigned int Texture::AddTexture(const std::filesystem::path& texture_path,
+                                 bool flip) {
+  unsigned int new_texture{0};
+  stbi_set_flip_vertically_on_load(flip);  // if it is flipped
 
-unsigned int Texture::AddTexture(std::filesystem::path texturePath, bool flip) {
-  unsigned int newTexture;
-  stbi_set_flip_vertically_on_load(flip); // if it is flipped
-
-  glGenTextures(1, &newTexture);
-  glBindTexture(GL_TEXTURE_2D, newTexture);
+  glGenTextures(1, &new_texture);
+  glBindTexture(GL_TEXTURE_2D, new_texture);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  int width, height, nrChannels;
-  unsigned char *data =
-      stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
+  int width{0};
+  int height{0};
+  int nr_channels{0};
+  unsigned char* data =
+      stbi_load(texture_path.c_str(), &width, &height, &nr_channels, 0);
 
   if (data != nullptr) {
-    if (texturePath.extension() == ".png") {
+    if (texture_path.extension() == ".png") {
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
                    GL_UNSIGNED_BYTE, data);
     } else {
@@ -38,10 +41,10 @@ unsigned int Texture::AddTexture(std::filesystem::path texturePath, bool flip) {
 
   stbi_image_free(data);
 
-  textures_.push_back(newTexture);
+  textures_.push_back(new_texture);
   std::println("Added texture successfully");
 
-  return newTexture;
+  return new_texture;
 }
 
-} // namespace Musashi
+}  // namespace musashi

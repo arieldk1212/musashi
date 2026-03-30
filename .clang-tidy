@@ -52,3 +52,11 @@ CheckOptions:
     value:           '16'
   - key:             modernize-use-nullptr.NullMacros
     value:           'NULL'
+  - key:             readability-uppercase-literal-suffix.NewSuffixes
+    value:           'f;l;ll;u;ul;ull'
+  - key:             readability-identifier-naming.PublicMemberCase
+    value:           snake_case
+  - key:             readability-identifier-naming.PublicMemberSuffix
+    value:           ''
+  - key:             readability-implicit-bool-conversion.AllowIntegerConditions
+    value:           true

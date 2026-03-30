@@ -1,19 +1,19 @@
 #ifndef GUI_H_
 #define GUI_H_
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 // TODO: add imgui menu, control with button the color of the cubes
 
 class Gui {
-public:
-  Gui(GLFWwindow *window) {
+ public:
+  explicit Gui(GLFWwindow* window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     (void)io;
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -25,13 +25,13 @@ public:
     ImGui::DestroyContext();
   }
 
-  void SetFrame() {
+  static void SetFrame() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
   }
 
-private:
+ private:
 };
 
 #endif

@@ -1,17 +1,17 @@
-#include "Renderer/Mesh.h"
+#include "mesh.h"
 
-namespace Musashi {
+namespace musashi {
 
 Mesh::Mesh(const std::vector<Vertex>& vertices,
            const std::vector<uint32_t>& indices,
            const std::vector<Texture>& textures)
-    : vertices(vertices),
-      indices(indices),
-      textures(textures) {
-  setupMesh();
+    : vertices_(vertices),
+      indices_(indices),
+      textures_(textures) {
+  SetupMesh();
 }
 
-void Mesh::setupMesh() {
+void Mesh::SetupMesh() {
   glGenVertexArrays(1, &vao_);
   glGenBuffers(1, &vbo_);
   glGenBuffers(1, &ebo_);
@@ -19,12 +19,12 @@ void Mesh::setupMesh() {
   glBindVertexArray(vao_);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 
-  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0],
-               GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(Vertex),
+               vertices_.data(), GL_STATIC_DRAW);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
-               &indices[0], GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(unsigned int),
+               indices_.data(), GL_STATIC_DRAW);
 
   // vertex positions
   glEnableVertexAttribArray(0);
@@ -32,40 +32,42 @@ void Mesh::setupMesh() {
   // vertex normals
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                        (void*)offsetof(Vertex, Normal));
+                        (void*)offsetof(Vertex, normal));
   // vertex texture coords
   glEnableVertexAttribArray(2);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                        (void*)offsetof(Vertex, TexCoords));
+                        (void*)offsetof(Vertex, tex_coords));
 
   glBindVertexArray(0);
 }
 
 void Mesh::Draw(Shader& shader) {
   // names can vary on different implementations, change accordingly
-  uint32_t diffuseNr = 1;
-  uint32_t specularNr = 1;
-  for (unsigned int i = 0; i < textures.size(); i++) {
+  uint32_t diffuse_nr{1};
+  uint32_t specular_nr{1};
+  for (unsigned int i = 0; i < textures_.size(); i++) {
     glActiveTexture(GL_TEXTURE0 +
                     i);  // activate proper texture unit before binding
     // retrieve texture number (the N in diffuse_textureN)
     std::string number;
-    std::string name = textures[i].type;
+    std::string name = textures_[i].type;
     if (name == "texture_diffuse") {
-      number = std::to_string(diffuseNr++);
+      number = std::to_string(diffuse_nr++);
     } else if (name == "texture_specular") {
-      number = std::to_string(specularNr++);
+      number = std::to_string(specular_nr++);
     }
 
-    shader.setInt(("material." + name + number).c_str(), i);
-    glBindTexture(GL_TEXTURE_2D, textures[i].id);
+    std::string mat{"material"};
+    mat.append(name).append(number);
+    shader.SetInt(mat, i);
+    glBindTexture(GL_TEXTURE_2D, textures_[i].id);
   }
   glActiveTexture(GL_TEXTURE0);
 
   // draw mesh
   glBindVertexArray(vao_);
-  glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);
 }
 
-};  // namespace Musashi
+};  // namespace musashi

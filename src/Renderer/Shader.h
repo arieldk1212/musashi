@@ -2,60 +2,36 @@
 #define SHADER_H_
 
 #include <filesystem>
-#include <iostream>
 #include <string>
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-namespace Musashi {
+namespace musashi {
 
 class Shader {
-public:
+ public:
   // constructor reads and builds the shader
-  Shader(std::filesystem::path vertexPath, std::filesystem::path fragmentPath);
+  Shader(const std::filesystem::path& vertex_path,
+         const std::filesystem::path& fragment_path);
 
   // the program ID
-  uint16_t ID;
 
   // use/activate the shader
-  void use();
-  void delete_program();
+  void Use() const;
+  void DeleteProgram() const;
   // utility uniform functions
-  void setBool(const std::string &name, bool value) const;
-  void setInt(const std::string &name, int value) const;
-  void setFloat(const std::string &name, float value) const;
-  void setMat4(const std::string &name, const glm::mat4 &mat) const;
-  void setVec3(const std::string &name, const glm::vec3 &vec) const;
+  void SetBool(const std::string& name, bool value) const;
+  void SetInt(const std::string& name, int value) const;
+  void SetFloat(const std::string& name, float value) const;
+  void SetMat4(const std::string& name, const glm::mat4& mat) const;
+  void SetVec3(const std::string& name, const glm::vec3& vec) const;
 
-private:
-  void checkCompileErrors(uint16_t shader, const std::string &type) const {
-    int success;
-    char infoLog[1024];
-    if (type != "PROGRAM") {
-      glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-      if (!success) {
-        glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-        std::cout
-            << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n"
-            << infoLog
-            << "\n -- --------------------------------------------------- -- "
-            << std::endl;
-      }
-    } else {
-      glGetProgramiv(shader, GL_LINK_STATUS, &success);
-      if (!success) {
-        glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-        std::cout
-            << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n"
-            << infoLog
-            << "\n -- --------------------------------------------------- -- "
-            << std::endl;
-      }
-    }
-  }
+ private:
+  static void CheckCompileErrors(uint16_t shader, const std::string& type);
+  uint16_t id_;
 };
 
-} // namespace Musashi
+}  // namespace musashi
 
 #endif
