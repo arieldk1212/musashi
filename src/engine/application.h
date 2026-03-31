@@ -1,5 +1,5 @@
-#ifndef APP_H_
-#define APP_H_
+#ifndef APPLICATION_H_
+#define APPLICATION_H_
 
 namespace musashi {
 

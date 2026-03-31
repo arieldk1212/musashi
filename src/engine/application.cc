@@ -1,17 +1,19 @@
-#include "app.h"
+#include "application.h"
 
-#include <string>
+// #include <string>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <imgui.h>
-#include <vendor/stb_image.h>
+// #include <glm/glm.hpp>
+// #include <glm/gtc/matrix_transform.hpp>
+// #include <glm/gtc/type_ptr.hpp>
+// #include <imgui.h>
+// #include <vendor/stb_image.h>
 
-#include "gui/gui.h"
-#include "renderer/model.h"
+// #include "gui/gui.h"
+// #include "renderer/model.h"
 
 namespace musashi {
+
+Application::Application() {}
 
 // int App::GetMaxVertexAttributes() {
 //   int nr_attributes{0};
