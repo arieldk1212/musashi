@@ -1,16 +1,22 @@
-#include "engine/core/window.h"
+#include "app_layer.h"
+
+#include "engine/application.h"
+#include "engine/global.h"
+
+musashi::Global musashi::kGlobal{};
 
 int main() {
-  // musashi::Window window{"test"};
+  musashi::ApplicationSpecification specs;
+  specs.application_name = "Dead Verse";
+  specs.window_specs.width = 1000;
+  specs.window_specs.height = 800;
 
-  // musashi::ApplicationSpecification specs;
-  // specs.name = "name";
-  // specs.Window.width = 1920;
-  // specs.Window.height = 1080;
+  musashi::Application application(specs);
 
-  // musashi::Application application(specs);
-  // application.PushLayer<AppLayer>();
-  // application.Run();
+  musashi::kGlobal.application = &application;
+
+  // application.PushLayer<dead_verse::AppLayer>();
+  musashi::kGlobal.application->Run();
 
   return 0;
 }

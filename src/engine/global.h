@@ -1,20 +1,17 @@
-#ifndef GLOBALS_H_
-#define GLOBALS_H_
-
-#include "application.h"
-
-#include "core/window.h"
+#ifndef GLOBAL_H_
+#define GLOBAL_H_
 
 namespace musashi {
+class Application;
 
 // TODO: or use dependency injection, think this thru.
 
 struct Global {
-  Window* window;
+  Global() = default;
   Application* application;
 };
 
-extern Global global;
+extern Global kGlobal;
 
 }  // namespace musashi
 

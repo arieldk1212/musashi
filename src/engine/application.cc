@@ -1,25 +1,21 @@
 #include "application.h"
-#include "globals.h"
-
-// #include <string>
-
-// #include <glm/glm.hpp>
-// #include <glm/gtc/matrix_transform.hpp>
-// #include <glm/gtc/type_ptr.hpp>
-// #include <imgui.h>
-// #include <vendor/stb_image.h>
-
-// #include "gui/gui.h"
-// #include "renderer/model.h"
+#include "global.h"
 
 namespace musashi {
 
-Application::Application() {}
+Application::Application(const ApplicationSpecification& specs)
+    : window_(std::make_shared<Window>(specs.window_specs)),
+      specifications_(specs) {
+  glfwInit();
+  window_->Create();
+}
 
-Application::~Application() {
+Application::~Application() noexcept {
   glfwTerminate();
   window_->Destory();
-  // here destroy the global application
+  // TODO: Change this?
+  kGlobal.application->Stop();
+  kGlobal.application = nullptr;
 }
 
 void Application::Run() {
@@ -53,21 +49,6 @@ void Application::Run() {
 // void App::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 // {
 //   glViewport(0, 0, width, height);
-// }
-
-// App::App(std::string window_title)
-//     : game_title_(std::move(window_title)) {
-//   if (!glfwInit()) {
-//     throw std::runtime_error("Failed to initialize GLFW");
-//   }
-
-//   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-//   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-// #ifdef __APPLE__
-//   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-// #endif
 // }
 
 // App::~App() {

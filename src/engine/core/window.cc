@@ -2,10 +2,17 @@
 
 namespace musashi {
 
-Window::Window(std::string window_title)
-    : title_(std::move(window_title)) {
+Window::Window(const WindowSpecification& specs)
+    : specifications_(specs) {}
+
+Window::~Window() {
+  Destory();
+}
+
+void Window::Create() {
   if (!glfwInit()) {
-    throw std::runtime_error("Failed to Initialize GLFW");
+    // TODO: log here("Failed to Initialize GLFW")
+    assert(false);
   }
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -16,34 +23,53 @@ Window::Window(std::string window_title)
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-  window_ = glfwCreateWindow(kWidth, kHeight, title_.c_str(), nullptr, nullptr);
+  window_ = glfwCreateWindow(static_cast<int>(specifications_.width),
+                             static_cast<int>(specifications_.height),
+                             specifications_.title.c_str(), nullptr, nullptr);
   if (window_ == nullptr) {
     glfwTerminate();
-    throw std::runtime_error("Failed to Create GLFW Window");
+    // TODO: log here ("Failed to Create GLFW Window")
+    assert(false);
   }
   glfwMakeContextCurrent(window_);
-  if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) ==
-      0) {
-    throw std::runtime_error("Failed to Initialize GLAD");
+  if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
+    // TODO: log here (Failed to Initialize GLAD)
+    assert(false);
   }
+
+  glfwMakeContextCurrent(window_);
+  glfwSetWindowUserPointer(window_, this);
 
   glEnable(GL_DEPTH_TEST);
 }
 
-Window::~Window() {
-  glfwTerminate();
+void Window::Destory() {
+  if (window_ != nullptr) {
+    glfwDestroyWindow(window_);
+  }
+  window_ = nullptr;
 }
 
-void Window::SetInputMode(InputMode mode) {
-  switch (mode) {
-    case InputMode::kNormal:
-      glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-      break;
-    case InputMode::kDisabled:
-      glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-      break;
-    default:
-  }
+void Window::Update() {
+  glfwSwapBuffers(window_);
+}
+
+bool Window::ShouldClose() const {
+  return glfwWindowShouldClose(window_) != 0;
+}
+
+glm::vec2 Window::GetMousePosition() const {
+  double x{0.0};
+  double y{0.0};
+  glfwGetCursorPos(window_, &x, &y);
+  return {static_cast<float>(x), static_cast<float>(y)};
+}
+
+glm::vec2 Window::GetFrameBufferSize() const {
+  int width{0};
+  int height{0};
+  glfwGetFramebufferSize(window_, &width, &height);
+  return {width, height};
 }
 
 }  // namespace musashi

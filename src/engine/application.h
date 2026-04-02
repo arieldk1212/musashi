@@ -21,21 +21,21 @@ class Application {
   Application();
   explicit Application(
       const ApplicationSpecification& specs = ApplicationSpecification());
-  ~Application();
+  ~Application() noexcept;
 
   void Run();
   void Stop() { running_ = false; }
 
   template <typename T>
     requires(std::is_base_of_v<Layer, T>)
-  void PushLayer(Layer& layer);
+  void PushLayer();
   template <typename T>
     requires(std::is_base_of_v<Layer, T>)
   T* GetLayer();
 
  private:
   bool running_{false};
-  std::unique_ptr<Window> window_;  // TODO: shared_ptr?
+  std::shared_ptr<Window> window_;
   ApplicationSpecification specifications_;
   std::vector<std::unique_ptr<Layer>> layers_;
 };

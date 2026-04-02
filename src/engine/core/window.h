@@ -3,8 +3,11 @@
 
 #include <string>
 
+// clang-format off
 #include <glad/glad.h>
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
+#include <glm/vec2.hpp>
+// clang-format on
 
 namespace musashi {
 
@@ -14,24 +17,14 @@ constexpr int kDefaultHeight = 1080;
 struct WindowSpecification {
   bool vsync{false};
   bool is_resizeable{false};
-  std::string title{"Default"};
+  std::string title{"Window"};
   uint32_t width = kDefaultWidth;
   uint32_t height = kDefaultHeight;
 };
 
-template <auto F>
-struct DeleteWith {
-  template <typename T>
-  void operator()(T* x) {
-    F(x);
-  }
-};
-
 class Window {
  public:
-  enum class InputMode : uint8_t { kNormal, kHidden, kDisabled, kCaptured };
-
-  explicit Window(std::string window_title);
+  explicit Window(const WindowSpecification& specs);
   ~Window();
 
   [[nodiscard]] static float GetTime() {
@@ -40,16 +33,20 @@ class Window {
   void Create();
   void Destory();
   void Update();
+  [[nodiscard]] bool ShouldClose() const;
 
-  void SetInputMode(InputMode mode);
-  void SetEventCallback();
-
-  bool ShouldClose();
-  [[nodiscard]] GLFWwindow* GetHandle() const { return window_; }
+  [[nodiscard]] glm::vec2 GetMousePosition() const;
+  [[nodiscard]] glm::vec2 GetFrameBufferSize() const;
+  [[nodiscard]] GLFWwindow* GetHandle() const {
+    if (window_ != nullptr) {
+      return window_;
+    }
+    assert(false);
+  }
 
  private:
-  std::string title_;
   GLFWwindow* window_{nullptr};
+  WindowSpecification specifications_;
 };
 
 }  // namespace musashi
