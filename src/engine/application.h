@@ -28,10 +28,20 @@ class Application {
 
   template <typename T>
     requires(std::is_base_of_v<Layer, T>)
-  void PushLayer();
+  void PushLayer() {
+    layers_.emplace_back(std::make_unique<T>());
+  }
   template <typename T>
     requires(std::is_base_of_v<Layer, T>)
-  T* GetLayer();
+  // Get a "peek" of the layer
+  T* GetLayer() {
+    for (const auto& layer : layers_) {
+      if (auto casted = dynamic_cast<T*>(layer)) {
+        return layer;
+      }
+    }
+    return nullptr;
+  }
 
  private:
   bool running_{false};

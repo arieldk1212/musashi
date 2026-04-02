@@ -9,12 +9,12 @@ namespace dead_verse {
 
 class AppLayer : public musashi::Layer {
  public:
-  AppLayer();
-  ~AppLayer() override;
+  AppLayer() = default;
+  ~AppLayer() override = default;
 
-  void OnEvent(musashi::Event& event) override {}
-  void OnUpdate(float ts) override {}
-  void OnRender() override {}
+  void OnEvent(musashi::Event& event) override;
+  void OnUpdate(float timestamp) override;
+  void OnRender() override;
 
  private:
   bool OnMousePressedEvent(musashi::MouseEvent& event);

@@ -1,7 +1,6 @@
-#include "app_layer.h"
-
 #include "engine/application.h"
 #include "engine/global.h"
+#include "layers/app_layer.h"
 
 musashi::Global musashi::kGlobal{};
 
@@ -15,7 +14,7 @@ int main() {
 
   musashi::kGlobal.application = &application;
 
-  // application.PushLayer<dead_verse::AppLayer>();
+  application.PushLayer<dead_verse::AppLayer>();
   musashi::kGlobal.application->Run();
 
   return 0;
