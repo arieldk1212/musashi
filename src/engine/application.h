@@ -1,15 +1,43 @@
 #ifndef APPLICATION_H_
 #define APPLICATION_H_
 
+#include <memory>
+#include <string>
+#include <type_traits>
+#include <vector>
+
+#include "core/window.h"
+#include "layers/layer.h"
+
 namespace musashi {
+
+struct ApplicationSpecification {
+  std::string application_name = "Application";
+  WindowSpecification window_specs;
+};
 
 class Application {
  public:
   Application();
+  explicit Application(
+      const ApplicationSpecification& specs = ApplicationSpecification());
+  ~Application();
 
   void Run();
+  void Stop() { running_ = false; }
+
+  template <typename T>
+    requires(std::is_base_of_v<Layer, T>)
+  void PushLayer(Layer& layer);
+  template <typename T>
+    requires(std::is_base_of_v<Layer, T>)
+  T* GetLayer();
 
  private:
+  bool running_{false};
+  std::unique_ptr<Window> window_;  // TODO: shared_ptr?
+  ApplicationSpecification specifications_;
+  std::vector<std::unique_ptr<Layer>> layers_;
 };
 
 }  // namespace musashi

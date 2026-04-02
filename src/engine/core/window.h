@@ -8,6 +8,17 @@
 
 namespace musashi {
 
+constexpr int kDefaultWidth = 1920;
+constexpr int kDefaultHeight = 1080;
+
+struct WindowSpecification {
+  bool vsync{false};
+  bool is_resizeable{false};
+  std::string title{"Default"};
+  uint32_t width = kDefaultWidth;
+  uint32_t height = kDefaultHeight;
+};
+
 template <auto F>
 struct DeleteWith {
   template <typename T>
@@ -18,8 +29,6 @@ struct DeleteWith {
 
 class Window {
  public:
-  static constexpr int kWidth{1000};
-  static constexpr int kHeight{800};
   enum class InputMode : uint8_t { kNormal, kHidden, kDisabled, kCaptured };
 
   explicit Window(std::string window_title);
@@ -28,9 +37,15 @@ class Window {
   [[nodiscard]] static float GetTime() {
     return static_cast<float>(glfwGetTime());
   }
-  void OnUpdate();
+  void Create();
+  void Destory();
+  void Update();
+
   void SetInputMode(InputMode mode);
   void SetEventCallback();
+
+  bool ShouldClose();
+  [[nodiscard]] GLFWwindow* GetHandle() const { return window_; }
 
  private:
   std::string title_;

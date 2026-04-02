@@ -31,5 +31,5 @@ target_include_directories(game PUBLIC ${PROJECT_SOURCE_DIR}/src/game ${PROJECT_
 target_link_libraries(game PUBLIC glfw imgui assimp glad glm::glm spdlog)
 
 # main
-add_executable(main main.cc)
+add_executable(main game)
 target_link_libraries(main PUBLIC engine game)

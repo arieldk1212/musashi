@@ -6,6 +6,8 @@
 
 namespace musashi {
 
+// TODO: change to ring buffer, and overall architecture of the static
+
 class Logger {
  public:
   static void Initialize();

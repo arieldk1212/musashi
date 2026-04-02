@@ -1,4 +1,5 @@
 #include "application.h"
+#include "globals.h"
 
 // #include <string>
 
@@ -14,6 +15,34 @@
 namespace musashi {
 
 Application::Application() {}
+
+Application::~Application() {
+  glfwTerminate();
+  window_->Destory();
+  // here destroy the global application
+}
+
+void Application::Run() {
+  running_ = true;
+
+  while (running_) {
+    glfwPollEvents();
+    if (window_->ShouldClose()) {
+      Stop();
+      break;
+    }
+
+    for (const auto& layer : layers_) {
+      layer->OnUpdate(0.0);
+    }
+
+    for (const auto& layer : layers_) {
+      layer->OnRender();
+    }
+
+    window_->Update();
+  }
+}
 
 // int App::GetMaxVertexAttributes() {
 //   int nr_attributes{0};
