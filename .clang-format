@@ -18,6 +18,8 @@ AllowShortFunctionsOnASingleLine: Inline
 DerivePointerAlignment: false
 PointerAlignment: Left
 FixNamespaceComments: true
+InsertNewlineAtEOF: true
+InsertBraces: true
 
 IncludeCategories:
   - Regex:           '^"([^/.]+\.h)"'
