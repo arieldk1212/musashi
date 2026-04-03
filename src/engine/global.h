@@ -3,6 +3,8 @@
 
 namespace musashi {
 
+static constexpr int kLogBufferSize{256};
+
 class Application;
 class Logger;
 

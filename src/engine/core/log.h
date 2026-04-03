@@ -3,14 +3,13 @@
 
 #include <chrono>
 #include <print>
+#include <thread>
 #include <vector>
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
 namespace musashi {
-
-// TODO: change to ring buffer, and overall architecture of the static
 
 #ifdef __cpp_lib_hardware_interference_size
 static constexpr size_t kCacheLineSize =
@@ -25,18 +24,27 @@ class Logger {
 
   explicit Logger(size_t capacity = 256)
       : capacity_(capacity) {
-    buffer_.resize(capacity_);
+    buffer_.resize(capacity);
   }
-  ~Logger() = default;
+  ~Logger() {
+    if (!Empty()) {
+      for (const auto& log : buffer_) {
+        log.PrintLog();
+      }
+    }
+  }
 
   struct LogRecord {
-    explicit LogRecord(LogLevel level)
-        : level(level) {
+    // For resize
+    LogRecord();
+    explicit LogRecord(LogLevel level, std::string_view msg)
+        : level(level),
+          msg(msg) {
       timestamp = std::chrono::time_point_cast<std::chrono::seconds>(
           std::chrono::system_clock::now());
     }
-    std::string msg;
     LogLevel level{LogLevel::kTrace};
+    std::string_view msg;
     std::chrono::system_clock::time_point timestamp;
 
     void PrintLog() const {
@@ -62,10 +70,40 @@ class Logger {
     }
   };
 
-  void Log() {}  // TODO: implement this
+  size_t Size() const { return tail_ - head_; }
+  size_t Capacity() const { return capacity_; }
+  bool Empty() const { return Size() == 0; }
+  bool Full() const { return Size() == Capacity(); }
+
+  bool Pop() {
+    if (Empty()) {
+      return false;
+    }
+    auto log = buffer_[head_];
+    log.PrintLog();
+    head_ = (head_ % capacity_) + 1;
+    return true;
+  }
+
+  bool Push(LogRecord& log) {
+    if (Full()) {
+      // capacity_ *= 2;
+      // buffer_.resize(capacity_);
+      return false;
+    }
+    buffer_[tail_] = log;
+    tail_ = (tail_ % capacity_) + 1;
+    return true;
+  }
+
+  void Log(LogLevel level, std::string_view msg) {
+    LogRecord log(level, msg);
+    Push(log);
+  }
 
  private:
   size_t capacity_;
+  std::thread thread_;
   alignas(kCacheLineSize) std::vector<LogRecord> buffer_;
   alignas(kCacheLineSize) std::atomic<size_t> head_{0};
   alignas(kCacheLineSize) std::atomic<size_t> tail_{0};
