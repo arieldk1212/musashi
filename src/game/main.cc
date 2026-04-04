@@ -1,5 +1,5 @@
-#include "core/log.h"
 #include "engine/application.h"
+#include "engine/core/log.h"
 #include "engine/global.h"
 #include "layers/app_layer.h"
 
@@ -11,14 +11,21 @@ int main() {
   specs.window_specs.width = 1000;
   specs.window_specs.height = 800;
 
-  musashi::Application application(specs);
+  // Setup
   musashi::Logger logger(musashi::kLogBufferSize);
-
-  musashi::kGlobal.application = &application;
   musashi::kGlobal.logger = &logger;
 
+  musashi::Application application(specs);
+  musashi::kGlobal.application = &application;
+
+  // Logic
   application.PushLayer<dead_verse::AppLayer>();
+  musashi::kGlobal.logger->Trace("LOGGING INITIALIZED");
   musashi::kGlobal.application->Run();
+
+  // Cleanup
+  musashi::kGlobal.logger = nullptr;
+  musashi::kGlobal.application = nullptr;
 
   return 0;
 }

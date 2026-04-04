@@ -1,6 +1,8 @@
 #include "application.h"
 #include "global.h"
 
+#include "core/log.h"
+
 namespace musashi {
 
 Application::Application(const ApplicationSpecification& specs)
@@ -8,14 +10,13 @@ Application::Application(const ApplicationSpecification& specs)
       specifications_(specs) {
   glfwInit();
   window_->Create();
+  kGlobal.logger->Trace("WINDOW CREATED");
 }
 
 Application::~Application() noexcept {
   glfwTerminate();
   window_->Destory();
-  // TODO: Change this?
   kGlobal.application->Stop();
-  kGlobal.application = nullptr;
 }
 
 void Application::Run() {

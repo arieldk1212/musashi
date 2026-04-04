@@ -1,4 +1,7 @@
+#include "global.h"
 #include "window.h"
+
+#include "core/log.h"
 
 namespace musashi {
 
@@ -11,7 +14,7 @@ Window::~Window() {
 
 void Window::Create() {
   if (!glfwInit()) {
-    // TODO: log here("Failed to Initialize GLFW")
+    kGlobal.logger->Critical("Failed to initialize GLFW");
     assert(false);
   }
 
@@ -28,12 +31,12 @@ void Window::Create() {
                              specifications_.title.c_str(), nullptr, nullptr);
   if (window_ == nullptr) {
     glfwTerminate();
-    // TODO: log here ("Failed to Create GLFW Window")
+    kGlobal.logger->Critical("Failed to create GLFW window");
     assert(false);
   }
   glfwMakeContextCurrent(window_);
   if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
-    // TODO: log here (Failed to Initialize GLAD)
+    kGlobal.logger->Critical("Failed to initialize GLAD");
     assert(false);
   }
 
