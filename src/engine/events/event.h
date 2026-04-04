@@ -3,8 +3,6 @@
 
 #include <string>
 
-#include "core/uuid.h"
-
 namespace musashi {
 
 enum class EventType : uint8_t { kKeyPressed, kMouseClicked, kWindowClosed };
@@ -13,7 +11,7 @@ class Event {
  public:
   virtual ~Event() = default;
 
-  [[nodiscard]] virtual UUID GetEventID() const = 0;
+  [[nodiscard]] virtual uint16_t GetEventID() const = 0;
   [[nodiscard]] virtual EventType GetEventType() const = 0;
   [[nodiscard]] virtual std::string ToString() const = 0;
 };

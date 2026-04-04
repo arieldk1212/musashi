@@ -11,16 +11,12 @@ namespace musashi {
 
 class Shader {
  public:
-  // constructor reads and builds the shader
   Shader(const std::filesystem::path& vertex_path,
          const std::filesystem::path& fragment_path);
 
-  // the program ID
-
-  // use/activate the shader
   void Use() const;
   void DeleteProgram() const;
-  // utility uniform functions
+
   void SetBool(const std::string& name, bool value) const;
   void SetInt(const std::string& name, int value) const;
   void SetFloat(const std::string& name, float value) const;
@@ -29,6 +25,7 @@ class Shader {
 
  private:
   static void CheckCompileErrors(uint16_t shader, const std::string& type);
+
   uint16_t id_;
 };
 

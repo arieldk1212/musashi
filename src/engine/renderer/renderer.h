@@ -9,7 +9,7 @@ class Renderer {
  public:
   using ShaderID = uint16_t;
 
-  Renderer();
+  Renderer() = default;
 
   ShaderID CreateGraphicsShader(const std::filesystem::path& vertex_shader,
                                 const std::filesystem::path& fragment_shader);

@@ -18,14 +18,14 @@ int main() {
   musashi::Application application(specs);
   musashi::kGlobal.application = &application;
 
-  // Logic
+  // Main Logic
   application.PushLayer<dead_verse::AppLayer>();
   musashi::kGlobal.logger->Trace("LOGGING INITIALIZED");
   musashi::kGlobal.application->Run();
 
   // Cleanup
-  musashi::kGlobal.logger = nullptr;
   musashi::kGlobal.application = nullptr;
+  musashi::kGlobal.logger = nullptr;
 
   return 0;
 }

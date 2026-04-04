@@ -10,12 +10,13 @@ Application::Application(const ApplicationSpecification& specs)
       specifications_(specs) {
   glfwInit();
   window_->Create();
-  kGlobal.logger->Trace("WINDOW CREATED");
+  kGlobal.logger->Trace("APPLICATION CREATED");
 }
 
 Application::~Application() noexcept {
   glfwTerminate();
   window_->Destory();
+  kGlobal.logger->Trace("APPLICATION DESTROYED");
   kGlobal.application->Stop();
 }
 
