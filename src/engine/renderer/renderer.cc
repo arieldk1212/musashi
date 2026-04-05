@@ -9,4 +9,7 @@ Renderer::ShaderID Renderer::CreateGraphicsShader(
   Shader shaders(vertex_shader, fragment_shader);
 }
 
+void Renderer::Update() {}
+void Renderer::Render() {}
+
 }  // namespace musashi

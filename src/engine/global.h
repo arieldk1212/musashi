@@ -12,10 +12,10 @@ struct Global {
   Global() = default;
 
   static void Cleanup(Global& global) {
+    global.input = nullptr;
+    global.renderer = nullptr;
     global.application = nullptr;
     global.logger = nullptr;
-    global.renderer = nullptr;
-    global.input = nullptr;
   }
 
   Input* input;

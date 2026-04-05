@@ -1,6 +1,7 @@
 #include "application.h"
 #include "global.h"
 
+#include "platform/input.h"
 #include "renderer/renderer.h"
 #include "util/log.h"
 
@@ -27,6 +28,8 @@ void Application::Run() {
 
   while (running_) {
     glfwPollEvents();
+
+    kGlobal.input->ProcessInput(window_->GetHandler());
     if (window_->ShouldClose()) {
       Stop();
       break;

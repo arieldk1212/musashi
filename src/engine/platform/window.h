@@ -18,8 +18,8 @@ struct WindowSpecification {
   bool vsync{false};
   bool is_resizeable{false};
   std::string title{"Window"};
-  uint32_t width = kDefaultWidth;
-  uint32_t height = kDefaultHeight;
+  uint32_t width{kDefaultWidth};
+  uint32_t height{kDefaultHeight};
 };
 
 class Window {
@@ -33,12 +33,10 @@ class Window {
   void Create();
   void Destory();
   void Update();
-  static void HandleCallback();
   [[nodiscard]] bool ShouldClose() const;
 
-  [[nodiscard]] glm::vec2 GetMousePosition() const;
   [[nodiscard]] glm::vec2 GetFrameBufferSize() const;
-  [[nodiscard]] GLFWwindow* GetHandle() const {
+  [[nodiscard]] GLFWwindow* GetHandler() const {
     if (window_ != nullptr) {
       return window_;
     }

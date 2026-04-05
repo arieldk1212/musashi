@@ -5,6 +5,7 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace musashi {
 
@@ -12,44 +13,40 @@ enum class CameraMovement : uint8_t { kForward, kBackward, kRight, kLeft };
 
 static constexpr float kCameraZStart{0.4f};
 
-// Default Values
 constexpr float kYaw{-90.0f};
 constexpr float kPitch{0.0f};
 constexpr float kZoom{45.0f};  // FOV
 constexpr float kSpeed = 2.5f;
 constexpr float kSensitivity{0.1f};
 
-class Camera {
- public:
-  explicit Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
-                  glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = kYaw,
-                  float pitch = kPitch);
+struct Camera {
+  explicit Camera(glm::vec3 p_position = glm::vec3(0.0f, 0.0f, 0.0f),
+                  glm::vec3 p_up = glm::vec3(0.0f, 1.0f, 0.0f),
+                  float p_yaw = kYaw, float p_pitch = kPitch);
   Camera(float pos_x, float pos_y, float pos_z, float up_x, float up_y,
-         float up_z, float yaw, float pitch);
+         float up_z, float p_yaw, float p_pitch);
 
-  [[nodiscard]] glm::mat4 GetViewMatrix() const;
-  [[nodiscard]] float GetZoom() const { return zoom_; }
-  [[nodiscard]] const glm::vec3& GetFront() const { return front_; }
-  [[nodiscard]] const glm::vec3& GetPosition() const { return position_; }
+  [[nodiscard]] float GetZoom() const { return zoom; }
+  [[nodiscard]] const glm::vec3& GetFront() const { return front; }
+  [[nodiscard]] const glm::vec3& GetPosition() const { return position; }
+  [[nodiscard]] glm::mat4 GetViewMatrix() const {
+    return glm::lookAt(position, position + front, up);
+  }
 
-  void ProcessKeyboard(CameraMovement direction, float delta_time);
-  void ProcessMouseMovement(float xoffset, float yoffset,
-                            GLboolean constrain_pitch = true);
-  void ProcessMouseScroll(float yoffset);
-
- private:
+  // Calculate new front vector
   void UpdateCameraVectors();
 
-  glm::vec3 up_{};
-  glm::vec3 right_{};
-  glm::vec3 world_up_{};
-  glm::vec3 position_{};
-  glm::vec3 front_{glm::vec3(0.0f, 0.0f, -1.0f)};
-  float yaw_{0.0f};
-  float pitch_{0.0f};
-  float zoom_{kZoom};
-  float movement_speed_{kSpeed};
-  float mouse_sensitivity_{kSensitivity};
+  float yaw{0.0f};
+  float pitch{0.0f};
+  float zoom{kZoom};
+  float movement_speed{kSpeed};
+  float mouse_sensitivity{kSensitivity};
+
+  glm::vec3 up{};
+  glm::vec3 right{};
+  glm::vec3 world_up{};
+  glm::vec3 position{};
+  glm::vec3 front{glm::vec3(0.0f, 0.0f, -1.0f)};
 };
 
 }  // namespace musashi

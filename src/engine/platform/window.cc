@@ -61,13 +61,6 @@ bool Window::ShouldClose() const {
   return glfwWindowShouldClose(window_) != 0;
 }
 
-glm::vec2 Window::GetMousePosition() const {
-  double x{0.0};
-  double y{0.0};
-  glfwGetCursorPos(window_, &x, &y);
-  return {static_cast<float>(x), static_cast<float>(y)};
-}
-
 glm::vec2 Window::GetFrameBufferSize() const {
   int width{0};
   int height{0};
