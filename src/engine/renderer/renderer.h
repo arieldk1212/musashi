@@ -11,9 +11,11 @@ class Renderer {
 
   Renderer() = default;
 
+  void Render();
+  void Update();
+  void LoadTexture();
   ShaderID CreateGraphicsShader(const std::filesystem::path& vertex_shader,
                                 const std::filesystem::path& fragment_shader);
-  void LoadTexture();
 };
 
 }  // namespace musashi

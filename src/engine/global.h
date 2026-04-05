@@ -3,16 +3,25 @@
 
 namespace musashi {
 
-class Application;
+class Input;
 class Logger;
-
-// TODO: or use dependency injection, think this thru.
+class Renderer;
+class Application;
 
 struct Global {
   Global() = default;
 
-  Application* application;
+  static void Cleanup(Global& global) {
+    global.application = nullptr;
+    global.logger = nullptr;
+    global.renderer = nullptr;
+    global.input = nullptr;
+  }
+
+  Input* input;
   Logger* logger;
+  Renderer* renderer;
+  Application* application;
 };
 
 extern Global kGlobal;

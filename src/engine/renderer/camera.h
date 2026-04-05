@@ -10,6 +10,8 @@ namespace musashi {
 
 enum class CameraMovement : uint8_t { kForward, kBackward, kRight, kLeft };
 
+static constexpr float kCameraZStart{0.4f};
+
 // Default Values
 constexpr float kYaw{-90.0f};
 constexpr float kPitch{0.0f};
@@ -25,11 +27,11 @@ class Camera {
   Camera(float pos_x, float pos_y, float pos_z, float up_x, float up_y,
          float up_z, float yaw, float pitch);
 
+  [[nodiscard]] glm::mat4 GetViewMatrix() const;
   [[nodiscard]] float GetZoom() const { return zoom_; }
   [[nodiscard]] const glm::vec3& GetFront() const { return front_; }
   [[nodiscard]] const glm::vec3& GetPosition() const { return position_; }
 
-  [[nodiscard]] glm::mat4 GetViewMatrix() const;
   void ProcessKeyboard(CameraMovement direction, float delta_time);
   void ProcessMouseMovement(float xoffset, float yoffset,
                             GLboolean constrain_pitch = true);

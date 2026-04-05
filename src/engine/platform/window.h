@@ -33,6 +33,7 @@ class Window {
   void Create();
   void Destory();
   void Update();
+  static void HandleCallback();
   [[nodiscard]] bool ShouldClose() const;
 
   [[nodiscard]] glm::vec2 GetMousePosition() const;

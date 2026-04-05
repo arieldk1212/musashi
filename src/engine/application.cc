@@ -1,7 +1,8 @@
 #include "application.h"
 #include "global.h"
 
-#include "core/log.h"
+#include "renderer/renderer.h"
+#include "util/log.h"
 
 namespace musashi {
 
@@ -22,6 +23,7 @@ Application::~Application() noexcept {
 
 void Application::Run() {
   running_ = true;
+  kGlobal.logger->Trace("APPLICATION RUNNING");
 
   while (running_) {
     glfwPollEvents();
@@ -30,13 +32,8 @@ void Application::Run() {
       break;
     }
 
-    for (const auto& layer : layers_) {
-      layer->OnUpdate(0.0);
-    }
-
-    for (const auto& layer : layers_) {
-      layer->OnRender();
-    }
+    kGlobal.renderer->Update();
+    kGlobal.renderer->Render();
 
     window_->Update();
   }

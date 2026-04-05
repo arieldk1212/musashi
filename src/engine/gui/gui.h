@@ -8,6 +8,8 @@
 
 // TODO: add imgui menu, control with button the color of the cubes
 
+namespace musashi {
+
 class Gui {
  public:
   explicit Gui(GLFWwindow* window) {
@@ -33,5 +35,7 @@ class Gui {
 
  private:
 };
+
+}  // namespace musashi
 
 #endif

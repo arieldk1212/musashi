@@ -1,7 +1,7 @@
 #include "global.h"
 #include "window.h"
 
-#include "core/log.h"
+#include "util/log.h"
 
 namespace musashi {
 

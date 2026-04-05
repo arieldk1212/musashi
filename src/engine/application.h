@@ -3,11 +3,8 @@
 
 #include <memory>
 #include <string>
-#include <type_traits>
-#include <vector>
 
-#include "core/window.h"
-#include "layers/layer.h"
+#include "platform/window.h"
 
 namespace musashi {
 
@@ -25,29 +22,12 @@ class Application {
 
   void Run();
   void Stop() { running_ = false; }
-
-  template <typename T>
-    requires(std::is_base_of_v<Layer, T>)
-  void PushLayer() {
-    layers_.emplace_back(std::make_unique<T>());
-  }
-  template <typename T>
-    requires(std::is_base_of_v<Layer, T>)
-  // Get a "peek" of the layer
-  T* GetLayer() {
-    for (const auto& layer : layers_) {
-      if (auto casted = dynamic_cast<T*>(layer)) {
-        return layer;
-      }
-    }
-    return nullptr;
-  }
+  void ProcessInput();
 
  private:
   bool running_{false};
   std::shared_ptr<Window> window_;
   ApplicationSpecification specifications_;
-  std::vector<std::unique_ptr<Layer>> layers_;
 };
 
 }  // namespace musashi
