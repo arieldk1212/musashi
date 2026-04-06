@@ -6,7 +6,7 @@ namespace musashi {
 class Input;
 class Logger;
 class Renderer;
-class Application;
+class Game;
 
 struct Global {
   Global() = default;
@@ -14,14 +14,14 @@ struct Global {
   static void Cleanup(Global& global) {
     global.input = nullptr;
     global.renderer = nullptr;
-    global.application = nullptr;
+    global.game = nullptr;
     global.logger = nullptr;
   }
 
   Input* input;
   Logger* logger;
   Renderer* renderer;
-  Application* application;
+  Game* game;
 };
 
 extern Global kGlobal;

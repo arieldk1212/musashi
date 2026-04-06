@@ -1,5 +1,5 @@
-#ifndef APPLICATION_H_
-#define APPLICATION_H_
+#ifndef GAME_H_
+#define GAME_H_
 
 #include <memory>
 #include <string>
@@ -8,17 +8,16 @@
 
 namespace musashi {
 
-struct ApplicationSpecification {
-  std::string application_name = "Application";
+struct GameSpecification {
+  std::string game_name = "Game";
   WindowSpecification window_specs;
 };
 
-class Application {
+class Game {
  public:
-  Application();
-  explicit Application(
-      const ApplicationSpecification& specs = ApplicationSpecification());
-  ~Application() noexcept;
+  Game();
+  explicit Game(const GameSpecification& specs = GameSpecification());
+  ~Game() noexcept;
 
   void Run();
   void Stop() { running_ = false; }
@@ -26,7 +25,7 @@ class Application {
  private:
   bool running_{false};
   std::shared_ptr<Window> window_;
-  ApplicationSpecification specifications_;
+  GameSpecification specifications_;
 };
 
 }  // namespace musashi

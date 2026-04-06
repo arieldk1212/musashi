@@ -1,4 +1,4 @@
-#include "application.h"
+#include "game.h"
 #include "global.h"
 
 #include "platform/input.h"
@@ -7,7 +7,7 @@
 
 namespace musashi {
 
-Application::Application(const ApplicationSpecification& specs)
+Game::Game(const GameSpecification& specs)
     : window_(std::make_shared<Window>(specs.window_specs)),
       specifications_(specs) {
   glfwInit();
@@ -15,14 +15,14 @@ Application::Application(const ApplicationSpecification& specs)
   kGlobal.logger->Trace("APPLICATION CREATED");
 }
 
-Application::~Application() noexcept {
+Game::~Game() noexcept {
   glfwTerminate();
   window_->Destory();
   kGlobal.logger->Trace("APPLICATION DESTROYED");
-  kGlobal.application->Stop();
+  kGlobal.game->Stop();
 }
 
-void Application::Run() {
+void Game::Run() {
   running_ = true;
   kGlobal.logger->Trace("APPLICATION RUNNING");
 

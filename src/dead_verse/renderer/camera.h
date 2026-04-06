@@ -34,7 +34,7 @@ struct Camera {
   }
 
   // Calculate new front vector
-  void UpdateCameraVectors();
+  void Update();
 
   float yaw{0.0f};
   float pitch{0.0f};

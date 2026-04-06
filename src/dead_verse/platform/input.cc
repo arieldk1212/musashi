@@ -69,7 +69,7 @@ void Input::CameraProcessMouseMovement(float x_offset, float y_offset,
     camera_.pitch = std::clamp(camera_.pitch, -89.0f, 89.0f);
   }
 
-  camera_.UpdateCameraVectors();
+  camera_.Update();
 }
 
 void Input::CameraProcessMouseScroll(float y_offset) {

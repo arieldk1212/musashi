@@ -31,6 +31,8 @@ void LogRecord::PrintLog() const {
       level_str = "CRITICAL";
       break;
   }
+  // TODO: Change to:
+  // TODO: [LEVEL][file:line][function_name][msg_tag] msg
   std::println("[{:%F %T}] [{}] {}", timestamp, level_str, msg);
 }
 

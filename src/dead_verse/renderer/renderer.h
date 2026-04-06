@@ -16,6 +16,10 @@ class Renderer {
   void LoadTexture();
   ShaderID CreateGraphicsShader(const std::filesystem::path& vertex_shader,
                                 const std::filesystem::path& fragment_shader);
+
+ private:
+  // TODO: add a umap of textures, frame buffers, programs, uniforms.
+  // TODO: prob vector of manages resources, ptr to sprite renderer, particle.
 };
 
 }  // namespace musashi

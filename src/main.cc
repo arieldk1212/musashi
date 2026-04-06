@@ -1,14 +1,14 @@
-#include "engine/application.h"
-#include "engine/global.h"
-#include "engine/platform/input.h"
-#include "engine/renderer/renderer.h"
-#include "engine/util/log.h"
+#include "dead_verse/game.h"
+#include "dead_verse/global.h"
+#include "dead_verse/platform/input.h"
+#include "dead_verse/renderer/renderer.h"
+#include "dead_verse/util/log.h"
 
 musashi::Global musashi::kGlobal;
 
 int main() {
-  musashi::ApplicationSpecification specs;
-  specs.application_name = "Dead Verse";
+  musashi::GameSpecification specs;
+  specs.game_name = "Dead Verse";
   specs.window_specs.width = 1000;
   specs.window_specs.height = 800;
 
@@ -19,15 +19,15 @@ int main() {
   musashi::Input input;
   musashi::kGlobal.input = &input;
 
-  musashi::Application application(specs);
-  musashi::kGlobal.application = &application;
+  musashi::Game game(specs);
+  musashi::kGlobal.game = &game;
 
   musashi::Renderer renderer;
   musashi::kGlobal.renderer = &renderer;
 
   // Main Logic
   musashi::kGlobal.logger->Trace("LOGGING INITIALIZED");  // Change this
-  musashi::kGlobal.application->Run();
+  musashi::kGlobal.game->Run();
 
   // Cleanup
   musashi::Global::Cleanup(musashi::kGlobal);
