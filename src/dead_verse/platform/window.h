@@ -17,7 +17,7 @@ constexpr int kDefaultHeight = 1080;
 struct WindowSpecification {
   bool vsync{false};
   bool is_resizeable{false};
-  std::string title{"Window"};
+  std::string title{"Dead Verse"};
   uint32_t width{kDefaultWidth};
   uint32_t height{kDefaultHeight};
 };
@@ -41,6 +41,12 @@ class Window {
       return window_;
     }
     assert(false);
+  }
+  [[nodiscard]] float GetWindowResolutionWidth() const {
+    return static_cast<float>(specifications_.width);
+  }
+  [[nodiscard]] float GetWindowResolutionHeight() const {
+    return static_cast<float>(specifications_.height);
   }
 
  private:

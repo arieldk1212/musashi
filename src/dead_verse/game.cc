@@ -24,6 +24,7 @@ Game::~Game() noexcept {
 
 void Game::Run() {
   running_ = true;
+  kGlobal.input->Init(window_->GetHandler());
   kGlobal.logger->Trace("APPLICATION RUNNING");
 
   while (running_) {
@@ -42,94 +43,12 @@ void Game::Run() {
   }
 }
 
-// int App::GetMaxVertexAttributes() {
-//   int nr_attributes{0};
-//   glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nr_attributes);
-//   return nr_attributes;
-// }
-
-// void App::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
-// {
-//   glViewport(0, 0, width, height);
-// }
-
 // App::~App() {
 //   glDeleteVertexArrays(1, &VAO_);
 //   glDeleteVertexArrays(1, &LightVAO_);
 //   glDeleteBuffers(1, &VBO_);
 //   shader_->DeleteProgram();
 //   glfwTerminate();
-// }
-
-// void App::ProcessInput(GLFWwindow* window) {
-//   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-//     glfwSetWindowShouldClose(window, true);
-//   }
-
-//   if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
-//     extras::show_imgui = true;
-//     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-//   }
-
-//   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-//     if (extras::show_imgui) {
-//       extras::show_imgui = false;
-//       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-//     }
-//   }
-
-//   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-//     camera_->ProcessKeyboard(CameraMovement::kForward, extras::delta_time);
-//   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-//     camera_->ProcessKeyboard(CameraMovement::kBackward, extras::delta_time);
-//   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-//     camera_->ProcessKeyboard(CameraMovement::kLeft, extras::delta_time);
-
-//   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-//     camera_->ProcessKeyboard(CameraMovement::kRight, extras::delta_time);
-// }
-
-// void App::MouseCallbackWrapper(GLFWwindow* window, double xpos, double ypos)
-// {
-//   App* instance = static_cast<App*>(glfwGetWindowUserPointer(window));
-//   if (instance != nullptr) {
-//     instance->MouseCallback(window, xpos, ypos);
-//   }
-// }
-
-// void App::ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
-//                                 double yoffset) {
-//   App* instance = static_cast<App*>(glfwGetWindowUserPointer(window));
-//   if (instance != nullptr) {
-//     instance->ScrollCallback(window, xoffset, yoffset);
-//   }
-// }
-
-// void App::MouseCallback(GLFWwindow* window, double xpos, double ypos) {
-//   xpos = static_cast<float>(xpos);
-//   ypos = static_cast<float>(ypos);
-
-//   if (extras::first_mouse) {
-//     extras::last_x = xpos;
-//     extras::last_y = ypos;
-//     extras::first_mouse = false;
-//   }
-
-//   float xoffset = xpos - extras::last_x;
-//   float yoffset = extras::last_y -
-//                   ypos;  // reversed, y-coordinates range from bottom to top
-
-//   extras::last_x = xpos;
-//   extras::last_y = ypos;
-
-//   if (!extras::show_imgui) {
-//     camera_->ProcessMouseMovement(xoffset, yoffset);
-//   }
-// }
-
-// void App::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-// {
-//   camera_->ProcessMouseScroll(static_cast<float>(yoffset));
 // }
 
 // void App::Run() {

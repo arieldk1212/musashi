@@ -3,22 +3,47 @@
 
 #include <algorithm>
 
+#include "renderer/camera.h"
 #include "util/log.h"
 
 namespace musashi {
 
-Input::Input()
-    : camera_(glm::vec3(0.0f, 0.0f, kCameraZStart)) {
-  kGlobal.logger->Trace("INPUT CREATED");
+Input::Input(uint32_t width, uint32_t height)
+    : camera_(glm::vec3(0.0f, 0.0f, kCameraZStart)),
+      last_x_(static_cast<float>(width / 2)),
+      last_y_(static_cast<float>(height / 2)) {}
+
+void Input::Init(GLFWwindow* window) {
+  SetInputMode(window, kDefaultInputMode);
+  glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
+  glfwSetCursorPosCallback(window, MouseCallbackWrapper);
+  glfwSetScrollCallback(window, ScrollCallbackWrapper);
+  kGlobal.logger->Trace("INPUT INITIALIZED");
 }
 
 void Input::ProcessInput(GLFWwindow* window) {
   if (KeyPressed(window, KeyCode::kEsc)) {
-    glfwSetWindowShouldClose(window, true);
+    glfwSetWindowShouldClose(window, static_cast<int>(true));
+    kGlobal.logger->Debug("EXISTING..");
+  }
+
+  if (KeyPressed(window, KeyCode::kW)) {
+    CameraProcessKeyboard(CameraMovement::kForward, kDeltaTime);
+    kGlobal.logger->Debug("Key Press: W");
+  }
+  if (KeyPressed(window, KeyCode::kA)) {
+    CameraProcessKeyboard(CameraMovement::kLeft, kDeltaTime);
+    kGlobal.logger->Debug("Key Press: A");
+  }
+  if (KeyPressed(window, KeyCode::kS)) {
+    CameraProcessKeyboard(CameraMovement::kBackward, kDeltaTime);
+    kGlobal.logger->Debug("Key Press: S");
+  }
+  if (KeyPressed(window, KeyCode::kD)) {
+    CameraProcessKeyboard(CameraMovement::kRight, kDeltaTime);
+    kGlobal.logger->Debug("Key Press: D");
   }
 }
-
-void Input::CallbackWrapper(std::function<void()> callback) {}
 
 bool Input::KeyPressed(GLFWwindow* window, KeyCode key_code) {
   auto state = glfwGetKey(window, static_cast<int>(key_code));
@@ -57,6 +82,31 @@ void Input::CameraProcessKeyboard(CameraMovement direction, float delta_time) {
   camera_.position.y = 0.0f;
 }
 
+void Input::MouseCallback(GLFWwindow* window, double xpos, double ypos) {
+  xpos = static_cast<float>(xpos);
+  ypos = static_cast<float>(ypos);
+
+  if (first_mouse_) {
+    last_x_ = xpos;
+    last_y_ = ypos;
+    first_mouse_ = false;
+  }
+
+  float xoffset = xpos - last_x_;
+  float yoffset =
+      last_y_ - ypos;  // reversed, y-coordinates range from bottom to top
+
+  last_x_ = xpos;
+  last_y_ = ypos;
+
+  CameraProcessMouseMovement(xoffset, yoffset);
+}
+
+void Input::CameraProcessMouseScroll(float y_offset) {
+  camera_.zoom -= y_offset;
+  camera_.zoom = std::clamp(camera_.zoom, 1.0f, 45.0f);
+}
+
 void Input::CameraProcessMouseMovement(float x_offset, float y_offset,
                                        GLboolean constrain_pitch) {
   x_offset *= camera_.mouse_sensitivity;
@@ -72,9 +122,23 @@ void Input::CameraProcessMouseMovement(float x_offset, float y_offset,
   camera_.Update();
 }
 
-void Input::CameraProcessMouseScroll(float y_offset) {
-  camera_.zoom -= y_offset;
-  camera_.zoom = std::clamp(camera_.zoom, 1.0f, 45.0f);
+void Input::FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
+  glViewport(0, 0, width, height);
+}
+
+void Input::MouseCallbackWrapper(GLFWwindow* window, double xpos, double ypos) {
+  auto* instance = static_cast<Input*>(glfwGetWindowUserPointer(window));
+  if (instance != nullptr) {
+    instance->MouseCallback(window, xpos, ypos);
+  }
+}
+
+void Input::ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
+                                  double yoffset) {
+  auto* instance = static_cast<Input*>(glfwGetWindowUserPointer(window));
+  if (instance != nullptr) {
+    instance->CameraProcessMouseScroll(static_cast<float>(yoffset));
+  }
 }
 
 }  // namespace musashi

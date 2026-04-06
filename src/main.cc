@@ -16,7 +16,7 @@ int main() {
   musashi::Logger logger(musashi::kLogBufferSize);
   musashi::kGlobal.logger = &logger;
 
-  musashi::Input input;
+  musashi::Input input(specs.window_specs.width, specs.window_specs.height);
   musashi::kGlobal.input = &input;
 
   musashi::Game game(specs);
