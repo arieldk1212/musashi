@@ -45,6 +45,26 @@ void Input::ProcessInput(GLFWwindow* window) {
   }
 }
 
+void Input::MouseCallback(GLFWwindow* window, double xpos, double ypos) {
+  xpos = static_cast<float>(xpos);
+  ypos = static_cast<float>(ypos);
+
+  if (first_mouse_) {
+    last_x_ = xpos;
+    last_y_ = ypos;
+    first_mouse_ = false;
+  }
+
+  float xoffset = xpos - last_x_;
+  float yoffset =
+      last_y_ - ypos;  // reversed, y-coordinates range from bottom to top
+
+  last_x_ = xpos;
+  last_y_ = ypos;
+
+  CameraProcessMouseMovement(xoffset, yoffset);
+}
+
 bool Input::KeyPressed(GLFWwindow* window, KeyCode key_code) {
   auto state = glfwGetKey(window, static_cast<int>(key_code));
   return state == GLFW_PRESS || state == GLFW_REPEAT;
@@ -82,31 +102,6 @@ void Input::CameraProcessKeyboard(CameraMovement direction, float delta_time) {
   camera_.position.y = 0.0f;
 }
 
-void Input::MouseCallback(GLFWwindow* window, double xpos, double ypos) {
-  xpos = static_cast<float>(xpos);
-  ypos = static_cast<float>(ypos);
-
-  if (first_mouse_) {
-    last_x_ = xpos;
-    last_y_ = ypos;
-    first_mouse_ = false;
-  }
-
-  float xoffset = xpos - last_x_;
-  float yoffset =
-      last_y_ - ypos;  // reversed, y-coordinates range from bottom to top
-
-  last_x_ = xpos;
-  last_y_ = ypos;
-
-  CameraProcessMouseMovement(xoffset, yoffset);
-}
-
-void Input::CameraProcessMouseScroll(float y_offset) {
-  camera_.zoom -= y_offset;
-  camera_.zoom = std::clamp(camera_.zoom, 1.0f, 45.0f);
-}
-
 void Input::CameraProcessMouseMovement(float x_offset, float y_offset,
                                        GLboolean constrain_pitch) {
   x_offset *= camera_.mouse_sensitivity;
@@ -122,6 +117,11 @@ void Input::CameraProcessMouseMovement(float x_offset, float y_offset,
   camera_.Update();
 }
 
+void Input::CameraProcessMouseScroll(float y_offset) {
+  camera_.zoom -= y_offset;
+  camera_.zoom = std::clamp(camera_.zoom, 1.0f, 45.0f);
+}
+
 void Input::FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
 }
@@ -131,6 +131,7 @@ void Input::MouseCallbackWrapper(GLFWwindow* window, double xpos, double ypos) {
   if (instance != nullptr) {
     instance->MouseCallback(window, xpos, ypos);
   }
+  kGlobal.logger->Error("INPUT INSTANCE NULLPTR");
 }
 
 void Input::ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
@@ -139,6 +140,7 @@ void Input::ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
   if (instance != nullptr) {
     instance->CameraProcessMouseScroll(static_cast<float>(yoffset));
   }
+  kGlobal.logger->Error("INPUT INSTANCE NULLPTR");
 }
 
 }  // namespace musashi

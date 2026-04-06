@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "platform/glfw/frame_buffer.h"
+#include "platform/opengl/frame_buffer.h"
 #include "renderer/texture.h"
 
 namespace musashi {

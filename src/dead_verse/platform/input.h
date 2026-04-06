@@ -55,11 +55,10 @@ class Input {
   void Init(GLFWwindow* window);
   void ProcessInput(GLFWwindow* window);
   void MouseCallback(GLFWwindow* window, double xpos, double ypos);
-  void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
-  static bool KeyPressed(GLFWwindow* window, KeyCode key_code);
-  static bool MouseButtonPressed(GLFWwindow* window, KeyCode button);
-  static glm::vec2 GetMousePosition(GLFWwindow* window);
+  bool KeyPressed(GLFWwindow* window, KeyCode key_code);
+  bool MouseButtonPressed(GLFWwindow* window, KeyCode button);
+  glm::vec2 GetMousePosition(GLFWwindow* window);
   static void SetInputMode(GLFWwindow* window, InputMode mode) {
     glfwSetInputMode(window, GLFW_CURSOR, static_cast<int>(mode));
   }

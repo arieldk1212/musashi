@@ -30,11 +30,12 @@ void Game::Run() {
   while (running_) {
     glfwPollEvents();
 
-    kGlobal.input->ProcessInput(window_->GetHandler());
     if (window_->ShouldClose()) {
       Stop();
       break;
     }
+
+    kGlobal.input->ProcessInput(window_->GetHandler());
 
     kGlobal.renderer->Update();
     kGlobal.renderer->Render();
