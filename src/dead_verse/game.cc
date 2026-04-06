@@ -18,7 +18,6 @@ Game::Game(const GameSpecification& specs)
 Game::~Game() noexcept {
   glfwTerminate();
   window_->Destory();
-  kGlobal.logger->Trace("APPLICATION DESTROYED");
   kGlobal.game->Stop();
 }
 
@@ -28,8 +27,6 @@ void Game::Run() {
   kGlobal.logger->Trace("APPLICATION RUNNING");
 
   while (running_) {
-    glfwPollEvents();
-
     if (window_->ShouldClose()) {
       Stop();
       break;
@@ -41,6 +38,7 @@ void Game::Run() {
     kGlobal.renderer->Render();
 
     window_->Update();
+    glfwPollEvents();
   }
 }
 

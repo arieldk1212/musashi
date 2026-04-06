@@ -8,11 +8,11 @@ namespace musashi {
 class GameState : public State {
   GameState();
 
-  void Tick();
-  void Update();
-  void Render();
+  void Tick() override;
+  void Update() override;
 
  private:
+  States current_state_;
 };
 
 }  // namespace musashi

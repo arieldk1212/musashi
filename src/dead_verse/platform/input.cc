@@ -14,6 +14,7 @@ Input::Input(uint32_t width, uint32_t height)
       last_y_(static_cast<float>(height / 2)) {}
 
 void Input::Init(GLFWwindow* window) {
+  glfwSetWindowUserPointer(window, this);
   SetInputMode(window, kDefaultInputMode);
   glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
   glfwSetCursorPosCallback(window, MouseCallbackWrapper);
@@ -130,8 +131,9 @@ void Input::MouseCallbackWrapper(GLFWwindow* window, double xpos, double ypos) {
   auto* instance = static_cast<Input*>(glfwGetWindowUserPointer(window));
   if (instance != nullptr) {
     instance->MouseCallback(window, xpos, ypos);
+  } else {
+    kGlobal.logger->Error("INPUT INSTANCE NULLPTR");
   }
-  kGlobal.logger->Error("INPUT INSTANCE NULLPTR");
 }
 
 void Input::ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
@@ -139,8 +141,9 @@ void Input::ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
   auto* instance = static_cast<Input*>(glfwGetWindowUserPointer(window));
   if (instance != nullptr) {
     instance->CameraProcessMouseScroll(static_cast<float>(yoffset));
+  } else {
+    kGlobal.logger->Error("INPUT INSTANCE NULLPTR");
   }
-  kGlobal.logger->Error("INPUT INSTANCE NULLPTR");
 }
 
 }  // namespace musashi
