@@ -28,6 +28,12 @@ void Game::Run() {
   kGlobal.input->Init(window_->GetHandler());
   kGlobal.logger->Trace("APPLICATION RUNNING");
 
+  kGlobal.renderer->AddShader("../../assets/shaders/object/vert.glsl",
+                              "../../assets/shaders/object/frag.glsl");
+
+  glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
   while (running_) {
     if (window_->ShouldClose()) {
       Stop();
@@ -37,7 +43,7 @@ void Game::Run() {
     // TODO: First render, then play with ticks and deltas.
     kGlobal.input->ProcessInput(window_->GetHandler());
 
-    kGlobal.state->Update();
+    // kGlobal.state->Update();
 
     kGlobal.renderer->Render(0.0f);
     // kGlobal.renderer->Render();

@@ -12,7 +12,8 @@ struct Texture {
   Texture(const Texture&) = delete;
   Texture& operator=(const Texture&) = delete;
 
-  unsigned int AddTexture(const std::filesystem::path& texture_path, bool flip);
+  static unsigned int AddTexture(const std::filesystem::path& texture_path,
+                                 bool flip);
 };
 
 }  // namespace musashi

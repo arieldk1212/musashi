@@ -20,8 +20,8 @@ int main() {
   musashi::Game game(specs);
   musashi::kGlobal.game = &game;
 
-  musashi::GameState state;
-  musashi::kGlobal.state = &state;
+  // musashi::GameState state;
+  // musashi::kGlobal.state = &state;
 
   musashi::Input input(specs.window_specs.width, specs.window_specs.height);
   musashi::kGlobal.input = &input;

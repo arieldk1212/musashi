@@ -15,7 +15,7 @@ struct Global {
   static void Cleanup(Global& global) {
     global.input = nullptr;
     global.renderer = nullptr;
-    global.state = nullptr;
+    // global.state = nullptr;
     global.game = nullptr;
     global.logger = nullptr;
   }
@@ -23,7 +23,7 @@ struct Global {
   Game* game;
   Input* input;
   Logger* logger;
-  GameState* state;
+  // GameState* state;
   Renderer* renderer;
 };
 

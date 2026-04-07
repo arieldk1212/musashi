@@ -2,7 +2,6 @@
 #define RENDERER_H_
 
 #include "shader.h"
-#include "texture.h"
 
 #include <string>
 #include <unordered_map>
@@ -27,7 +26,7 @@ class Renderer {
  private:
   // TODO: add a umap of textures, frame buffers, programs, uniforms.
   // TODO: prob vector of manages resources, ptr to sprite renderer, particle.
-  std::unordered_map<std::string, Texture> textures_;
+  std::unordered_map<std::string, unsigned int> textures_;
   // std::unordered_map<std::string, FrameBuffer> frame_buffers_;
   std::unordered_map<std::string, VertexBuffer> vertex_buffers_;
   std::unordered_map<std::string, std::unique_ptr<Shader>> shaders_;
