@@ -7,6 +7,7 @@ class Input;
 class Logger;
 class Renderer;
 class Game;
+class GameState;
 
 struct Global {
   Global() = default;
@@ -14,14 +15,16 @@ struct Global {
   static void Cleanup(Global& global) {
     global.input = nullptr;
     global.renderer = nullptr;
+    global.state = nullptr;
     global.game = nullptr;
     global.logger = nullptr;
   }
 
+  Game* game;
   Input* input;
   Logger* logger;
+  GameState* state;
   Renderer* renderer;
-  Game* game;
 };
 
 extern Global kGlobal;

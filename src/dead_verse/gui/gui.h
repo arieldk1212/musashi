@@ -1,6 +1,10 @@
 #ifndef GUI_H_
 #define GUI_H_
 
+#include "platform/window.h"
+// Do not remove
+#include <memory>
+
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -12,13 +16,13 @@ namespace musashi {
 
 class Gui {
  public:
-  explicit Gui(GLFWwindow* window) {
+  explicit Gui(std::shared_ptr<Window> window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     (void)io;
     ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(window->GetHandler(), true);
     ImGui_ImplOpenGL3_Init("#version 330");
   }
   ~Gui() {

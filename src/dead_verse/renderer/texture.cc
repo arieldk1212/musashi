@@ -1,9 +1,12 @@
+#include "global.h"
 #include "texture.h"
 
 #include <print>
 
 #include <glad/glad.h>
 #include <vendor/stb_image.h>
+
+#include "util/log.h"
 
 namespace musashi {
 
@@ -36,13 +39,12 @@ unsigned int Texture::AddTexture(const std::filesystem::path& texture_path,
     }
     glGenerateMipmap(GL_TEXTURE_2D);
   } else {
-    std::println("Failed to load texture");
+    kGlobal.logger->Error("Failed to load texture");
   }
 
   stbi_image_free(data);
 
-  textures_.push_back(new_texture);
-  std::println("Added texture successfully");
+  kGlobal.logger->Trace("Added Texture Successfully");
 
   return new_texture;
 }

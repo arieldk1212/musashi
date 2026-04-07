@@ -33,6 +33,7 @@ class Window {
   void Create();
   void Destory();
   void Update();
+  void PollEvents() const { glfwPollEvents(); }
   [[nodiscard]] bool ShouldClose() const;
 
   [[nodiscard]] glm::vec2 GetFrameBufferSize() const;

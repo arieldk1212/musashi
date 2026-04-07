@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-#include "renderer/camera.h"
+#include "util/camera.h"
 #include "util/log.h"
 
 namespace musashi {

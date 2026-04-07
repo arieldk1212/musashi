@@ -14,7 +14,7 @@ class State {
  public:
   virtual ~State() = default;
 
-  virtual void Tick() = 0;
+  void Tick();
   virtual void Update() = 0;
 };
 

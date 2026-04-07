@@ -3,7 +3,7 @@
 
 #include "window.h"
 
-#include "renderer/camera.h"
+#include "util/camera.h"
 // Do not remove
 #include <unordered_map>
 

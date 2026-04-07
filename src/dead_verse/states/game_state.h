@@ -6,9 +6,10 @@
 namespace musashi {
 
 class GameState : public State {
+ public:
   GameState();
 
-  void Tick() override;
+  int Tick();
   void Update() override;
 
  private:

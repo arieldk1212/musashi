@@ -8,6 +8,10 @@
 
 namespace musashi {
 
+static int Tick();  // Return the current number of milliseconds that have
+                    // elapsed since the system was started
+                    // apply at state.h
+
 struct GameSpecification {
   std::string game_name = "Dead Verse";
   WindowSpecification window_specs;
@@ -15,6 +19,10 @@ struct GameSpecification {
 
 class Game {
  public:
+  static constexpr int kMaxFrameSkip{5};
+  static constexpr int kTicksPerSecond{25};
+  static constexpr int kSkipTicks{1000 / kTicksPerSecond};
+
   Game();
   explicit Game(const GameSpecification& specs = GameSpecification());
   ~Game() noexcept;
@@ -32,19 +40,5 @@ class Game {
 
 // inline float delta_time{0.0f};
 // inline float last_frame{0.0f};
-//
-//   void Run();
-//   void Shaders();
-
-//  private:
-//   GLuint VAO_{0};
-//   GLuint VBO_{0};
-//   GLuint LightVAO_{0};
-//   std::string game_title_;
-//   std::unique_ptr<Camera> camera_;
-//   std::unique_ptr<Shader> shader_;
-//   // std::unique_ptr<Texture> texture_;
-//   std::unique_ptr<Shader> light_shader_;
-// };
 
 #endif

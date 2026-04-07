@@ -3,6 +3,7 @@
 
 #include "platform/input.h"
 #include "renderer/renderer.h"
+#include "states/game_state.h"
 #include "util/log.h"
 
 namespace musashi {
@@ -18,6 +19,7 @@ Game::Game(const GameSpecification& specs)
 Game::~Game() noexcept {
   glfwTerminate();
   window_->Destory();
+  kGlobal.renderer->ShutDown();
   kGlobal.game->Stop();
 }
 
@@ -32,24 +34,18 @@ void Game::Run() {
       break;
     }
 
+    // TODO: First render, then play with ticks and deltas.
     kGlobal.input->ProcessInput(window_->GetHandler());
 
-    kGlobal.renderer->Update();
-    kGlobal.renderer->Render();
+    kGlobal.state->Update();
+
+    kGlobal.renderer->Render(0.0f);
+    // kGlobal.renderer->Render();
 
     window_->Update();
-    glfwPollEvents();
+    window_->PollEvents();
   }
 }
-
-// App::~App() {
-//   glDeleteVertexArrays(1, &VAO_);
-//   glDeleteVertexArrays(1, &LightVAO_);
-//   glDeleteBuffers(1, &VBO_);
-//   shader_->DeleteProgram();
-//   glfwTerminate();
-// }
-
 // void App::Run() {
 //   using Window = std::unique_ptr<GLFWwindow, DeleteWith<glfwDestroyWindow>>;
 
@@ -135,83 +131,6 @@ void Game::Run() {
 //     glfwSwapBuffers(window.get());
 //     glfwPollEvents();
 //   }
-// }
-
-// void App::Shaders() {
-//   std::vector<float> vertices_cube = {
-//       // COORDINATES  - aPos (3) | NORMALS (3) | TEX CORD - aTexCoord (2) |
-//       (can
-//       // also add color)
-//       // we will ignore the textures and only apply the normals.
-//       // also better to represent it using glm::vec3
-//       -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.5f, -0.5f, -0.5f,
-//       0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.5f, 0.5f, -0.5f, 0.0f, 0.0f,
-//       -1.0f, 1.0f, 1.0f, 0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
-//       -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f,
-//       0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-//       // each layers holds 6 vertices, each vertex holds the stuff above.
-
-//       -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.5f, -0.5f, 0.5f,
-//       0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f, 0.0f,
-//       0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-//       -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f,
-//       0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-//       -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, -0.5f, 0.5f, -0.5f,
-//       -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-//       0.0f, 1.0f, -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, -0.5f,
-//       -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -0.5f, 0.5f, 0.5f, -1.0f,
-//       0.0f, 0.0f, 1.0f, 0.0f,
-
-//       0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f,
-//       -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-//       0.0f, 0.0f, 1.0f, 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-//       0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f,
-//       0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-
-//       -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.5f, -0.5f, -0.5f,
-//       0.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.5f, -0.5f, 0.5f, 0.0f, -1.0f,
-//       0.0f, 1.0f, 0.0f, 0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-//       -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, -0.5f, -0.5f, -0.5f,
-//       0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-
-//       -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f, -0.5f,
-//       0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f,
-//       0.0f, 0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, -0.5f, 0.5f,
-//       0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
-//       0.0f, 0.0f, 1.0f};
-
-//   // for VAO_
-//   glGenVertexArrays(1, &VAO_);
-//   glGenBuffers(1, &VBO_);
-
-//   glBindBuffer(GL_ARRAY_BUFFER, VBO_);
-//   glBufferData(GL_ARRAY_BUFFER, vertices_cube.size() * sizeof(float),
-//                vertices_cube.data(), GL_STATIC_DRAW);
-
-//   glBindVertexArray(VAO_);
-
-//   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-//   (void*)0); glEnableVertexAttribArray(0); glVertexAttribPointer(1, 3,
-//   GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-//                         (void*)(3 * sizeof(float)));
-//   glEnableVertexAttribArray(1);
-//   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-//                         (void*)(6 * sizeof(float)));
-//   glEnableVertexAttribArray(2);
-
-//   // for LightVAO_
-//   glGenVertexArrays(1, &LightVAO_);
-//   glBindVertexArray(LightVAO_);
-
-//   glBindBuffer(GL_ARRAY_BUFFER,
-//                VBO_);  // no need but we do it again for educational purposes
-
-//   // we Use only the first 3 therefore the stride is 6 for source shaders (or
-//   to
-//   // something else if you add more)
-//   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-//   (void*)0); glEnableVertexAttribArray(0);
 // }
 
 };  // namespace musashi
