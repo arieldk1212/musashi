@@ -1,4 +1,7 @@
+#include "global.h"
 #include "renderer.h"
+
+#include "util/log.h"
 
 namespace musashi {
 
@@ -11,11 +14,16 @@ void Renderer::ShutDown() {
   }
 }
 
-void Renderer::AddShader(std::string shader_name,
+void Renderer::AddShader(ShaderName shader_name,
                          const std::filesystem::path& vertex_path,
                          const std::filesystem::path& fragment_path) {
   auto unique_shader = std::make_unique<Shader>(vertex_path, fragment_path);
-  shaders_[std::move(shader_name)] = std::move(unique_shader);
+  shaders_[shader_name] = std::move(unique_shader);
+  kGlobal.logger->Debug("Shader Created");
+}
+
+void Renderer::UseShader(ShaderName shader_name) {
+  shaders_[shader_name]->Use();
 }
 
 }  // namespace musashi

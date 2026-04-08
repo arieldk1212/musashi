@@ -26,8 +26,7 @@ class Shader {
  private:
   static void CheckCompileErrors(uint16_t shader, const std::string& type);
 
-  uint16_t id_;
-  std::string name_;
+  uint8_t id_;
 };
 
 }  // namespace musashi

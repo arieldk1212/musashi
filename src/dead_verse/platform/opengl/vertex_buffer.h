@@ -11,9 +11,7 @@ namespace musashi {
 struct Vertex {
   std::array<float, 3> pos;
   std::array<float, 3> normal;
-  std::array<float, 3> uv;
-  std::array<float, 2> color;
-  std::array<float, 2> texture;
+  std::array<float, 2> uv;
 };
 
 struct VertexBuffer {
@@ -37,7 +35,8 @@ struct VertexBuffer {
   }
 
   static void Unbind() { glBindVertexArray(0); }
-  static void SetupVertexAttributes(bool use_colors, bool use_uvs) {
+  static void SetupVertexAttributes(bool use_colors = false,
+                                    bool use_uvs = false) {
     auto stride = sizeof(Vertex);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride,
@@ -48,17 +47,9 @@ struct VertexBuffer {
                           (void*)offsetof(Vertex, normal));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride,
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride,
                           (void*)offsetof(Vertex, uv));
     glEnableVertexAttribArray(2);
-
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, stride,
-                          (void*)offsetof(Vertex, color));
-    glEnableVertexAttribArray(3);
-
-    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, stride,
-                          (void*)offsetof(Vertex, texture));
-    glEnableVertexAttribArray(4);
   }
 };
 

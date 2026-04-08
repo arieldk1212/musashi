@@ -8,10 +8,6 @@
 
 namespace musashi {
 
-static int Tick();  // Return the current number of milliseconds that have
-                    // elapsed since the system was started
-                    // apply at state.h
-
 struct GameSpecification {
   std::string game_name = "Dead Verse";
   WindowSpecification window_specs;
@@ -29,6 +25,8 @@ class Game {
 
   void Run();
   void Stop() { running_ = false; }
+  void Update();
+  void Tick();
 
  private:
   bool running_{false};
