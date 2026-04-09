@@ -5,6 +5,7 @@
 #include "renderer/renderer.h"
 #include "states/game_state.h"
 #include "util/log.h"
+#include "util/time.h"
 
 namespace musashi {
 
@@ -13,24 +14,29 @@ Game::Game(const GameSpecification& specs)
       specifications_(specs) {
   glfwInit();
   window_->Create();
-  kGlobal.logger->Trace("APPLICATION CREATED");
+  kLogger->Trace("APPLICATION CREATED");
 }
 
 Game::~Game() noexcept {
   glfwTerminate();
   window_->Destory();
-  kGlobal.renderer->ShutDown();
-  kGlobal.game->Stop();
+  kRenderer->ShutDown();
+  Stop();
 }
 
 void Game::Run() {
   running_ = true;
-  kGlobal.input->Init(window_->GetHandler());
-  kGlobal.logger->Trace("APPLICATION RUNNING");
+  kLogger->Trace("APPLICATION RUNNING");
 
-  kGlobal.renderer->AddShader(ShaderName::kObjectShader,
-                              "assets/shaders/object/vert.glsl",
-                              "assets/shaders/object/frag.glsl");
+  kInput->Init(window_->GetHandler());
+  kRenderer->Init();
+
+  float last_time{0};
+  float elapsed_time{0};
+  float delta_time{0};
+
+  // TODO: Change after we have game logic.
+  kRenderer->UseShader(ShaderName::kObjectShader);
 
   while (running_) {
     if (window_->ShouldClose()) {
@@ -38,28 +44,30 @@ void Game::Run() {
       break;
     }
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // TODO: Refactor input.
+    kInput->ProcessInput(window_->GetHandler());
 
-    kGlobal.renderer->UseShader(ShaderName::kObjectShader);
+    // TODO: Refactor to ticks.
+    auto now = Time::GetTime();
+    delta_time = now - last_time;
+    elapsed_time += delta_time;
+    last_time = now;
 
-    kGlobal.input->ProcessInput(window_->GetHandler());
+    while (elapsed_time >= kTicksPerSecond) {
+      Update(elapsed_time);
+      elapsed_time -= kTicksPerSecond;
+    }
 
-    kGlobal.renderer->Render(0.0f);
+    kRenderer->Render();
 
     window_->Update();
     window_->PollEvents();
   }
 }
-// void App::Run() {
+
+void Game::Update(float ts) {}
 
 //   while (!glfwWindowShouldClose(window.get())) {
-//     auto current_time = static_cast<float>(glfwGetTime());
-//     extras::delta_time = current_time - extras::last_frame;
-//     extras::last_frame = current_time;
-
-//     Gui::SetFrame();
-
 //     glm::mat4 projection = glm::perspective(
 //         glm::radians(camera_->GetZoom()),
 //         static_cast<float>(kGameWidth) / static_cast<float>(kGameHeight),
@@ -80,19 +88,7 @@ void Game::Run() {
 //                   1.0f));  // it's a bit too big for our scene, so scale it
 //                   down
 //     shader_->SetMat4("model", model);
-//     backpack.Draw(*shader_);
 
-//     if (extras::show_imgui) {
-//       ImGui::Begin("Musashi");
-//       ImGui::Text("Lighting");
-//       ImGui::End();
-//     }
-//     ImGui::Render();
-//     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-//     glfwSwapBuffers(window.get());
-//     glfwPollEvents();
 //   }
-// }
 
 };  // namespace musashi

@@ -10,11 +10,12 @@ Window::Window(const WindowSpecification& specs)
 
 Window::~Window() {
   Destory();
+  kLogger->Trace("Window Destroyed");
 }
 
 void Window::Create() {
   if (!glfwInit()) {
-    kGlobal.logger->Critical("Failed to initialize GLFW");
+    kLogger->Critical("Failed To Initialize GLFW");
     assert(false);
   }
 
@@ -31,12 +32,12 @@ void Window::Create() {
                              specifications_.title.c_str(), nullptr, nullptr);
   if (window_ == nullptr) {
     glfwTerminate();
-    kGlobal.logger->Critical("Failed to create GLFW window");
+    kLogger->Critical("Failed To Create GLFW Window");
     assert(false);
   }
   glfwMakeContextCurrent(window_);
   if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
-    kGlobal.logger->Critical("Failed to initialize GLAD");
+    kLogger->Critical("Failed To Initialize Glad");
     assert(false);
   }
 
@@ -44,6 +45,7 @@ void Window::Create() {
   glfwSetWindowUserPointer(window_, this);
 
   glEnable(GL_DEPTH_TEST);
+  glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
 }
 
 void Window::Destory() {
@@ -55,6 +57,7 @@ void Window::Destory() {
 
 void Window::Update() {
   glfwSwapBuffers(window_);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 bool Window::ShouldClose() const {

@@ -25,7 +25,7 @@ class Game {
 
   void Run();
   void Stop() { running_ = false; }
-  void Update();
+  void Update(float ts);
   void Tick();
 
  private:
@@ -35,8 +35,5 @@ class Game {
 };
 
 }  // namespace musashi
-
-// inline float delta_time{0.0f};
-// inline float last_frame{0.0f};
 
 #endif

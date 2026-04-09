@@ -1,3 +1,4 @@
+#include "dead_verse/entity/component_manager.h"
 #include "dead_verse/game.h"
 #include "dead_verse/global.h"
 #include "dead_verse/platform/input.h"
@@ -13,7 +14,6 @@ int main() {
   specs.window_specs.width = 1000;
   specs.window_specs.height = 800;
 
-  // Setup - Change this.
   musashi::Logger logger(musashi::kLogBufferSize);
   musashi::kGlobal.logger = &logger;
 
@@ -29,8 +29,11 @@ int main() {
   musashi::Renderer renderer;
   musashi::kGlobal.renderer = &renderer;
 
+  musashi::ComponentManager<500> ec_manager;
+  musashi::kGlobal.ec_manager = &ec_manager;
+
   // Main Logic
-  musashi::kGlobal.logger->Trace("LOGGING INITIALIZED");  // Change this
+  musashi::kGlobal.logger->Trace("LOGGING INITIALIZED");
   musashi::kGlobal.game->Run();
 
   // Cleanup

@@ -1,5 +1,5 @@
-#ifndef GUI_H_
-#define GUI_H_
+#ifndef UI_H_
+#define UI_H_
 
 #include "platform/window.h"
 // Do not remove
@@ -14,9 +14,9 @@
 
 namespace musashi {
 
-class Gui {
+class Ui {
  public:
-  explicit Gui(std::shared_ptr<Window> window) {
+  explicit Ui(std::shared_ptr<Window> window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -25,7 +25,7 @@ class Gui {
     ImGui_ImplGlfw_InitForOpenGL(window->GetHandler(), true);
     ImGui_ImplOpenGL3_Init("#version 330");
   }
-  ~Gui() {
+  ~Ui() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

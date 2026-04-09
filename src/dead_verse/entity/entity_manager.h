@@ -1,17 +1,25 @@
 #ifndef ENTITY_MANAGER_H_
 #define ENTITY_MANAGER_H_
 
+#include "components.h"
+
+#include <vector>
+
 namespace musashi {
 
+using EntityId = uint32_t;
+
 struct Entity {
-  virtual ~Entity() = default;
+  explicit Entity(EntityId);
 
-  void Tick();
-};
+  EntityId id;
+  std::vector<Component> components;
 
-class EntityManager {
- public:
- private:
+  template <typename Component>
+  Component* Get();
+
+  template <typename Component>
+  void Add(Component component);
 };
 
 }  // namespace musashi
