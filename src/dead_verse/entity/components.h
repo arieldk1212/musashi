@@ -1,12 +1,13 @@
 #ifndef COMPONENTS_H_
 #define COMPONENTS_H_
 
-#include <type_traits>
-
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
 namespace musashi {
+
+// Number of unique component type.
+static inline constexpr int kNumberOfComponents{5};
 
 enum class ComponentType : uint8_t {
   kHealthComponent = 0,
@@ -16,39 +17,32 @@ enum class ComponentType : uint8_t {
   kTransformComponent = 4
 };
 
-static inline constexpr int kNumberOfComponents{5};
-
-struct Component {
-  virtual ~Component() = default;
-
-  virtual ComponentType Type() = 0;
-};
-
 template <typename T>
-concept IsComponent = std::is_base_of_v<Component, T>;
-
-struct PositionComponent : public Component {
-  ComponentType Type() override { return ComponentType::kPositionComponent; }
+concept IsComponent = requires {
+  { T::Type() } -> std::same_as<ComponentType>;
 };
 
-struct TransformComponent : public Component {
+struct PositionComponent {
+  static ComponentType Type() { return ComponentType::kPositionComponent; }
+};
+
+struct TransformComponent {
   glm::mat4 translate;
   glm::vec3 position;
   glm::vec3 scale;
-
-  ComponentType Type() override { return ComponentType::kTransformComponent; }
+  static ComponentType Type() { return ComponentType::kTransformComponent; }
 };
 
-struct CollisionComponent : public Component {
-  ComponentType Type() override { return ComponentType::kCollisionComponent; }
+struct CollisionComponent {
+  static ComponentType Type() { return ComponentType::kCollisionComponent; }
 };
 
-struct HealthComponent : public Component {
-  ComponentType Type() override { return ComponentType::kHealthComponent; }
+struct HealthComponent {
+  static ComponentType Type() { return ComponentType::kHealthComponent; }
 };
 
-struct CombatComponent : public Component {
-  ComponentType Type() override { return ComponentType::kCombatComponent; }
+struct CombatComponent {
+  static ComponentType Type() { return ComponentType::kCombatComponent; }
 };
 
 }  // namespace musashi

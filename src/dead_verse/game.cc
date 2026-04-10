@@ -1,6 +1,8 @@
 #include "game.h"
 #include "global.h"
 
+#include "entity/component_manager.h"
+#include "entity/components.h"
 #include "platform/input.h"
 #include "renderer/renderer.h"
 #include "states/game_state.h"
@@ -27,6 +29,10 @@ Game::~Game() noexcept {
 void Game::Run() {
   running_ = true;
   kLogger->Trace("APPLICATION RUNNING");
+
+  // auto me = kECManager->CreateEntity("Me");
+  // kECManager->RegisterComponent<HealthComponent>(100);
+  // kECManager->AddComponent(me.id, HealthComponent{});
 
   kInput->Init(window_->GetHandler());
   kRenderer->Init();

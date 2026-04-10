@@ -14,9 +14,11 @@ static inline constexpr EntityId kNullEntity =
 
 struct Entity {
   explicit Entity(EntityId id, std::string entity_name)
-      : entity_name(std::move(entity_name)),
+      : name(std::move(entity_name)),
         id(id) {}
-  std::string entity_name;
+
+  void Destroy() { id = kNullEntity; }
+  std::string name;
   EntityId id;
 };
 

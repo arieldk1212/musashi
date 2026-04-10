@@ -46,6 +46,7 @@ class LogRingBuffer {
 
 // TODO: Use fflush instead of std::println
 // TODO: Add codition variable instead of sleep
+// TODO: Add option to construct string inside log.
 class Logger {
  public:
   explicit Logger(size_t capacity = kLogBufferSize);

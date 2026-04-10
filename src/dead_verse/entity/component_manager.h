@@ -5,6 +5,7 @@
 #include "entity_manager.h"
 #include "global.h"
 
+#include <array>
 #include <atomic>
 #include <cstdint>
 #include <memory>
@@ -14,6 +15,7 @@
 
 namespace musashi {
 
+// Number of instances of the specific component.
 static inline constexpr int kMaxComponentsSize{5000};
 
 struct SparseSetInterface {
@@ -29,10 +31,10 @@ struct SparseSetInterface {
 
 template <typename T>
 struct SparseSet : public SparseSetInterface {
-  SparseSet() {
+  explicit SparseSet(size_t size = kMaxComponentsSize) {
     // TODO: Check optimization for it instead of "resize".
-    dense.reserve(kMaxComponentsSize);
-    dense_to_entity.reserve(kMaxComponentsSize);
+    dense.reserve(size);
+    dense_to_entity.reserve(size);
   }
   struct Chunk {
     // Pagination
@@ -56,11 +58,19 @@ struct SparseSet : public SparseSetInterface {
   }
 
   void Add(EntityId id, T value) {
-    auto idx = Chunk::GetChunkNumber(id);
-    if (idx > entities.size()) {
+    size_t idx = Chunk::GetChunkNumber(id);
+    if (idx >= entities.size()) {
       entities.resize(idx + 1);
+      entities[idx].fill(kNullEntity);
     }
     auto idx_chunk = Chunk::GetIndexInChunk(id);
+
+    // If already exists..
+    if (entities[idx][idx_chunk] != kNullEntity) {
+      dense[entities[idx][idx_chunk]] = std::move(value);
+      dense_to_entity[entities[idx][idx_chunk]] = id;
+      return;
+    }
 
     dense.push_back(value);
 
@@ -116,7 +126,7 @@ class ComponentManager {
  public:
   using ComponentMask = std::bitset<kNumberOfComponents>;
 
-  ComponentManager() = default;
+  ComponentManager() { component_pool_.resize(kNumberOfComponents); }
 
   Entity CreateEntity(std::string entity_name = "Entity") {
     auto id = ComponentRegistry::GenerateEntityId();
@@ -127,16 +137,84 @@ class ComponentManager {
     kLogger->Error("Reached Entity Capacity! Quitting..");
     assert(false);
   }
-  void DeleteEntity(EntityId id);
+
+  void DeleteEntity(Entity& entity) {
+    auto mask = entity_masks_.Get(entity.id);
+
+    if (mask.has_value()) {
+      for (int i = 0; i < kNumberOfComponents; ++i) {
+        if (mask.value()[i] == 1) {
+          component_pool_[i]->Delete(entity.id);
+        }
+      }
+    }
+    entity_masks_.Delete(entity.id);
+    entity.Destroy();
+
+    std::string log{"Entity Deleted: " + entity.name};
+    kLogger->Trace(log);
+  }
 
   template <IsComponent T>
-  void RegisterComponent(size_t size);
+  void RegisterComponent(size_t size = kMaxComponentsSize) {
+    auto type_idx = T::Type();
+
+    if (component_pool_.size() == kNumberOfComponents) {
+      kLogger->Error("Reached Components Capacity! Quitting..");
+      assert(false);
+    }
+
+    if (component_pool_[type_idx] == nullptr) {
+      component_pool_[type_idx] = std::make_unique<SparseSet<T>>(size);
+    }
+  }
+
   template <IsComponent T>
-  void GetComponent(EntityId id);
+  T& GetComponent(EntityId id) {
+    auto type_idx = static_cast<size_t>(T::Type());
+
+    auto& component_pool =
+        *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
+
+    auto component = component_pool.Get(id);
+
+    if (!component.has_value()) {
+      kLogger->Error("Entity Does Not Have This Component!");
+      assert(false);
+    }
+
+    return *component.value();
+  }
+
   template <IsComponent T>
-  void AddComponent(EntityId id);
+  void AddComponent(EntityId id, T component) {
+    auto type_idx = static_cast<size_t>(T::Type());
+
+    auto& component_pool =
+        *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
+
+    component_pool.Add(id, std::move(component));
+
+    auto mask = entity_masks_.Get(id);
+    if (mask.has_value()) {
+      mask.value()->set(type_idx);
+    }
+  }
+
   template <IsComponent T>
-  void RemoveComponent(EntityId id);
+  void RemoveComponent(EntityId id) {
+    auto type_idx = static_cast<size_t>(T::Type());
+
+    auto& component_pool =
+        *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
+
+    component_pool.Delete(id);
+
+    auto mask = entity_masks_.Get(id);
+    if (mask.has_value()) {
+      mask.value()->reset(type_idx);
+    }
+  }
 
   [[nodiscard]] size_t GetEntityCount() { return entity_masks_.Size(); }
   [[nodiscard]] size_t GetComponentPoolSize() const {
