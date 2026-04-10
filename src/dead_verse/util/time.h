@@ -1,7 +1,7 @@
 #ifndef TIME_H_
 #define TIME_H_
 
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 namespace musashi {
 

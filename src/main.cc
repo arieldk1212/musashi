@@ -29,7 +29,7 @@ int main() {
   musashi::Renderer renderer;
   musashi::kGlobal.renderer = &renderer;
 
-  musashi::ComponentManager<500> ec_manager;
+  musashi::ComponentManager ec_manager;
   musashi::kGlobal.ec_manager = &ec_manager;
 
   // Main Logic

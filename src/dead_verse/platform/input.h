@@ -7,7 +7,7 @@
 // Do not remove
 #include <unordered_map>
 
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 namespace musashi {
 

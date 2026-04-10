@@ -9,7 +9,6 @@ class Game;
 class Input;
 class Logger;
 class Renderer;
-template <size_t Size>
 class ComponentManager;
 // class GameState;
 
@@ -30,7 +29,7 @@ struct Global {
   Logger* logger;
   // GameState* state; // should hold the entity manager?
   Renderer* renderer;
-  ComponentManager<500>* ec_manager;
+  ComponentManager* ec_manager;
 };
 
 extern Global kGlobal;
