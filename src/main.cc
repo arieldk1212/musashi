@@ -1,7 +1,7 @@
 #include "dead_verse/entity/component_manager.h"
 #include "dead_verse/game.h"
 #include "dead_verse/global.h"
-#include "dead_verse/platform/input.h"
+#include "dead_verse/platform/platform.h"
 #include "dead_verse/renderer/renderer.h"
 #include "dead_verse/util/log.h"
 
@@ -16,11 +16,11 @@ int main() {
   musashi::Logger logger(musashi::kLogBufferSize);
   musashi::kGlobal.logger = &logger;
 
+  musashi::Platform platform(specs.window_specs);
+  musashi::kGlobal.platform = &platform;
+
   musashi::Game game(specs);
   musashi::kGlobal.game = &game;
-
-  musashi::Input input(specs.window_specs.width, specs.window_specs.height);
-  musashi::kGlobal.input = &input;
 
   musashi::Renderer renderer;
   musashi::kGlobal.renderer = &renderer;

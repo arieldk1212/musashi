@@ -10,13 +10,6 @@
 
 namespace musashi {
 
-struct Command {
-  virtual ~Command() = 0;
-  virtual void Execute() = 0;
-};
-
-struct JumpCommand : public Command {};
-
 enum class InputMode : unsigned int {
   // Mapped to glfw
   kCursorDisabled = GLFW_CURSOR_DISABLED,
@@ -44,7 +37,7 @@ enum class KeyCode : uint16_t {
 
 class Input {
  public:
-  Input(uint32_t width, uint32_t height);
+  Input(Camera& camera, uint32_t width, uint32_t height);
   ~Input() = default;
 
   static constexpr InputMode kDefaultInputMode{InputMode::kCursorHidden};

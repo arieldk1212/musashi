@@ -23,8 +23,6 @@ struct Camera {
   explicit Camera(glm::vec3 p_position = glm::vec3(0.0f, 0.0f, 0.0f),
                   glm::vec3 p_up = glm::vec3(0.0f, 1.0f, 0.0f),
                   float p_yaw = kYaw, float p_pitch = kPitch);
-  Camera(float pos_x, float pos_y, float pos_z, float up_x, float up_y,
-         float up_z, float p_yaw, float p_pitch);
 
   [[nodiscard]] float GetZoom() const { return zoom; }
   [[nodiscard]] const glm::vec3& GetFront() const { return front; }

@@ -6,7 +6,7 @@
 namespace musashi {
 
 class Game;
-class Input;
+class Platform;
 class Logger;
 class Renderer;
 class ComponentManager;
@@ -15,7 +15,7 @@ struct Global {
   Global() = default;
 
   static void Cleanup(Global& global) {
-    global.input = nullptr;
+    global.platform = nullptr;
     global.renderer = nullptr;
     global.game = nullptr;
     global.logger = nullptr;
@@ -23,8 +23,8 @@ struct Global {
   }
 
   Game* game;
-  Input* input;
   Logger* logger;
+  Platform* platform;
   Renderer* renderer;
   ComponentManager* ec_manager;
 };
@@ -32,8 +32,8 @@ struct Global {
 extern Global kGlobal;
 
 inline auto& kGame = kGlobal.game;
-inline auto& kInput = kGlobal.input;
 inline auto& kLogger = kGlobal.logger;
+inline auto& kPlatform = kGlobal.platform;
 inline auto& kRenderer = kGlobal.renderer;
 inline auto& kECManager = kGlobal.ec_manager;
 

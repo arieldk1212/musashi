@@ -8,8 +8,8 @@
 
 namespace musashi {
 
-Input::Input(uint32_t width, uint32_t height)
-    : camera_(glm::vec3(0.0f, 0.0f, kCameraZStart)),
+Input::Input(Camera& camera, uint32_t width, uint32_t height)
+    : camera_(camera),
       last_x_(static_cast<float>(width / 2)),
       last_y_(static_cast<float>(height / 2)) {}
 

@@ -160,7 +160,7 @@ class ComponentManager {
 
   template <IsComponent T>
   void RegisterComponent(size_t size = kMaxComponentsSize) {
-    auto type_idx = T::Type();
+    auto type_idx = static_cast<uint8_t>(T::Type());
 
     if (component_pool_.size() == kNumberOfComponents) {
       kLogger->Error("Reached Components Capacity! Quitting..");
@@ -243,7 +243,10 @@ class ComponentManager {
   };
 
   // TODO: Implement this method, register components.
-  void Init() {}
+  void Init() {
+    // RegisterComponent<InputComponent>();
+    // RegisterComponent<TransformComponent>();
+  }
 
   SparseSet<ComponentMask> entity_masks_;
   std::vector<std::unique_ptr<SparseSetInterface>> component_pool_;

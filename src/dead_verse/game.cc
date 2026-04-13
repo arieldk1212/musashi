@@ -3,45 +3,41 @@
 
 #include "entity/component_manager.h"
 #include "entity/components.h"
-#include "platform/input.h"
+#include "platform/platform.h"
 #include "renderer/renderer.h"
-#include "states/game_state.h"
 #include "util/log.h"
 #include "util/time.h"
 
 namespace musashi {
 
-Game::Game(const GameSpecification& specs)
-    : window_(std::make_shared<Window>(specs.window_specs)),
-      specifications_(specs) {
+Game::Game(const GameSpecification& specs) {
   Init();
 }
 
 Game::~Game() noexcept {
   glfwTerminate();
-  window_->Destory();
+  kPlatform->window->Destory();
   kRenderer->ShutDown();
   Stop();
 }
 
 void Game::Init() {
   glfwInit();
-  window_->Create();
+  kPlatform->window->Create();
   kLogger->Trace("APPLICATION CREATED");
 }
 
 void Game::Run() {
   kRenderer->Init();
-  kInput->Init(window_->GetHandler());
 
   running_ = true;
 
   time_.Init();
 
   while (running_) {
-    window_->PollEvents();
+    kPlatform->window->PollEvents();
 
-    if (window_->ShouldClose()) {
+    if (kPlatform->window->ShouldClose()) {
       Stop();
       break;
     }
@@ -53,7 +49,8 @@ void Game::Run() {
     time_.points.last_time = time_.points.current_time;
     time_.points.accumulator += time_.points.elapsed_time;
 
-    kInput->ProcessInput(window_->GetHandler(), time_.points.elapsed_time);
+    kPlatform->input.ProcessInput(kPlatform->window->GetHandler(),
+                                  time_.points.elapsed_time);
 
     while (time_.points.accumulator >= Time::kFixedDeltaTime) {
       Update(Time::kFixedDeltaTime);
@@ -62,7 +59,7 @@ void Game::Run() {
 
     kRenderer->Render();
 
-    window_->Update();
+    kPlatform->window->Update();
   }
 }
 

@@ -28,7 +28,6 @@ class Game {
  private:
   Time time_;
   bool running_{false};
-  std::shared_ptr<Window> window_;
   GameSpecification specifications_;
 };
 
