@@ -14,9 +14,7 @@ namespace musashi {
 Game::Game(const GameSpecification& specs)
     : window_(std::make_shared<Window>(specs.window_specs)),
       specifications_(specs) {
-  glfwInit();
-  window_->Create();
-  kLogger->Trace("APPLICATION CREATED");
+  Init();
 }
 
 Game::~Game() noexcept {
@@ -26,48 +24,45 @@ Game::~Game() noexcept {
   Stop();
 }
 
+void Game::Init() {
+  glfwInit();
+  window_->Create();
+  kLogger->Trace("APPLICATION CREATED");
+}
+
 void Game::Run() {
-  running_ = true;
-  kLogger->Trace("APPLICATION RUNNING");
-
-  // auto me = kECManager->CreateEntity("Me");
-  // kECManager->RegisterComponent<HealthComponent>(100);
-  // kECManager->AddComponent(me.id, HealthComponent{});
-
-  kInput->Init(window_->GetHandler());
   kRenderer->Init();
+  kInput->Init(window_->GetHandler());
 
-  float last_time{0};
-  float elapsed_time{0};
-  float delta_time{0};
+  running_ = true;
 
-  // TODO: Change after we have game logic.
-  kRenderer->UseShader(ShaderName::kObjectShader);
+  time_.Init();
 
   while (running_) {
+    window_->PollEvents();
+
     if (window_->ShouldClose()) {
       Stop();
       break;
     }
 
-    // TODO: Refactor input.
-    kInput->ProcessInput(window_->GetHandler());
+    time_.points.current_time = Time::GetTime();
+    time_.points.elapsed_time =
+        time_.points.current_time - time_.points.last_time;
 
-    // TODO: Refactor to ticks.
-    auto now = Time::GetTime();
-    delta_time = now - last_time;
-    elapsed_time += delta_time;
-    last_time = now;
+    time_.points.last_time = time_.points.current_time;
+    time_.points.accumulator += time_.points.elapsed_time;
 
-    while (elapsed_time >= kTicksPerSecond) {
-      Update(elapsed_time);
-      elapsed_time -= kTicksPerSecond;
+    kInput->ProcessInput(window_->GetHandler(), time_.points.elapsed_time);
+
+    while (time_.points.accumulator >= Time::kFixedDeltaTime) {
+      Update(Time::kFixedDeltaTime);
+      time_.points.accumulator -= Time::kFixedDeltaTime;
     }
 
     kRenderer->Render();
 
     window_->Update();
-    window_->PollEvents();
   }
 }
 

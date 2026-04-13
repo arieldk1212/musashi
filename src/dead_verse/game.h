@@ -5,6 +5,7 @@
 #include <string>
 
 #include "platform/window.h"
+#include "util/time.h"
 
 namespace musashi {
 
@@ -15,20 +16,17 @@ struct GameSpecification {
 
 class Game {
  public:
-  static constexpr int kMaxFrameSkip{5};
-  static constexpr int kTicksPerSecond{25};
-  static constexpr int kSkipTicks{1000 / kTicksPerSecond};
-
   Game();
   explicit Game(const GameSpecification& specs = GameSpecification());
   ~Game() noexcept;
 
+  void Init();
   void Run();
   void Stop() { running_ = false; }
-  void Update(float ts);
-  void Tick();
+  void Update(float ts = 0);
 
  private:
+  Time time_;
   bool running_{false};
   std::shared_ptr<Window> window_;
   GameSpecification specifications_;

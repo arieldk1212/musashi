@@ -5,15 +5,20 @@
 
 #include "util/camera.h"
 // Do not remove
-#include <unordered_map>
 
 #include <GLFW/glfw3.h>
 
 namespace musashi {
 
-static constexpr float kDeltaTime{0.0f};
+struct Command {
+  virtual ~Command() = 0;
+  virtual void Execute() = 0;
+};
+
+struct JumpCommand : public Command {};
 
 enum class InputMode : unsigned int {
+  // Mapped to glfw
   kCursorDisabled = GLFW_CURSOR_DISABLED,
   kCursorNormal = GLFW_CURSOR_NORMAL,
   kCursorHidden = GLFW_CURSOR_HIDDEN,
@@ -21,6 +26,7 @@ enum class InputMode : unsigned int {
 };
 
 enum class KeyCode : uint16_t {
+  // Mapped to glfw
   kW = 87,
   kA = 65,
   kS = 83,
@@ -36,15 +42,6 @@ enum class KeyCode : uint16_t {
   kMouseRightButton = 1
 };
 
-// enum class InputState : uint8_t { kReleased, kPressed, kUnknown };
-//
-// struct InputAction {
-//   using Action = std::function<void()>;
-//   void Assign(KeyCode code, Action& action);
-//   void Execute(KeyCode code);
-//   std::unordered_map<KeyCode, Action> actions;
-// };
-
 class Input {
  public:
   Input(uint32_t width, uint32_t height);
@@ -53,7 +50,7 @@ class Input {
   static constexpr InputMode kDefaultInputMode{InputMode::kCursorHidden};
 
   void Init(GLFWwindow* window);
-  void ProcessInput(GLFWwindow* window);
+  void ProcessInput(GLFWwindow* window, float delta_time);
   void MouseCallback(GLFWwindow* window, double xpos, double ypos);
 
   bool KeyPressed(GLFWwindow* window, KeyCode key_code);
@@ -77,14 +74,10 @@ class Input {
   static void ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
                                     double yoffset);
 
-  Camera camera_;
   float last_x_;
   float last_y_;
+  Camera camera_;
   bool first_mouse_{true};
-
-  // InputAction key_actions_;
-  // std::array<bool, 105> last_keys_;
-  // std::array<bool, 105> current_keys_;
 };
 
 }  // namespace musashi

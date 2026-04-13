@@ -1,12 +1,41 @@
 #ifndef TIME_H_
 #define TIME_H_
 
-#include <GLFW/glfw3.h>
+#include <chrono>
 
 namespace musashi {
 
 struct Time {
-  static float GetTime() { return static_cast<float>(glfwGetTime()); }
+  Time() { Init(); }
+
+  static constexpr float kTickRate{60.0f};        // Updates per second
+  static constexpr float kMaxAccumulator{0.25f};  // Lag
+  static constexpr float kFixedDeltaTime{1.0f / kTickRate};
+
+  struct Points {
+    float last_time{0.0f};
+    float accumulator{0.0f};
+    float current_time{0.0f};
+    float elapsed_time{0.0f};
+  };
+
+  static float GetTime() {
+    auto now = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float> duration_in_seconds = now.time_since_epoch();
+    return duration_in_seconds.count();
+  }
+
+  void Init() {
+    points.last_time = GetTime();
+    points.current_time = GetTime();
+  }
+
+  [[nodiscard]] float GetCurrentTime() const { return points.current_time; }
+  [[nodiscard]] float GetCurrentTimeMs() const {
+    return points.current_time * 1000.0f;
+  }
+
+  Points points;
 };
 
 }  // namespace musashi

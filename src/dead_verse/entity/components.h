@@ -14,7 +14,8 @@ enum class ComponentType : uint8_t {
   kCombatComponent = 1,
   kCollisionComponent = 2,
   kPositionComponent = 3,
-  kTransformComponent = 4
+  kTransformComponent = 4,
+  kInputComponent = 5
 };
 
 template <typename T>
@@ -22,15 +23,25 @@ concept IsComponent = requires {
   { T::Type() } -> std::same_as<ComponentType>;
 };
 
-struct PositionComponent {
-  static ComponentType Type() { return ComponentType::kPositionComponent; }
-};
-
 struct TransformComponent {
   glm::mat4 translate;
   glm::vec3 position;
   glm::vec3 scale;
   static ComponentType Type() { return ComponentType::kTransformComponent; }
+
+  void Update();
+};
+
+struct VelocityComponent {};
+
+struct CameraComponent {};
+
+struct CameraControllerComponent {};
+
+struct TextureComponent {};
+
+struct PositionComponent {
+  static ComponentType Type() { return ComponentType::kPositionComponent; }
 };
 
 struct CollisionComponent {
@@ -43,6 +54,10 @@ struct HealthComponent {
 
 struct CombatComponent {
   static ComponentType Type() { return ComponentType::kCombatComponent; }
+};
+
+struct InputComponent {
+  static ComponentType Type() { return ComponentType::kInputComponent; }
 };
 
 }  // namespace musashi

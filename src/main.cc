@@ -3,7 +3,6 @@
 #include "dead_verse/global.h"
 #include "dead_verse/platform/input.h"
 #include "dead_verse/renderer/renderer.h"
-#include "dead_verse/states/game_state.h"
 #include "dead_verse/util/log.h"
 
 musashi::Global musashi::kGlobal;
@@ -19,9 +18,6 @@ int main() {
 
   musashi::Game game(specs);
   musashi::kGlobal.game = &game;
-
-  // musashi::GameState state;
-  // musashi::kGlobal.state = &state;
 
   musashi::Input input(specs.window_specs.width, specs.window_specs.height);
   musashi::kGlobal.input = &input;

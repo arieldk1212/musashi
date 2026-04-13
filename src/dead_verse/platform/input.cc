@@ -22,26 +22,26 @@ void Input::Init(GLFWwindow* window) {
   kGlobal.logger->Trace("INPUT INITIALIZED");
 }
 
-void Input::ProcessInput(GLFWwindow* window) {
+void Input::ProcessInput(GLFWwindow* window, float delta_time) {
   if (KeyPressed(window, KeyCode::kEsc)) {
     glfwSetWindowShouldClose(window, static_cast<int>(true));
     kGlobal.logger->Debug("EXISTING..");
   }
 
   if (KeyPressed(window, KeyCode::kW)) {
-    CameraProcessKeyboard(CameraMovement::kForward, kDeltaTime);
+    CameraProcessKeyboard(CameraMovement::kForward, delta_time);
     kGlobal.logger->Debug("Key Press: W");
   }
   if (KeyPressed(window, KeyCode::kA)) {
-    CameraProcessKeyboard(CameraMovement::kLeft, kDeltaTime);
+    CameraProcessKeyboard(CameraMovement::kLeft, delta_time);
     kGlobal.logger->Debug("Key Press: A");
   }
   if (KeyPressed(window, KeyCode::kS)) {
-    CameraProcessKeyboard(CameraMovement::kBackward, kDeltaTime);
+    CameraProcessKeyboard(CameraMovement::kBackward, delta_time);
     kGlobal.logger->Debug("Key Press: S");
   }
   if (KeyPressed(window, KeyCode::kD)) {
-    CameraProcessKeyboard(CameraMovement::kRight, kDeltaTime);
+    CameraProcessKeyboard(CameraMovement::kRight, delta_time);
     kGlobal.logger->Debug("Key Press: D");
   }
 }

@@ -18,8 +18,9 @@ struct Entity {
         id(id) {}
 
   void Destroy() { id = kNullEntity; }
-  std::string name;
+
   EntityId id;
+  std::string name;
 };
 
 }  // namespace musashi

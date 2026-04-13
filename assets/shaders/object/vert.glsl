@@ -1,22 +1,21 @@
 #version 330 core
 layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec3 aNormal;
-layout(location = 2) in vec2 aUv;
+// layout(location = 1) in vec3 aNormal;
+// layout(location = 2) in vec2 aUv;
 
-out vec3 FragPos;
-out vec3 vNormal;
-out vec2 vUv;
+// out vec3 FragPos;
+// out vec3 vNormal;
+// out vec2 vUv;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 uMVP;
 
 void main() {
-    FragPos = vec3(model * vec4(aPos, 1.0));
+    // FragPos = vec3(model * vec4(aPos, 1.0));
 
-    vNormal = mat3(transpose(inverse(model))) * aNormal;
+    // vNormal = mat3(transpose(inverse(model))) * aNormal;
 
-    vUv = aUv;
+    // vUv = aUv;
 
-    gl_Position = projection * view * vec4(FragPos, 1.0);
+    gl_Position = uMVP * vec4(aPos, 1.0);;
+    // gl_Position = projection * view * vec4(FragPos, 1.0);
 }

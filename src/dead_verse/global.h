@@ -10,7 +10,6 @@ class Input;
 class Logger;
 class Renderer;
 class ComponentManager;
-// class GameState;
 
 struct Global {
   Global() = default;
@@ -18,7 +17,6 @@ struct Global {
   static void Cleanup(Global& global) {
     global.input = nullptr;
     global.renderer = nullptr;
-    // global.state = nullptr;
     global.game = nullptr;
     global.logger = nullptr;
     global.ec_manager = nullptr;
@@ -27,7 +25,6 @@ struct Global {
   Game* game;
   Input* input;
   Logger* logger;
-  // GameState* state; // should hold the entity manager?
   Renderer* renderer;
   ComponentManager* ec_manager;
 };

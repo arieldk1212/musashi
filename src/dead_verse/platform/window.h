@@ -35,6 +35,13 @@ class Window {
   void Update();
   void PollEvents() const { glfwPollEvents(); }
   [[nodiscard]] bool ShouldClose() const;
+  void SetVSync(bool status) const {
+    if (status) {
+      glfwSwapInterval(1);
+    } else {
+      glfwSwapInterval(0);
+    }
+  }
 
   [[nodiscard]] glm::vec2 GetFrameBufferSize() const;
   [[nodiscard]] GLFWwindow* GetHandler() const {

@@ -10,47 +10,73 @@ namespace musashi {
 
 struct Vertex {
   std::array<float, 3> pos;
-  std::array<float, 3> normal;
-  std::array<float, 2> uv;
+  // std::array<float, 3> normal;
+  // std::array<float, 2> uv;
 };
 
-struct VertexBuffer {
-  uint32_t vao;
-  uint32_t vbo;
+class VertexBuffer {
+ public:
+  VertexBuffer() = default;
+  ~VertexBuffer() { Destroy(); }
 
-  void Init(const std::vector<Vertex>& data) {
-    glGenBuffers(1, &vbo);
-    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), data.data(),
-                 GL_STATIC_DRAW);
-    glad_glGenVertexArrays(1, &vao);
+  void Init(const std::vector<Vertex>& vertices,
+            const std::vector<uint32_t>& indices) {
+    index_count_ = static_cast<uint32_t>(indices.size());
+    glGenVertexArrays(1, &vao_);
+    glGenBuffers(1, &vbo_);
+    glGenBuffers(1, &ibo_);
+
+    glBindVertexArray(vao_);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex),
+                 vertices.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t),
+                 indices.data(), GL_STATIC_DRAW);
+
     SetupVertexAttributes();
   }
-  void Bind() {
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  }
-  void Destroy() {
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
+
+  void Bind() const { glBindVertexArray(vao_); }
+
+  void Unbind() const { glBindVertexArray(0); }
+
+  void Draw() const {
+    if (index_count_ > 0) {
+      glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, 0);
+    }
   }
 
-  static void Unbind() { glBindVertexArray(0); }
-  static void SetupVertexAttributes(bool use_colors = false,
-                                    bool use_uvs = false) {
+  void Destroy() {
+    glDeleteVertexArrays(1, &vao_);
+    glDeleteBuffers(1, &vbo_);
+    glDeleteBuffers(1, &ibo_);
+    vao_ = vbo_ = ibo_ = 0;
+  }
+
+  static void SetupVertexAttributes() {
     auto stride = sizeof(Vertex);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride,
                           (void*)offsetof(Vertex, pos));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride,
-                          (void*)offsetof(Vertex, normal));
-    glEnableVertexAttribArray(1);
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride,
+    //                       (void*)offsetof(Vertex, normal));
+    // glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride,
-                          (void*)offsetof(Vertex, uv));
-    glEnableVertexAttribArray(2);
+    // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride,
+    //                       (void*)offsetof(Vertex, uv));
+    // glEnableVertexAttribArray(2);
   }
+
+ private:
+  uint32_t vao_{0};
+  uint32_t vbo_{0};
+  uint32_t ibo_{0};
+  uint32_t index_count_{0};
 };
 
 }  // namespace musashi

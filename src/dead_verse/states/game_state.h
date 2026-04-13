@@ -3,6 +3,8 @@
 
 #include "state.h"
 
+#include "util/time.h"
+
 namespace musashi {
 
 class GameState : public State {
@@ -13,6 +15,7 @@ class GameState : public State {
   void Update() override;
 
  private:
+  Time time_;
   States current_state_;
 };
 

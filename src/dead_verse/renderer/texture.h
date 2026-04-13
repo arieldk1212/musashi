@@ -6,14 +6,15 @@
 namespace musashi {
 
 struct Texture {
- public:
-  Texture() = default;
+  Texture(const std::filesystem::path& texture_path, bool flip);
 
   Texture(const Texture&) = delete;
   Texture& operator=(const Texture&) = delete;
 
-  static unsigned int AddTexture(const std::filesystem::path& texture_path,
-                                 bool flip);
+  unsigned int id{0};
+  int width{0};
+  int height{0};
+  int nr_channels{0};
 };
 
 }  // namespace musashi

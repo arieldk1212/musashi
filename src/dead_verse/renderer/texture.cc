@@ -8,22 +8,17 @@
 
 namespace musashi {
 
-unsigned int Texture::AddTexture(const std::filesystem::path& texture_path,
-                                 bool flip) {
-  unsigned int new_texture{0};
+Texture::Texture(const std::filesystem::path& texture_path, bool flip) {
   stbi_set_flip_vertically_on_load(flip);  // if it is flipped
 
-  glGenTextures(1, &new_texture);
-  glBindTexture(GL_TEXTURE_2D, new_texture);
+  glGenTextures(1, &id);
+  glBindTexture(GL_TEXTURE_2D, id);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  int width{0};
-  int height{0};
-  int nr_channels{0};
   unsigned char* data =
       stbi_load(texture_path.c_str(), &width, &height, &nr_channels, 0);
 
@@ -43,8 +38,6 @@ unsigned int Texture::AddTexture(const std::filesystem::path& texture_path,
   stbi_image_free(data);
 
   kGlobal.logger->Trace("Added Texture Successfully");
-
-  return new_texture;
 }
 
 }  // namespace musashi

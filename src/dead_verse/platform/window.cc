@@ -44,8 +44,9 @@ void Window::Create() {
   glfwMakeContextCurrent(window_);
   glfwSetWindowUserPointer(window_, this);
 
-  glEnable(GL_DEPTH_TEST);
   glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
+  SetVSync(true);
+  glViewport(0, 0, specifications_.width, specifications_.height);
 }
 
 void Window::Destory() {
@@ -57,7 +58,6 @@ void Window::Destory() {
 
 void Window::Update() {
   glfwSwapBuffers(window_);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 bool Window::ShouldClose() const {

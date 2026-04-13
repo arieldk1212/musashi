@@ -126,7 +126,10 @@ class ComponentManager {
  public:
   using ComponentMask = std::bitset<kNumberOfComponents>;
 
-  ComponentManager() { component_pool_.resize(kNumberOfComponents); }
+  ComponentManager() {
+    component_pool_.resize(kNumberOfComponents);
+    Init();
+  }
 
   Entity CreateEntity(std::string entity_name = "Entity") {
     auto id = ComponentRegistry::GenerateEntityId();
@@ -238,6 +241,9 @@ class ComponentManager {
       return next.fetch_add(1);
     }
   };
+
+  // TODO: Implement this method, register components.
+  void Init() {}
 
   SparseSet<ComponentMask> entity_masks_;
   std::vector<std::unique_ptr<SparseSetInterface>> component_pool_;
