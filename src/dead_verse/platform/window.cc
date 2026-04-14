@@ -22,6 +22,9 @@ void Window::Create() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  if (specifications_.is_resizeable) {
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+  }
 
 #ifdef __APPLE__
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -41,12 +44,13 @@ void Window::Create() {
     assert(false);
   }
 
-  glfwMakeContextCurrent(window_);
   glfwSetWindowUserPointer(window_, this);
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
   SetVSync(true);
   glViewport(0, 0, specifications_.width, specifications_.height);
+
+  glfwSetFramebufferSizeCallback(window_, FramebufferSizeCallback);
 }
 
 void Window::Destory() {
@@ -58,6 +62,15 @@ void Window::Destory() {
 
 void Window::Update() {
   glfwSwapBuffers(window_);
+}
+
+void Window::SetVSync(bool status) {
+  if (status) {
+    glfwSwapInterval(1);
+  } else {
+    glfwSwapInterval(0);
+  }
+  specifications_.vsync = status;
 }
 
 bool Window::ShouldClose() const {

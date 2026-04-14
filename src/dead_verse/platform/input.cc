@@ -16,7 +16,6 @@ Input::Input(Camera& camera, uint32_t width, uint32_t height)
 void Input::Init(GLFWwindow* window) {
   glfwSetWindowUserPointer(window, this);
   SetInputMode(window, kDefaultInputMode);
-  glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
   glfwSetCursorPosCallback(window, MouseCallbackWrapper);
   glfwSetScrollCallback(window, ScrollCallbackWrapper);
   kGlobal.logger->Trace("INPUT INITIALIZED");
@@ -121,10 +120,6 @@ void Input::CameraProcessMouseMovement(float x_offset, float y_offset,
 void Input::CameraProcessMouseScroll(float y_offset) {
   camera_.zoom -= y_offset;
   camera_.zoom = std::clamp(camera_.zoom, 1.0f, 45.0f);
-}
-
-void Input::FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
-  glViewport(0, 0, width, height);
 }
 
 void Input::MouseCallbackWrapper(GLFWwindow* window, double xpos, double ypos) {

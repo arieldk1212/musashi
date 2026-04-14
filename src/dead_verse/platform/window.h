@@ -35,13 +35,7 @@ class Window {
   void Update();
   void PollEvents() const { glfwPollEvents(); }
   [[nodiscard]] bool ShouldClose() const;
-  void SetVSync(bool status) const {
-    if (status) {
-      glfwSwapInterval(1);
-    } else {
-      glfwSwapInterval(0);
-    }
-  }
+  void SetVSync(bool status);
 
   [[nodiscard]] glm::vec2 GetFrameBufferSize() const;
   [[nodiscard]] GLFWwindow* GetHandler() const {
@@ -55,6 +49,9 @@ class Window {
   }
   [[nodiscard]] float GetWindowResolutionHeight() const {
     return static_cast<float>(specifications_.height);
+  }
+  static void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
   }
 
  private:

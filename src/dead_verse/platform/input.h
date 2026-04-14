@@ -60,8 +60,6 @@ class Input {
       GLboolean constrain_pitch = static_cast<GLboolean>(true));
   void CameraProcessMouseScroll(float y_offset);
 
-  static void FramebufferSizeCallback(GLFWwindow* window, int width,
-                                      int height);
   static void MouseCallbackWrapper(GLFWwindow* window, double xpos,
                                    double ypos);
   static void ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
