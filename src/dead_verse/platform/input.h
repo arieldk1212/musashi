@@ -10,6 +10,24 @@
 
 namespace musashi {
 
+// REFACTORED
+struct Inputt {
+  // Keyboard keys, Mouse keys, Mouse position
+  // Pressed, Held, Released - Each one is a u_set;
+  // Same for mouse
+  // then we forward to key/mouse callbacks
+  // also for the mouse pos, callback
+  // at the end of the frame we clear.
+  // OR with maps? for each game state? manu/player..
+  //
+};
+/**
+
+ auto player = manager->CreateEntity();
+ manager->AddComp<InputComponent>(player);
+
+ */
+
 enum class InputMode : unsigned int {
   // Mapped to glfw
   kCursorDisabled = GLFW_CURSOR_DISABLED,

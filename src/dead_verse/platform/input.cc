@@ -24,7 +24,6 @@ void Input::Init(GLFWwindow* window) {
 void Input::ProcessInput(GLFWwindow* window, float delta_time) {
   if (KeyPressed(window, KeyCode::kEsc)) {
     glfwSetWindowShouldClose(window, static_cast<int>(true));
-    kGlobal.logger->Debug("EXISTING..");
   }
 
   if (KeyPressed(window, KeyCode::kW)) {
