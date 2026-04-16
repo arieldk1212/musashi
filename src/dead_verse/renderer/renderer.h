@@ -11,6 +11,7 @@
 
 namespace musashi {
 
+enum class VertexName : uint8_t { kCube };
 enum class ShaderName : uint8_t { kObjectShader };
 
 class Renderer {
@@ -18,22 +19,22 @@ class Renderer {
   Renderer() = default;
 
   void Init();
-
   void Render();
-  void RenderCube();
+  void ShutDown();
+  static void Clear();
+  void Draw(ShaderName shader_name, VertexName name, const glm::mat4& mvp);
+
+  void CreateCube();
 
   void AddShader(ShaderName shader_name,
                  const std::filesystem::path& vertex_path,
                  const std::filesystem::path& fragment_path);
   void UseShader(ShaderName shader_name);
 
-  void ShutDown();
-
  private:
   std::unordered_map<std::string, Texture> textures_;
   std::unordered_map<ShaderName, std::unique_ptr<Shader>> shaders_;
-  std::unordered_map<std::string, std::unique_ptr<VertexBuffer>>
-      vertex_buffers_;
+  std::unordered_map<VertexName, std::unique_ptr<VertexBuffer>> vertex_buffers_;
 };
 
 }  // namespace musashi

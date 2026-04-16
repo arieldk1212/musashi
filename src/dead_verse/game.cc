@@ -23,7 +23,7 @@ Game::~Game() noexcept {
 
 void Game::Init() {
   glfwInit();
-  kPlatform->window->Create();
+  kPlatform->Init();
   kLogger->Trace("APPLICATION CREATED");
 }
 
@@ -49,8 +49,8 @@ void Game::Run() {
     time_.points.last_time = time_.points.current_time;
     time_.points.accumulator += time_.points.elapsed_time;
 
-    kPlatform->input.ProcessInput(kPlatform->window->GetHandler(),
-                                  time_.points.elapsed_time);
+    // kPlatform->input_system.ProcessInput(kPlatform->window->GetHandler(),
+    //                                      time_.points.elapsed_time);
 
     while (time_.points.accumulator >= Time::kFixedDeltaTime) {
       Update(Time::kFixedDeltaTime);

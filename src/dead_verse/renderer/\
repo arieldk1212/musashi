@@ -1,5 +1,6 @@
 #include "global.h"
 #include "renderer.h"
+#include "util/time.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -7,7 +8,6 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "platform/platform.h"
 #include "util/log.h"
-#include "util/time.h"
 
 namespace musashi {
 
@@ -21,15 +21,27 @@ void Renderer::Init() {
   CreateCube();
 }
 
+void Renderer::Clear() const {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Renderer::ShutDown() {
+  for (auto& [_, shader] : shaders_) {
+    shader->DeleteProgram();
+  }
+}
+
 void Renderer::Render() {
   Clear();
+
+  auto& object_shader = shaders_[ShaderName::kObjectShader];
 
   auto projection = glm::mat4(1.0f);
   auto view = glm::mat4(1.0f);
   auto model = glm::mat4(1.0f);
 
   model = glm::rotate(model, Time::GetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
-  model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+  // model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 
   view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
@@ -41,28 +53,11 @@ void Renderer::Render() {
 
   auto mvp = projection * view * model;
 
-  Draw(ShaderName::kObjectShader, VertexName::kCube, mvp);
-}
+  object_shader->Use();
+  object_shader->SetMat4("uMVP", mvp);
 
-void Renderer::ShutDown() {
-  for (auto& [_, shader] : shaders_) {
-    shader->DeleteProgram();
-  }
-}
-
-void Renderer::Clear() {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void Renderer::Draw(ShaderName shader_name, VertexName name,
-                    const glm::mat4& mvp) {
-  auto& shader = shaders_[shader_name];
-
-  shader->Use();
-  shader->SetMat4("uMVP", mvp);
-
-  vertex_buffers_[name]->Bind();
-  vertex_buffers_[name]->Draw();
+  vertex_buffers_["cube"]->Bind();
+  vertex_buffers_["cube"]->Draw();
 }
 
 void Renderer::CreateCube() {
@@ -94,11 +89,7 @@ void Renderer::CreateCube() {
 
   auto cube = std::make_unique<VertexBuffer>();
   cube->Init(data, indices);
-  vertex_buffers_[VertexName::kCube] = std::move(cube);
-}
-
-void Renderer::UseShader(ShaderName shader_name) {
-  shaders_[shader_name]->Use();
+  vertex_buffers_["cube"] = std::move(cube);
 }
 
 void Renderer::AddShader(ShaderName shader_name,
@@ -106,6 +97,10 @@ void Renderer::AddShader(ShaderName shader_name,
                          const std::filesystem::path& fragment_path) {
   auto unique_shader = std::make_unique<Shader>(vertex_path, fragment_path);
   shaders_[shader_name] = std::move(unique_shader);
+}
+
+void Renderer::UseShader(ShaderName shader_name) {
+  shaders_[shader_name]->Use();
 }
 
 }  // namespace musashi

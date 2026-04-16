@@ -5,7 +5,6 @@
 #include "window.h"
 
 #include <memory>
-
 #include "util/camera.h"
 
 namespace musashi {
@@ -17,9 +16,9 @@ struct Platform {
   void Destroy() const;
   void Update(float ts);
 
-  Input input;
-  Camera camera;
   std::shared_ptr<Window> window;
+  PrespectiveCameraController camera;
+  InputSystem input_system;
 };
 
 }  // namespace musashi

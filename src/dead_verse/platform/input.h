@@ -1,35 +1,14 @@
 #ifndef INPUT_H_
 #define INPUT_H_
 
-#include "window.h"
-
-#include "util/camera.h"
-// Do not remove
-
 #include <GLFW/glfw3.h>
+
+#include "glm/vec2.hpp"
+#include "unordered_map"
 
 namespace musashi {
 
-// REFACTORED
-struct Inputt {
-  // Keyboard keys, Mouse keys, Mouse position
-  // Pressed, Held, Released - Each one is a u_set;
-  // Same for mouse
-  // then we forward to key/mouse callbacks
-  // also for the mouse pos, callback
-  // at the end of the frame we clear.
-  // OR with maps? for each game state? manu/player..
-  //
-};
-/**
-
- auto player = manager->CreateEntity();
- manager->AddComp<InputComponent>(player);
-
- */
-
-enum class InputMode : unsigned int {
-  // Mapped to glfw
+enum class Mode : unsigned int {
   kCursorDisabled = GLFW_CURSOR_DISABLED,
   kCursorNormal = GLFW_CURSOR_NORMAL,
   kCursorHidden = GLFW_CURSOR_HIDDEN,
@@ -37,7 +16,6 @@ enum class InputMode : unsigned int {
 };
 
 enum class KeyCode : uint16_t {
-  // Mapped to glfw
   kW = 87,
   kA = 65,
   kS = 83,
@@ -50,44 +28,62 @@ enum class KeyCode : uint16_t {
   kSpace = 32,
   kEnter = 257,
   kMouseLeftButton = 0,
-  kMouseRightButton = 1
+  kMouseRightButton = 1,
+  kMouseMiddleButton = 2
 };
 
-class Input {
+class InputSystem {
  public:
-  Input(Camera& camera, uint32_t width, uint32_t height);
-  ~Input() = default;
+  InputSystem() = default;
 
-  static constexpr InputMode kDefaultInputMode{InputMode::kCursorHidden};
+  void Init();
 
-  void Init(GLFWwindow* window);
-  void ProcessInput(GLFWwindow* window, float delta_time);
-  void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+  bool IsKeyPressed(KeyCode key_code);
+  bool IsMouseButtonPressed(KeyCode key_code);
+  void ClearKeys() { keys_.clear(); }
 
-  bool KeyPressed(GLFWwindow* window, KeyCode key_code);
-  bool MouseButtonPressed(GLFWwindow* window, KeyCode button);
-  glm::vec2 GetMousePosition(GLFWwindow* window);
-  static void SetInputMode(GLFWwindow* window, InputMode mode) {
-    glfwSetInputMode(window, GLFW_CURSOR, static_cast<int>(mode));
-  }
+  void SetKey(KeyCode key_code) { keys_[key_code] = true; }
+  void SetCursorMode(Mode mode) { cursor_mode_ = mode; }
+
+  static glm::vec2 GetMousePosition();
 
  private:
-  void CameraProcessKeyboard(CameraMovement direction, float delta_time);
-  void CameraProcessMouseMovement(
-      float x_offset, float y_offset,
-      GLboolean constrain_pitch = static_cast<GLboolean>(true));
-  void CameraProcessMouseScroll(float y_offset);
-
-  static void MouseCallbackWrapper(GLFWwindow* window, double xpos,
-                                   double ypos);
-  static void ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
-                                    double yoffset);
-
-  float last_x_;
-  float last_y_;
-  Camera camera_;
-  bool first_mouse_{true};
+  Mode cursor_mode_{Mode::kCursorHidden};
+  std::unordered_map<KeyCode, bool> keys_;
 };
+
+// class Input {
+//  public:
+//   explicit Input(Camera& camera);
+//   ~Input() = default;
+
+//   static constexpr InputMode kDefaultInputMode{InputMode::kCursorHidden};
+
+//   void Init(GLFWwindow* window);
+//   void ProcessInput(GLFWwindow* window, float delta_time);
+//   void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+
+//   bool KeyPressed(GLFWwindow* window, KeyCode key_code);
+//   bool MouseButtonPressed(GLFWwindow* window, KeyCode button);
+//   glm::vec2 GetMousePosition(GLFWwindow* window);
+//   static void SetInputMode(GLFWwindow* window, InputMode mode) {
+//     glfwSetInputMode(window, GLFW_CURSOR, static_cast<int>(mode));
+//   }
+
+//  private:
+//   void CameraProcessKeyboard(CameraMovement direction, float delta_time);
+//   void CameraProcessMouseMovement(
+//       float x_offset, float y_offset,
+//       GLboolean constrain_pitch = static_cast<GLboolean>(true));
+//   void CameraProcessMouseScroll(float y_offset);
+
+//   static void MouseCallbackWrapper(GLFWwindow* window, double xpos,
+//                                    double ypos);
+//   static void ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
+//                                     double yoffset);
+
+//   bool first_mouse_{true};
+// };
 
 }  // namespace musashi
 

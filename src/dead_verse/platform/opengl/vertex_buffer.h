@@ -2,6 +2,7 @@
 #define VERTEX_H_
 
 #include <array>
+#include <optional>
 #include <vector>
 
 #include <glad/glad.h>
@@ -20,8 +21,9 @@ class VertexBuffer {
   ~VertexBuffer() { Destroy(); }
 
   void Init(const std::vector<Vertex>& vertices,
-            const std::vector<uint32_t>& indices) {
-    index_count_ = static_cast<uint32_t>(indices.size());
+            const std::vector<uint32_t>& indices = {}) {
+    vertices_count_ = static_cast<uint32_t>(vertices.size());
+
     glGenVertexArrays(1, &vao_);
     glGenBuffers(1, &vbo_);
     glGenBuffers(1, &ibo_);
@@ -32,20 +34,29 @@ class VertexBuffer {
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex),
                  vertices.data(), GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t),
-                 indices.data(), GL_STATIC_DRAW);
+    if (indices.size() > 0) {
+      index_count_ = static_cast<uint32_t>(indices.size());
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t),
+                   indices.data(), GL_STATIC_DRAW);
+    }
 
     SetupVertexAttributes();
   }
 
   void Bind() const { glBindVertexArray(vao_); }
 
-  void Unbind() const { glBindVertexArray(0); }
+  static void Unbind() { glBindVertexArray(0); }
 
   void Draw() const {
     if (index_count_ > 0) {
       glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, 0);
+      return;
+    }
+
+    if (vertices_count_ > 0) {
+      glDrawArrays(GL_TRIANGLES, 0, vertices_count_);
+      return;
     }
   }
 
@@ -77,6 +88,7 @@ class VertexBuffer {
   uint32_t vbo_{0};
   uint32_t ibo_{0};
   uint32_t index_count_{0};
+  uint32_t vertices_count_{0};
 };
 
 }  // namespace musashi

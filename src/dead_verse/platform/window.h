@@ -4,7 +4,6 @@
 #include <string>
 
 // clang-format off
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 // clang-format on
@@ -50,7 +49,8 @@ class Window {
   [[nodiscard]] float GetWindowResolutionHeight() const {
     return static_cast<float>(specifications_.height);
   }
-  static void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
+  static void FramebufferSizeCallback(GLFWwindow* window, int width,
+                                      int height) {
     glViewport(0, 0, width, height);
   }
 

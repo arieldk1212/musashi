@@ -7,8 +7,8 @@ namespace musashi {
 
 class Game;
 class Logger;
-class Platform;
 class Renderer;
+struct Platform;
 class ComponentManager;
 
 struct Global {

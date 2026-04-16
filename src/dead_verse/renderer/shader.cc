@@ -47,7 +47,7 @@ Shader::Shader(const std::filesystem::path& vertex_path,
 
   // vertex shader
   vertex = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertex, 1, &vShaderCode, NULL);
+  glShaderSource(vertex, 1, &vShaderCode, nullptr);
   glCompileShader(vertex);
 
   // print error for vertex
@@ -59,7 +59,7 @@ Shader::Shader(const std::filesystem::path& vertex_path,
 
   // fragment shader
   fragment = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragment, 1, &fShaderCode, NULL);
+  glShaderSource(fragment, 1, &fShaderCode, nullptr);
   glCompileShader(fragment);
 
   // print error for fragment
