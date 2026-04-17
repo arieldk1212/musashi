@@ -64,4 +64,13 @@ void Game::Run() {
 
 void Game::Update(float ts) {}
 
+void Game::TestEntity() {
+  auto cube_entity = kECManager->CreateEntity("Cube");
+  kECManager->AddComponent<TransformComponent>(cube_entity.id,
+                                               TransformComponent{});
+  kECManager->AddComponent<InputComponent>(cube_entity.id, InputComponent{});
+  kECManager->AddComponent<PositionComponent>(cube_entity.id,
+                                              PositionComponent{});
+}
+
 };  // namespace musashi

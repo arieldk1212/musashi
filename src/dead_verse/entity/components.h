@@ -7,29 +7,48 @@
 namespace musashi {
 
 // Number of unique component type.
-static inline constexpr int kNumberOfComponents{5};
+static inline constexpr int kNumberOfComponents{6};
 
 enum class ComponentType : uint8_t {
-  kHealthComponent = 0,
-  kCombatComponent = 1,
-  kCollisionComponent = 2,
-  kPositionComponent = 3,
-  kTransformComponent = 4,
-  kInputComponent = 5
+  kTransformComponent = 0,
+  kInputComponent = 1,
+  kPositionComponent = 2,
+  kHealthComponent = 3,
+  kCombatComponent = 4,
+  kCollisionComponent = 5,
+};
+
+struct Component {
+  virtual ~Component() = default;
 };
 
 template <typename T>
-concept IsComponent = requires {
+concept HasComponentType = requires {
   { T::Type() } -> std::same_as<ComponentType>;
 };
 
-struct TransformComponent {
+template <typename T>
+concept HasComponentBase = std::derived_from<T, Component>;
+
+template <typename T>
+concept IsComponent = HasComponentType<T> && HasComponentBase<T>;
+
+struct TransformComponent : public Component {
   glm::mat4 translate;
   glm::vec3 position;
-  glm::vec3 scale;
-  static ComponentType Type() { return ComponentType::kTransformComponent; }
+        glm::vec3 scale;
 
-  void Update();
+  static ComponentType Type() { return ComponentType::kTransformComponent; }
+};
+
+struct InputComponent : public Component {
+  static ComponentType Type() { return ComponentType::kInputComponent; }
+};
+
+struct PositionComponent : public Component {
+  glm::vec3 position;
+
+  static ComponentType Type() { return ComponentType::kPositionComponent; }
 };
 
 struct VelocityComponent {};
@@ -39,10 +58,6 @@ struct CameraComponent {};
 struct CameraControllerComponent {};
 
 struct TextureComponent {};
-
-struct PositionComponent {
-  static ComponentType Type() { return ComponentType::kPositionComponent; }
-};
 
 struct CollisionComponent {
   static ComponentType Type() { return ComponentType::kCollisionComponent; }
@@ -54,10 +69,6 @@ struct HealthComponent {
 
 struct CombatComponent {
   static ComponentType Type() { return ComponentType::kCombatComponent; }
-};
-
-struct InputComponent {
-  static ComponentType Type() { return ComponentType::kInputComponent; }
 };
 
 }  // namespace musashi

@@ -25,15 +25,13 @@ void Renderer::Render() {
   auto& camera = kPlatform->camera;
   auto projection = camera.camera.GetProjectionMatrix();
   auto view = camera.camera.GetViewMatrix();
-
   auto model = glm::mat4(1.0f);
+
   model = glm::rotate(model, Time::GetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
   model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-
   view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
   auto mvp = projection * view * model;
-
   Draw(ShaderName::kObjectShader, VertexName::kCube, mvp);
 }
 

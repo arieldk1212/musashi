@@ -9,6 +9,7 @@ class Game;
 class Logger;
 class Renderer;
 struct Platform;
+class GameState;
 class ComponentManager;
 
 struct Global {
@@ -19,6 +20,7 @@ struct Global {
     global.renderer = nullptr;
     global.game = nullptr;
     global.platform = nullptr;
+    global.state = nullptr;
     global.logger = nullptr;
   }
 
@@ -26,6 +28,7 @@ struct Global {
   Logger* logger;
   Platform* platform;
   Renderer* renderer;
+  GameState* state;
   ComponentManager* ec_manager;
 };
 
@@ -35,6 +38,7 @@ inline auto& kGame = kGlobal.game;
 inline auto& kLogger = kGlobal.logger;
 inline auto& kPlatform = kGlobal.platform;
 inline auto& kRenderer = kGlobal.renderer;
+inline auto& kState = kGlobal.state;
 inline auto& kECManager = kGlobal.ec_manager;
 
 }  // namespace musashi
