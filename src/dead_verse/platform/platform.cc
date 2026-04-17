@@ -8,10 +8,19 @@ Platform::Platform(const WindowSpecification& specifications)
 void Platform::Init() {
   window->Create();
   input_system.Init();
+  camera.Init();
+}
+
+void Platform::Clear() {
+  input_system.Clear();
 }
 
 void Platform::Destroy() const {
-  window->Destory();
+  window->Destroy();
+}
+
+void Platform::Update(float ts) {
+  camera.Update(ts);
 }
 
 }  // namespace musashi

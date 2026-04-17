@@ -1,10 +1,8 @@
 #include "global.h"
 #include "renderer.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glad/glad.h>
 
-#include "glm/ext/matrix_clip_space.hpp"
 #include "platform/platform.h"
 #include "util/log.h"
 #include "util/time.h"
@@ -34,7 +32,7 @@ void Renderer::Render() {
   view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
   projection =
-      glm::perspective(glm::radians(kPlatform->camera.GetZoom()),
+      glm::perspective(glm::radians(kPlatform->camera.camera.settings.zoom),
                        kPlatform->window->GetWindowResolutionWidth() /
                            kPlatform->window->GetWindowResolutionHeight(),
                        0.1f, 100.0f);

@@ -3,10 +3,8 @@
 
 #include <string>
 
-// clang-format off
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
-// clang-format on
 
 namespace musashi {
 
@@ -26,15 +24,13 @@ class Window {
   explicit Window(const WindowSpecification& specs);
   ~Window();
 
-  [[nodiscard]] static float GetTime() {
-    return static_cast<float>(glfwGetTime());
-  }
   void Create();
-  void Destory();
+  void Destroy();
   void Update();
-  void PollEvents() const { glfwPollEvents(); }
+  void SetShouldClose();
   [[nodiscard]] bool ShouldClose() const;
   void SetVSync(bool status);
+  void PollEvents();
 
   [[nodiscard]] glm::vec2 GetFrameBufferSize() const;
   [[nodiscard]] GLFWwindow* GetHandler() const {
@@ -43,6 +39,7 @@ class Window {
     }
     assert(false);
   }
+
   [[nodiscard]] float GetWindowResolutionWidth() const {
     return static_cast<float>(specifications_.width);
   }
@@ -50,9 +47,7 @@ class Window {
     return static_cast<float>(specifications_.height);
   }
   static void FramebufferSizeCallback(GLFWwindow* window, int width,
-                                      int height) {
-    glViewport(0, 0, width, height);
-  }
+                                      int height);
 
  private:
   GLFWwindow* window_{nullptr};

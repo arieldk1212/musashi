@@ -16,7 +16,7 @@ Game::Game(const GameSpecification& specs) {
 
 Game::~Game() noexcept {
   glfwTerminate();
-  kPlatform->window->Destory();
+  kPlatform->Destroy();
   kRenderer->ShutDown();
   Stop();
 }
@@ -49,8 +49,7 @@ void Game::Run() {
     time_.points.last_time = time_.points.current_time;
     time_.points.accumulator += time_.points.elapsed_time;
 
-    // kPlatform->input_system.ProcessInput(kPlatform->window->GetHandler(),
-    //                                      time_.points.elapsed_time);
+    Update(time_.points.elapsed_time);
 
     while (time_.points.accumulator >= Time::kFixedDeltaTime) {
       Update(Time::kFixedDeltaTime);
@@ -60,33 +59,12 @@ void Game::Run() {
     kRenderer->Render();
 
     kPlatform->window->Update();
+    kPlatform->Clear();
   }
 }
 
-void Game::Update(float ts) {}
-
-//   while (!glfwWindowShouldClose(window.get())) {
-//     glm::mat4 projection = glm::perspective(
-//         glm::radians(camera_->GetZoom()),
-//         static_cast<float>(kGameWidth) / static_cast<float>(kGameHeight),
-//         0.1f, 100.0f);
-//     glm::mat4 view = camera_->GetViewMatrix();
-//     shader_->SetMat4("projection", projection);
-//     shader_->SetMat4("view", view);
-
-//     auto model = glm::mat4(1.0f);
-//     model = glm::translate(
-//         model,
-//         glm::vec3(
-//             0.0f, 0.0f,
-//             0.0f));  // translate it down so it's at the center of the scene
-//     model = glm::scale(
-//         model,
-//         glm::vec3(1.0f, 1.0f,
-//                   1.0f));  // it's a bit too big for our scene, so scale it
-//                   down
-//     shader_->SetMat4("model", model);
-
-//   }
+void Game::Update(float ts) {
+  kPlatform->Update(ts);
+}
 
 };  // namespace musashi

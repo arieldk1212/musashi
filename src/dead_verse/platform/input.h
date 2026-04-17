@@ -2,8 +2,8 @@
 #define INPUT_H_
 
 #include <GLFW/glfw3.h>
+#include <glm/vec2.hpp>
 
-#include "glm/vec2.hpp"
 #include "unordered_map"
 
 namespace musashi {
@@ -16,34 +16,150 @@ enum class Mode : unsigned int {
 };
 
 enum class KeyCode : uint16_t {
-  kW = 87,
-  kA = 65,
-  kS = 83,
-  kD = 68,
-  kR = 82,
-  kF = 70,
-  kC = 67,
-  kEsc = 256,
-  kTab = 258,
+  // NOTE: From GLFW
   kSpace = 32,
+  kApostrophe = 39,
+  kComma = 44,
+  kMinus = 45,
+  kPeriod = 46,
+  kSlash = 47,
+  kD0 = 48,
+  kD1 = 49,
+  kD2 = 50,
+  kD3 = 51,
+  kD4 = 52,
+  kD5 = 53,
+  kD6 = 54,
+  kD7 = 55,
+  kD8 = 56,
+  kD9 = 57,
+  kSemicolon = 59,
+  kEqual = 61,
+  kA = 65,
+  kB = 66,
+  kC = 67,
+  kD = 68,
+  kE = 69,
+  kF = 70,
+  kG = 71,
+  kH = 72,
+  kI = 73,
+  kJ = 74,
+  kK = 75,
+  kL = 76,
+  kM = 77,
+  kN = 78,
+  kO = 79,
+  kP = 80,
+  kQ = 81,
+  kR = 82,
+  kS = 83,
+  kT = 84,
+  kU = 85,
+  kV = 86,
+  kW = 87,
+  kX = 88,
+  kY = 89,
+  kZ = 90,
+  kLeftBracket = 91,
+  kBackslash = 92,
+  kRightBracket = 93,
+  kGraveAccent = 96,
+  kWorld1 = 161,
+  kWorld2 = 162,
+  kEscape = 256,
   kEnter = 257,
-  kMouseLeftButton = 0,
-  kMouseRightButton = 1,
-  kMouseMiddleButton = 2
+  kTab = 258,
+  kBackspace = 259,
+  kInsert = 260,
+  kDelete = 261,
+  kRight = 262,
+  kLeft = 263,
+  kDown = 264,
+  kUp = 265,
+  kPageUp = 266,
+  kPageDown = 267,
+  kHome = 268,
+  kEnd = 269,
+  kCapsLock = 280,
+  kScrollLock = 281,
+  kNumLock = 282,
+  kPrintScreen = 283,
+  kPause = 284,
+  kF1 = 290,
+  kF2 = 291,
+  kF3 = 292,
+  kF4 = 293,
+  kF5 = 294,
+  kF6 = 295,
+  kF7 = 296,
+  kF8 = 297,
+  kF9 = 298,
+  kF10 = 299,
+  kF11 = 300,
+  kF12 = 301,
+  kF13 = 302,
+  kF14 = 303,
+  kF15 = 304,
+  kF16 = 305,
+  kF17 = 306,
+  kF18 = 307,
+  kF19 = 308,
+  kF20 = 309,
+  kF21 = 310,
+  kF22 = 311,
+  kF23 = 312,
+  kF24 = 313,
+  kF25 = 314,
+  kKP0 = 320,
+  kKP1 = 321,
+  kKP2 = 322,
+  kKP3 = 323,
+  kKP4 = 324,
+  kKP5 = 325,
+  kKP6 = 326,
+  kKP7 = 327,
+  kKP8 = 328,
+  kKP9 = 329,
+  kKPDecimal = 330,
+  kKPDivide = 331,
+  kKPMultiply = 332,
+  kKPSubtract = 333,
+  kKPAdd = 334,
+  kKPEnter = 335,
+  kKPEqual = 336,
+  kLeftShift = 340,
+  kLeftControl = 341,
+  kLeftAlt = 342,
+  kLeftSuper = 343,
+  kRightShift = 344,
+  kRightControl = 345,
+  kRightAlt = 346,
+  kRightSuper = 347,
+  kMenu = 348
 };
 
 class InputSystem {
  public:
   InputSystem() = default;
 
-  void Init();
+  void Init(Mode mode = Mode::kCursorDisabled);
+  [[nodiscard]] Mode GetCursorMode() const { return cursor_mode_; }
+  void Clear() { keys_.clear(); }
+  void InputCallback(GLFWwindow* window, int key, int code, int action,
+                     int mods);
 
+  // NOTE: OpenGL Current Action
+  static bool KeyPressed(KeyCode key_code);
+  static bool MouseButtonPressed(KeyCode key_code);
+
+  // NOTE: Key State
   bool IsKeyPressed(KeyCode key_code);
   bool IsMouseButtonPressed(KeyCode key_code);
-  void ClearKeys() { keys_.clear(); }
 
+  void SetCursorMode(Mode mode);
   void SetKey(KeyCode key_code) { keys_[key_code] = true; }
-  void SetCursorMode(Mode mode) { cursor_mode_ = mode; }
+  void UnsetKey(KeyCode key_code) { keys_[key_code] = false; }
 
   static glm::vec2 GetMousePosition();
 
@@ -51,39 +167,6 @@ class InputSystem {
   Mode cursor_mode_{Mode::kCursorHidden};
   std::unordered_map<KeyCode, bool> keys_;
 };
-
-// class Input {
-//  public:
-//   explicit Input(Camera& camera);
-//   ~Input() = default;
-
-//   static constexpr InputMode kDefaultInputMode{InputMode::kCursorHidden};
-
-//   void Init(GLFWwindow* window);
-//   void ProcessInput(GLFWwindow* window, float delta_time);
-//   void MouseCallback(GLFWwindow* window, double xpos, double ypos);
-
-//   bool KeyPressed(GLFWwindow* window, KeyCode key_code);
-//   bool MouseButtonPressed(GLFWwindow* window, KeyCode button);
-//   glm::vec2 GetMousePosition(GLFWwindow* window);
-//   static void SetInputMode(GLFWwindow* window, InputMode mode) {
-//     glfwSetInputMode(window, GLFW_CURSOR, static_cast<int>(mode));
-//   }
-
-//  private:
-//   void CameraProcessKeyboard(CameraMovement direction, float delta_time);
-//   void CameraProcessMouseMovement(
-//       float x_offset, float y_offset,
-//       GLboolean constrain_pitch = static_cast<GLboolean>(true));
-//   void CameraProcessMouseScroll(float y_offset);
-
-//   static void MouseCallbackWrapper(GLFWwindow* window, double xpos,
-//                                    double ypos);
-//   static void ScrollCallbackWrapper(GLFWwindow* window, double xoffset,
-//                                     double yoffset);
-
-//   bool first_mouse_{true};
-// };
 
 }  // namespace musashi
 

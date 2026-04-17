@@ -5,6 +5,8 @@
 #include <print>
 #include <sstream>
 
+#include <glad/glad.h>
+
 namespace musashi {
 
 Shader::Shader(const std::filesystem::path& vertex_path,
@@ -36,8 +38,8 @@ Shader::Shader(const std::filesystem::path& vertex_path,
   } catch (const std::ifstream::failure& e) {
     std::println("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ");
   }
-  const char* vShaderCode = vertex_code.c_str();
-  const char* fShaderCode = fragment_code.c_str();
+  const char* vshader_code = vertex_code.c_str();
+  const char* fshader_code = fragment_code.c_str();
 
   // compile shaders
   int success{0};
@@ -47,7 +49,7 @@ Shader::Shader(const std::filesystem::path& vertex_path,
 
   // vertex shader
   vertex = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertex, 1, &vShaderCode, nullptr);
+  glShaderSource(vertex, 1, &vshader_code, nullptr);
   glCompileShader(vertex);
 
   // print error for vertex
@@ -59,7 +61,7 @@ Shader::Shader(const std::filesystem::path& vertex_path,
 
   // fragment shader
   fragment = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragment, 1, &fShaderCode, nullptr);
+  glShaderSource(fragment, 1, &fshader_code, nullptr);
   glCompileShader(fragment);
 
   // print error for fragment

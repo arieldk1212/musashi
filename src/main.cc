@@ -12,6 +12,7 @@ int main() {
   specs.game_name = "Dead Verse";
   specs.window_specs.width = 1000;
   specs.window_specs.height = 800;
+  specs.window_specs.is_resizeable = true;
 
   musashi::Logger logger(musashi::kLogBufferSize);
   musashi::kGlobal.logger = &logger;

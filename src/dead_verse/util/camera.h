@@ -3,7 +3,6 @@
 
 #include <cstdint>
 
-// #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -21,6 +20,7 @@ struct CameraDefaults {
 };
 
 struct CameraSettings {
+  bool first_mouse{true};
   float yaw{CameraDefaults::kYaw};
   float pitch{CameraDefaults::kPitch};
   float zoom{CameraDefaults::kZoom};
@@ -86,8 +86,13 @@ struct PrespectiveCameraController {
       const glm::vec3& position = glm::vec3(0.0f, 0.0f,
                                             CameraDefaults::kCameraZStart));
 
+  void Init();
+  // NOTE: API
   void Update(float delta_time);
 
+  // NOTE: Dont use below
+  void CallbackScroll(float y_offset);
+  void CallbackMouse(double x_pos, double y_pos);
   void CameraProcessKeyboard(CameraMovement direction, float delta_time);
 
   PrespectiveCamera camera;

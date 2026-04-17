@@ -1,4 +1,9 @@
+// clang-format off
+#include <glad/glad.h>
+// clang-format on
+//
 #include "global.h"
+#include "platform.h"
 #include "window.h"
 
 #include "util/log.h"
@@ -9,7 +14,7 @@ Window::Window(const WindowSpecification& specs)
     : specifications_(specs) {}
 
 Window::~Window() {
-  Destory();
+  Destroy();
   kLogger->Trace("Window Destroyed");
 }
 
@@ -44,7 +49,7 @@ void Window::Create() {
     assert(false);
   }
 
-  glfwSetWindowUserPointer(window_, this);
+  glfwSetWindowUserPointer(kPlatform->window->GetHandler(), this);
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
   SetVSync(true);
@@ -53,7 +58,7 @@ void Window::Create() {
   glfwSetFramebufferSizeCallback(window_, FramebufferSizeCallback);
 }
 
-void Window::Destory() {
+void Window::Destroy() {
   if (window_ != nullptr) {
     glfwDestroyWindow(window_);
   }
@@ -62,6 +67,10 @@ void Window::Destory() {
 
 void Window::Update() {
   glfwSwapBuffers(window_);
+}
+
+void Window::PollEvents() {
+  glfwPollEvents();
 }
 
 void Window::SetVSync(bool status) {
@@ -73,6 +82,10 @@ void Window::SetVSync(bool status) {
   specifications_.vsync = status;
 }
 
+void Window::SetShouldClose() {
+  glfwSetWindowShouldClose(window_, true);
+}
+
 bool Window::ShouldClose() const {
   return glfwWindowShouldClose(window_) != 0;
 }
@@ -82,6 +95,11 @@ glm::vec2 Window::GetFrameBufferSize() const {
   int height{0};
   glfwGetFramebufferSize(window_, &width, &height);
   return {width, height};
+}
+
+void Window::FramebufferSizeCallback(GLFWwindow* window, int width,
+                                     int height) {
+  glViewport(0, 0, width, height);
 }
 
 }  // namespace musashi

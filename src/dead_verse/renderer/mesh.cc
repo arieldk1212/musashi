@@ -1,5 +1,10 @@
 #include "mesh.h"
 
+// clang-format off
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+// clang-format on
+
 namespace musashi {
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices,
