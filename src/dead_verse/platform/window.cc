@@ -49,13 +49,21 @@ void Window::Create() {
     assert(false);
   }
 
-  glfwSetWindowUserPointer(kPlatform->window->GetHandler(), this);
+  glfwSetWindowUserPointer(window_, kPlatform);
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
   SetVSync(true);
-  glViewport(0, 0, specifications_.width, specifications_.height);
 
-  glfwSetFramebufferSizeCallback(window_, FramebufferSizeCallback);
+  glfwSetWindowSize(window_, specifications_.width, specifications_.height);
+
+  auto frame_buffer = GetFrameBufferSize();
+  glViewport(0, 0, frame_buffer.x, frame_buffer.y);
+
+  auto wrapper_frame_buffer = [](GLFWwindow* window, int width, int height) {
+    static_cast<Platform*>(glfwGetWindowUserPointer(window))
+        ->window->FramebufferSizeCallback(window, width, height);
+  };
+  glfwSetFramebufferSizeCallback(window_, wrapper_frame_buffer);
 }
 
 void Window::Destroy() {
@@ -99,7 +107,10 @@ glm::vec2 Window::GetFrameBufferSize() const {
 
 void Window::FramebufferSizeCallback(GLFWwindow* window, int width,
                                      int height) {
-  glViewport(0, 0, width, height);
+  // kPlatform->window->specifications_.width = width;
+  // kPlatform->window->specifications_.height = height;
+  auto frame_buffer = kPlatform->window->GetFrameBufferSize();
+  glViewport(0, 0, frame_buffer.x, frame_buffer.y);
 }
 
 }  // namespace musashi

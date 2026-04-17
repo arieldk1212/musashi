@@ -1,5 +1,7 @@
 #include "platform.h"
 
+#include "platform/input.h"
+
 namespace musashi {
 
 Platform::Platform(const WindowSpecification& specifications)
@@ -19,8 +21,6 @@ void Platform::Destroy() const {
   window->Destroy();
 }
 
-void Platform::Update(float ts) {
-  camera.Update(ts);
-}
+void Platform::Update(float ts) {}
 
 }  // namespace musashi

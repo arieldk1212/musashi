@@ -14,20 +14,21 @@ struct Time {
 
   struct Points {
     float last_time{0.0f};
-    float accumulator{0.0f};
+    float delta_time{0.0f};
     float current_time{0.0f};
     float elapsed_time{0.0f};
   };
 
   static float GetTime() {
+    static auto start = std::chrono::high_resolution_clock::now();
     auto now = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<float> duration_in_seconds = now.time_since_epoch();
-    return duration_in_seconds.count();
+    std::chrono::duration<float> elapsed = now - start;
+    return elapsed.count();
   }
 
   void Init() {
+    points.delta_time = 0;
     points.last_time = GetTime();
-    points.current_time = GetTime();
   }
 
   [[nodiscard]] float GetCurrentTime() const { return points.current_time; }

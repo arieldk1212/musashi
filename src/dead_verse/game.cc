@@ -10,7 +10,8 @@
 
 namespace musashi {
 
-Game::Game(const GameSpecification& specs) {
+Game::Game(const GameSpecification& specs)
+    : specifications_(specs) {
   Init();
 }
 
@@ -43,28 +44,24 @@ void Game::Run() {
     }
 
     time_.points.current_time = Time::GetTime();
-    time_.points.elapsed_time =
+    time_.points.delta_time =
         time_.points.current_time - time_.points.last_time;
-
     time_.points.last_time = time_.points.current_time;
-    time_.points.accumulator += time_.points.elapsed_time;
 
-    Update(time_.points.elapsed_time);
+    time_.points.elapsed_time += time_.points.delta_time;
 
-    while (time_.points.accumulator >= Time::kFixedDeltaTime) {
+    while (time_.points.elapsed_time >= Time::kFixedDeltaTime) {
       Update(Time::kFixedDeltaTime);
-      time_.points.accumulator -= Time::kFixedDeltaTime;
+      time_.points.elapsed_time -= Time::kFixedDeltaTime;
     }
 
-    kRenderer->Render();
+    kPlatform->camera.Update(time_.points.delta_time);
 
+    kRenderer->Render();
     kPlatform->window->Update();
-    kPlatform->Clear();
   }
 }
 
-void Game::Update(float ts) {
-  kPlatform->Update(ts);
-}
+void Game::Update(float ts) {}
 
 };  // namespace musashi

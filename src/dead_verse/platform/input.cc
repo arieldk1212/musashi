@@ -9,8 +9,6 @@ namespace musashi {
 void InputSystem::Init(Mode mode) {
   SetCursorMode(mode);
 
-  glfwSetWindowUserPointer(kPlatform->window->GetHandler(), this);
-
   auto wrapper_input = [](GLFWwindow* window, int key, int code, int action,
                           int mods) {
     static_cast<Platform*>(glfwGetWindowUserPointer(window))
@@ -74,15 +72,5 @@ glm::vec2 InputSystem::GetMousePosition() {
   glfwGetCursorPos(kPlatform->window->GetHandler(), &x, &y);
   return glm::vec2{static_cast<float>(x), static_cast<float>(y)};
 }
-
-// bool Input::KeyPressed(GLFWwindow* window, KeyCode key_code) {
-//   auto state = glfwGetKey(window, static_cast<int>(key_code));
-//   return state == GLFW_PRESS || state == GLFW_REPEAT;
-// }
-
-// bool Input::MouseButtonPressed(GLFWwindow* window, KeyCode button) {
-//   auto state = glfwGetKey(window, static_cast<int>(button));
-//   return state == GLFW_PRESS;
-// }
 
 }  // namespace musashi

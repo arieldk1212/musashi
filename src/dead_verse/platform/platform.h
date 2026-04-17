@@ -18,8 +18,8 @@ struct Platform {
   void Destroy() const;
   void Update(float ts);
 
-  InputSystem input_system;
   std::shared_ptr<Window> window;
+  InputSystem input_system;
   PrespectiveCameraController camera;
 };
 

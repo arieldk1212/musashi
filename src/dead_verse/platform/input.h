@@ -17,6 +17,9 @@ enum class Mode : unsigned int {
 
 enum class KeyCode : uint16_t {
   // NOTE: From GLFW
+  kMouseButtonLeft = 0,
+  kMouseButtonRight = 1,
+  kMouseButtonMiddle = 2,
   kSpace = 32,
   kApostrophe = 39,
   kComma = 44,

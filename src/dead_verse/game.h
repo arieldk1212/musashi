@@ -1,7 +1,6 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include <memory>
 #include <string>
 
 #include "platform/window.h"

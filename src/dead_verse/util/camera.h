@@ -22,15 +22,15 @@ struct CameraDefaults {
 struct CameraSettings {
   bool first_mouse{true};
   float yaw{CameraDefaults::kYaw};
-  float pitch{CameraDefaults::kPitch};
   float zoom{CameraDefaults::kZoom};
+  float pitch{CameraDefaults::kPitch};
   float movement_speed{CameraDefaults::kSpeed};
   float mouse_sensitivity{CameraDefaults::kSensitivity};
 };
 
 struct CameraVectors {
   glm::vec3 right{};
-  glm::vec3 world_up{};
+  glm::vec3 world_up{0.0f, 1.0f, 0.0f};
   glm::vec3 up{glm::vec3(0.0f, 1.0f, 0.0f)};
   glm::vec3 front{glm::vec3(0.0f, 0.0f, -1.0f)};
 };
@@ -57,10 +57,10 @@ struct PrespectiveCamera : public Camera {
     Update();
   }
 
-  const glm::mat4& GetViewMatrix() override { return view_matrix; }
   [[nodiscard]] glm::mat4 CalculateNewViewMatrix() const {
     return glm::lookAt(position, position + vectors.front, vectors.up);
   }
+  const glm::mat4& GetViewMatrix() override { return view_matrix; }
   const glm::mat4& GetProjectionMatrix() override { return projection_matrix; }
   const glm::mat4& GetViewProjectionMatrix() override {
     return view_projection_matrix;
@@ -73,7 +73,6 @@ struct PrespectiveCamera : public Camera {
   glm::mat4 view_matrix;
   glm::mat4 projection_matrix;
   glm::mat4 view_projection_matrix;
-  // Camera::CameraSettings settings;
 };
 
 struct PrespectiveCameraController {
