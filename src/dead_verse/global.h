@@ -6,6 +6,7 @@
 namespace musashi {
 
 class Game;
+class World;
 class Logger;
 class Renderer;
 struct Platform;
@@ -25,6 +26,7 @@ struct Global {
   }
 
   Game* game;
+  World* world;
   Logger* logger;
   Platform* platform;
   Renderer* renderer;
@@ -35,6 +37,7 @@ struct Global {
 extern Global kGlobal;
 
 inline auto& kGame = kGlobal.game;
+inline auto& kWorld = kGlobal.world;
 inline auto& kLogger = kGlobal.logger;
 inline auto& kPlatform = kGlobal.platform;
 inline auto& kRenderer = kGlobal.renderer;

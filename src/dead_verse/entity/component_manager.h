@@ -210,7 +210,7 @@ class ComponentManager {
   }
 
   template <IsComponent T>
-  void AddComponent(EntityId id, T component) {
+  T& AddComponent(EntityId id, T component) {
     auto type_idx = static_cast<size_t>(T::Type());
 
     auto& component_pool =
@@ -221,6 +221,7 @@ class ComponentManager {
     auto mask = entity_masks_.Get(id);
     if (mask.has_value()) {
       mask.value()->set(type_idx);
+      return GetComponent<T>(id);
     }
   }
 
@@ -264,7 +265,7 @@ class ComponentManager {
   };
 
   void Init() {
-    RegisterComponent<InputComponent>();
+    RegisterComponent<TagInputComponent>();
     RegisterComponent<TransformComponent>();
     RegisterComponent<VelocityComponent>();
   }

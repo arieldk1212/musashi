@@ -15,7 +15,6 @@ struct GameSpecification {
 
 class Game {
  public:
-  Game();
   explicit Game(const GameSpecification& specs = GameSpecification());
   ~Game() noexcept;
 
@@ -23,7 +22,6 @@ class Game {
   void Run();
   void Stop() { running_ = false; }
   void Update(float ts = 0);
-  void CreateCubeEntity();
 
  private:
   Time time_;

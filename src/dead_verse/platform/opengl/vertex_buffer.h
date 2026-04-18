@@ -14,7 +14,6 @@ struct Vertex {
   // glm::vec2 uv;
 };
 
-// TODO: Add textures here via the constructor?
 class VertexBuffer {
  public:
   VertexBuffer() = default;
@@ -28,7 +27,6 @@ class VertexBuffer {
   void Destroy();
 
   static void Unbind();
-  // TODO: Abstract into layers, each instance can have different layer
   static void SetupLayout();
 
  private:

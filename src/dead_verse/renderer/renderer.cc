@@ -5,6 +5,7 @@
 
 #include "entity/component_manager.h"
 #include "entity/components.h"
+#include "platform/input.h"
 #include "platform/platform.h"
 #include "util/log.h"
 
@@ -24,25 +25,12 @@ void Renderer::Render() {
   Clear();
 
   auto& camera = kPlatform->camera;
-  auto& cube_component = kECManager->GetComponent<TransformComponent>("Cube");
-  auto& cube_input_component = kECManager->GetComponent<InputComponent>("Cube");
-  auto& cube_velocity_component =
-      kECManager->GetComponent<VelocityComponent>("Cube");
-
-  if (kPlatform->input_system.IsKeyPressed(cube_input_component.keys[0])) {
-    cube_component.position.x -= cube_velocity_component.velocity;
-  }
 
   auto projection = camera.camera.GetProjectionMatrix();
   auto view = camera.camera.GetViewMatrix();
   view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
-  auto model = glm::mat4(1.0f);
-  model = glm::scale(model, cube_component.scale);
-  model = glm::translate(model, cube_component.position);
-
-  auto mvp = projection * view * model;
-  Draw(ShaderName::kObjectShader, VertexName::kCube, mvp);
+  RenderTestEntity(projection * view);
 }
 
 void Renderer::ShutDown() {
@@ -89,6 +77,25 @@ void Renderer::AddShader(ShaderName shader_name,
                          const std::filesystem::path& fragment_path) {
   auto unique_shader = std::make_unique<Shader>(vertex_path, fragment_path);
   shaders_[shader_name] = std::move(unique_shader);
+}
+
+void Renderer::RenderTestEntity(const glm::mat4& pv) {
+  auto& cube_component = kECManager->GetComponent<TransformComponent>("Cube");
+  auto& cube_input_component =
+      kECManager->GetComponent<TagInputComponent>("Cube");
+  auto& cube_velocity_component =
+      kECManager->GetComponent<VelocityComponent>("Cube");
+
+  if (kPlatform->input_system.IsKeyPressed(KeyCode::kC)) {
+    cube_component.position.x -= cube_velocity_component.velocity;
+  }
+
+  auto model = glm::mat4(1.0f);
+  model = glm::scale(model, cube_component.scale);
+  model = glm::translate(model, cube_component.position);
+
+  auto mvp = pv * model;
+  Draw(ShaderName::kObjectShader, VertexName::kCube, mvp);
 }
 
 }  // namespace musashi

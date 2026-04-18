@@ -1,3 +1,5 @@
+#include "world.h"
+
 #include "dead_verse/entity/component_manager.h"
 #include "dead_verse/game.h"
 #include "dead_verse/global.h"
@@ -32,6 +34,9 @@ int main() {
 
   musashi::ComponentManager ec_manager;
   musashi::kGlobal.ec_manager = &ec_manager;
+
+  musashi::World world;
+  musashi::kGlobal.world = &world;
 
   // Main Logic
   musashi::kGlobal.logger->Trace("LOGGING INITIALIZED");

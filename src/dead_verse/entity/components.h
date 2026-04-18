@@ -38,13 +38,10 @@ concept IsComponent = HasComponentType<T> && HasComponentBase<T>;
 struct TransformComponent : public Component {
   glm::vec3 position{0.0f};
   glm::vec3 scale{0.0f};
-
   static ComponentType Type() { return ComponentType::kTransformComponent; }
 };
 
-struct InputComponent : public Component {
-  std::vector<KeyCode> keys;
-
+struct TagInputComponent : public Component {
   static ComponentType Type() { return ComponentType::kInputComponent; }
 };
 

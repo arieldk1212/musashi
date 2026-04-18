@@ -1,9 +1,6 @@
 #include "game.h"
 #include "global.h"
 
-#include "entity/component_manager.h"
-#include "entity/components.h"
-#include "platform/input.h"
 #include "platform/platform.h"
 #include "renderer/renderer.h"
 #include "util/log.h"
@@ -31,8 +28,6 @@ void Game::Init() {
 
 void Game::Run() {
   kRenderer->Init();
-
-  CreateCubeEntity();
 
   running_ = true;
 
@@ -66,23 +61,5 @@ void Game::Run() {
 }
 
 void Game::Update(float ts) {}
-
-void Game::CreateCubeEntity() {
-  auto cube_entity = kECManager->CreateEntity("Cube");
-
-  TransformComponent transform;
-  transform.position = glm::vec3(0.0f, 0.0f, -3.0f);
-  transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
-  kECManager->AddComponent<TransformComponent>(cube_entity.id,
-                                               std::move(transform));
-
-  kECManager->AddComponent<VelocityComponent>(cube_entity.id,
-                                              VelocityComponent{0.05f});
-
-  InputComponent input;
-  input.keys = {KeyCode::kC};
-
-  kECManager->AddComponent<InputComponent>(cube_entity.id, input);
-}
 
 };  // namespace musashi
