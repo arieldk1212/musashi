@@ -57,15 +57,19 @@ struct SparseSet : public SparseSetInterface {
     return std::nullopt;
   }
 
+  // NOTE: Create entity if null, Add Component to it.
   void Add(EntityId id, T value) {
     size_t idx = Chunk::GetChunkNumber(id);
+    // NOTE: If we reached entity max size..
+    // NOTE: Increase
     if (idx >= entities.size()) {
       entities.resize(idx + 1);
       entities[idx].fill(kNullEntity);
     }
     auto idx_chunk = Chunk::GetIndexInChunk(id);
 
-    // If already exists..
+    // NOTE: If entity already exists in this specific components map
+    // NOTE: Move component into its place
     if (entities[idx][idx_chunk] != kNullEntity) {
       dense[entities[idx][idx_chunk]] = std::move(value);
       dense_to_entity[entities[idx][idx_chunk]] = id;
@@ -80,6 +84,7 @@ struct SparseSet : public SparseSetInterface {
     dense_to_entity.push_back(id);
   }
 
+  // NOTE: Delete component, pops entity
   void Delete(EntityId id) override {
     auto idx = Chunk::GetChunkNumber(id);
     auto idx_chunk = Chunk::GetIndexInChunk(id);
@@ -117,9 +122,9 @@ struct SparseSet : public SparseSetInterface {
   const std::vector<T>& DenseData() { return dense; }
   const std::vector<DenseIdx>& DenseToEntityData() { return dense_to_entity; }
 
-  std::vector<T> dense;                   // Dense
-  std::vector<SparseChunk> entities;      // Sparse
-  std::vector<DenseIdx> dense_to_entity;  // Dense To Entity Id
+  std::vector<T> dense;                   // Dense (Components)
+  std::vector<SparseChunk> entities;      // Sparse (Entities)
+  std::vector<DenseIdx> dense_to_entity;  // Components - > Entity Id
 };
 
 class ComponentManager {
@@ -131,11 +136,12 @@ class ComponentManager {
     Init();
   }
 
-  Entity CreateEntity(std::string entity_name = "Entity") {
+  Entity CreateEntity(const std::string& entity_name = "Entity") {
     auto id = ComponentRegistry::GenerateEntityId();
     if (id.has_value()) {
       entity_masks_.Add(id.value(), ComponentMask{});
-      return Entity{id.value(), std::move(entity_name)};
+      entities_[entity_name] = id.value();
+      return Entity{id.value(), entity_name};
     }
     kLogger->Error("Reached Entity Capacity! Quitting..");
     assert(false);
@@ -146,16 +152,18 @@ class ComponentManager {
 
     if (mask.has_value()) {
       for (int i = 0; i < kNumberOfComponents; ++i) {
+        // NOTE: Delete all components associated
         if (mask.value()[i] == 1) {
           component_pool_[i]->Delete(entity.id);
         }
       }
     }
+
     entity_masks_.Delete(entity.id);
+    entities_.erase(entity.name);
     entity.Destroy();
 
-    std::string log{"Entity Deleted: " + entity.name};
-    kLogger->Trace(log);
+    kLogger->Trace("Entity Deleted: " + entity.name);
   }
 
   template <IsComponent T>
@@ -175,6 +183,23 @@ class ComponentManager {
         *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
 
     auto component = component_pool.Get(id);
+
+    if (!component.has_value()) {
+      kLogger->Error("Entity Does Not Have This Component!");
+      assert(false);
+    }
+
+    return *component.value();
+  }
+
+  template <IsComponent T>
+  T& GetComponent(const std::string& name) {
+    auto type_idx = static_cast<size_t>(T::Type());
+
+    auto& component_pool =
+        *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
+
+    auto component = component_pool.Get(entities_[name]);
 
     if (!component.has_value()) {
       kLogger->Error("Entity Does Not Have This Component!");
@@ -220,6 +245,7 @@ class ComponentManager {
   }
 
   void Clear() {
+    entities_.clear();
     entity_masks_.Clear();
     component_pool_.clear();
   }
@@ -240,10 +266,11 @@ class ComponentManager {
   void Init() {
     RegisterComponent<InputComponent>();
     RegisterComponent<TransformComponent>();
-    RegisterComponent<PositionComponent>();
+    RegisterComponent<VelocityComponent>();
   }
 
   SparseSet<ComponentMask> entity_masks_;
+  std::unordered_map<std::string, EntityId> entities_;
   std::vector<std::unique_ptr<SparseSetInterface>> component_pool_;
 };
 

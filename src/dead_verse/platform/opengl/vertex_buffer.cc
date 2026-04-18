@@ -29,7 +29,7 @@ void VertexBuffer::Init(const std::vector<Vertex>& vertices,
                  indices.data(), GL_STATIC_DRAW);
   }
 
-  SetupVertexAttributes();
+  SetupLayout();
 }
 
 void VertexBuffer::Bind() const {
@@ -59,7 +59,7 @@ void VertexBuffer::Unbind() {
   glBindVertexArray(0);
 }
 
-void VertexBuffer::SetupVertexAttributes() {
+void VertexBuffer::SetupLayout() {
   auto stride = sizeof(Vertex);
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride,

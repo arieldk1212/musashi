@@ -14,10 +14,11 @@ static inline constexpr EntityId kNullEntity =
 
 struct Entity {
   explicit Entity(EntityId id, std::string entity_name)
-      : name(std::move(entity_name)),
-        id(id) {}
+      : id(id),
+        name(std::move(entity_name)) {}
 
   void Destroy() { id = kNullEntity; }
+  [[nodiscard]] bool IsDestroyed() const { return id == kNullEntity; }
 
   EntityId id;
   std::string name;

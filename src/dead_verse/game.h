@@ -23,7 +23,7 @@ class Game {
   void Run();
   void Stop() { running_ = false; }
   void Update(float ts = 0);
-  void TestEntity();
+  void CreateCubeEntity();
 
  private:
   Time time_;

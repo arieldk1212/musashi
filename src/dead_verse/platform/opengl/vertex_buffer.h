@@ -28,7 +28,8 @@ class VertexBuffer {
   void Destroy();
 
   static void Unbind();
-  static void SetupVertexAttributes();
+  // TODO: Abstract into layers, each instance can have different layer
+  static void SetupLayout();
 
  private:
   uint32_t vao_{0};

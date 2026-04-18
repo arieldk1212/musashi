@@ -3,9 +3,10 @@
 
 #include <glad/glad.h>
 
+#include "entity/component_manager.h"
+#include "entity/components.h"
 #include "platform/platform.h"
 #include "util/log.h"
-#include "util/time.h"
 
 namespace musashi {
 
@@ -16,20 +17,29 @@ void Renderer::Init() {
   kLogger->Trace("RENDERER & SHADERS INITIALIZED");
   UseShader(ShaderName::kObjectShader);
 
-  CreateCube();
+  InitCubeMesh();
 }
 
 void Renderer::Render() {
   Clear();
 
   auto& camera = kPlatform->camera;
+  auto& cube_component = kECManager->GetComponent<TransformComponent>("Cube");
+  auto& cube_input_component = kECManager->GetComponent<InputComponent>("Cube");
+  auto& cube_velocity_component =
+      kECManager->GetComponent<VelocityComponent>("Cube");
+
+  if (kPlatform->input_system.IsKeyPressed(cube_input_component.keys[0])) {
+    cube_component.position.x -= cube_velocity_component.velocity;
+  }
+
   auto projection = camera.camera.GetProjectionMatrix();
   auto view = camera.camera.GetViewMatrix();
-  auto model = glm::mat4(1.0f);
-
-  model = glm::rotate(model, Time::GetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
-  model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
   view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+  auto model = glm::mat4(1.0f);
+  model = glm::scale(model, cube_component.scale);
+  model = glm::translate(model, cube_component.position);
 
   auto mvp = projection * view * model;
   Draw(ShaderName::kObjectShader, VertexName::kCube, mvp);
@@ -56,32 +66,14 @@ void Renderer::Draw(ShaderName shader_name, VertexName name,
   vertex_buffers_[name]->Draw();
 }
 
-void Renderer::CreateCube() {
-  std::vector<Vertex> data = {
-      // Front face
-      {{-0.5f, -0.5f, 0.5f}},  // 0: Bottom Left
-      {{0.5f, -0.5f, 0.5f}},   // 1: Bottom Right
-      {{0.5f, 0.5f, 0.5f}},    // 2: Top Right
-      {{-0.5f, 0.5f, 0.5f}},   // 3: Top Left
-
-      // Back face
-      {{-0.5f, -0.5f, -0.5f}},  // 4: Bottom Left
-      {{0.5f, -0.5f, -0.5f}},   // 5: Bottom Right
-      {{0.5f, 0.5f, -0.5f}},    // 6: Top Right
-      {{-0.5f, 0.5f, -0.5f}}    // 7: Top Left
-  };
-  std::vector<uint32_t> indices = {// Front
-                                   0, 1, 2, 2, 3, 0,
-                                   // Right
-                                   1, 5, 6, 6, 2, 1,
-                                   // Back
-                                   5, 4, 7, 7, 6, 5,
-                                   // Left
-                                   4, 0, 3, 3, 7, 4,
-                                   // Top
-                                   3, 2, 6, 6, 7, 3,
-                                   // Bottom
-                                   4, 5, 1, 1, 0, 4};
+void Renderer::InitCubeMesh() {
+  std::vector<Vertex> data = {{{-0.5f, -0.5f, 0.5f}},  {{0.5f, -0.5f, 0.5f}},
+                              {{0.5f, 0.5f, 0.5f}},    {{-0.5f, 0.5f, 0.5f}},
+                              {{-0.5f, -0.5f, -0.5f}}, {{0.5f, -0.5f, -0.5f}},
+                              {{0.5f, 0.5f, -0.5f}},   {{-0.5f, 0.5f, -0.5f}}};
+  std::vector<uint32_t> indices = {0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1,
+                                   5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4,
+                                   3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4};
 
   auto cube = std::make_unique<VertexBuffer>();
   cube->Init(data, indices);
