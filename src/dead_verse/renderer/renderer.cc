@@ -27,7 +27,6 @@ void Renderer::Render() {
 
   auto projection = camera.camera.GetProjectionMatrix();
   auto view = camera.camera.GetViewMatrix();
-  // view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
   RenderQuad("Quad3D", projection * view);
   RenderQuad("Quad2D", projection * view);
@@ -38,15 +37,6 @@ void Renderer::Render() {
 void Renderer::RenderQuad(const std::string& quad_entity, const glm::mat4& pv) {
   auto& cube_transform_component =
       kECManager->GetComponent<TransformComponent>(quad_entity);
-  // auto& cube_input_component =
-  //     kECManager->GetComponent<TagInputComponent>(quad_entity);
-  // auto& cube_velocity_component =
-  //     kECManager->GetComponent<VelocityComponent>(quad_entity);
-
-  // if (kPlatform->input_system.IsKeyPressed(KeyCode::kC)) {
-  //   cube_transform_component.position.x -=
-  //       cube_velocity_component.velocity;  // * delta_time
-  // }
 
   auto model = glm::mat4(1.0f);
   model = glm::scale(model, cube_transform_component.scale);

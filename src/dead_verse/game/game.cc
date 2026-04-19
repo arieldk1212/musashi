@@ -1,4 +1,5 @@
 #include "game.h"
+#include "game_state.h"
 #include "global.h"
 
 #include "platform/platform.h"
@@ -60,6 +61,17 @@ void Game::Run() {
   }
 }
 
-void Game::Update(float ts) {}
+void Game::Update(float ts) {
+  // TODO: Play with states here.
+  // auto& cube_input_component =
+  //     kECManager->GetComponent<TagInputComponent>(quad_entity);
+  // auto& cube_velocity_component =
+  //     kECManager->GetComponent<VelocityComponent>(quad_entity);
+
+  // if (kPlatform->input_system.IsKeyPressed(KeyCode::kC)) {
+  //   cube_transform_component.position.x -=
+  //       cube_velocity_component.velocity;  // * delta_time
+  // }
+}
 
 };  // namespace musashi

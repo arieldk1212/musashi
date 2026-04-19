@@ -5,6 +5,7 @@
 
 namespace musashi {
 
+// INFO: Responsible for entity creation and more general game world stuff
 class World {
  public:
   World();

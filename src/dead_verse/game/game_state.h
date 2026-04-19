@@ -5,12 +5,7 @@
 
 namespace musashi {
 
-enum class States : uint8_t {
-  kMenuState,
-  kGameState,
-  kObjectState,
-  kCameraState
-};
+enum class States : uint8_t { kMenuState, kGameActiveState, kGameEndState };
 
 class State {
  public:
@@ -29,7 +24,7 @@ class GameState : public State {
   [[nodiscard]] States GetState() const override { return current_state_; }
 
  private:
-  States current_state_{States::kGameState};
+  States current_state_{States::kGameActiveState};
 };
 
 }  // namespace musashi

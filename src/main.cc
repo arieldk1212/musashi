@@ -1,11 +1,10 @@
-#include "world.h"
-
 #include "dead_verse/entity/component_manager.h"
-#include "dead_verse/game.h"
+#include "dead_verse/game/game.h"
+#include "dead_verse/game/game_state.h"
+#include "dead_verse/game/world.h"
 #include "dead_verse/global.h"
 #include "dead_verse/platform/platform.h"
 #include "dead_verse/renderer/renderer.h"
-#include "dead_verse/states/game_state.h"
 #include "dead_verse/util/log.h"
 
 musashi::Global musashi::kGlobal;

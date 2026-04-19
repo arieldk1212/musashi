@@ -55,7 +55,6 @@ void PrespectiveCameraController::Init() {
 
 void PrespectiveCameraController::Update(float delta_time) {
   auto& input_system = kPlatform->input_system;
-  kLogger->Debug("Time -> " + std::to_string(delta_time));
 
   if (input_system.IsKeyPressed(KeyCode::kW)) {
     CameraProcessKeyboard(CameraMovement::kForward, delta_time);

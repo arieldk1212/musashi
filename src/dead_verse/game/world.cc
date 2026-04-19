@@ -12,8 +12,8 @@ World::World() {
 }
 
 void World::Init() {
-  InitQuad3D("Quad3D");
   InitQuad("Quad2D");
+  InitQuad3D("Quad3D");
 }
 
 void World::InitQuad(const std::string& name) {
@@ -21,7 +21,7 @@ void World::InitQuad(const std::string& name) {
 
   auto& transform = kECManager->AddComponent<TransformComponent>(
       quad_entity.id, TransformComponent{});
-  transform.position = glm::vec3(0.0f, 0.0f, -3.0f);
+  transform.position = glm::vec3(0.0f, 0.0f, 8.0f);
   transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
 
   kECManager->AddComponent<VelocityComponent>(quad_entity.id,
@@ -41,7 +41,7 @@ void World::InitQuad3D(const std::string& name) {
 
   auto& transform = kECManager->AddComponent<TransformComponent>(
       quad_entity.id, TransformComponent{});
-  transform.position = glm::vec3(0.0f, 0.0f, -10.0f);
+  transform.position = glm::vec3(0.0f, 0.0f, 10.0f);
   transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
 
   kECManager->AddComponent<VelocityComponent>(quad_entity.id,

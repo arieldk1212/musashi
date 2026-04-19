@@ -5,6 +5,7 @@
 #include <glm/vec3.hpp>
 
 #include "renderer/mesh.h"
+#include "renderer/sprite.h"
 
 namespace musashi {
 
@@ -41,6 +42,7 @@ concept IsComponent = HasComponentType<T> && HasComponentBase<T>;
 struct TransformComponent : public Component {
   glm::vec3 position{0.0f};
   glm::vec3 scale{0.0f};
+
   static ComponentType Type() { return ComponentType::kTransformComponent; }
 };
 
@@ -74,6 +76,8 @@ struct TextureComponent : public Component {
 };
 
 struct SpriteComponent : public Component {
+  std::shared_ptr<Sprite> sprite;
+
   static ComponentType Type() { return ComponentType::kSpriteComponent; };
 };
 
