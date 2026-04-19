@@ -4,12 +4,12 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
-#include "platform/input.h"
+#include "renderer/mesh.h"
 
 namespace musashi {
 
 // Number of unique component type.
-static inline constexpr int kNumberOfComponents{6};
+static inline constexpr int kNumberOfComponents{9};
 
 enum class ComponentType : uint8_t {
   kTransformComponent = 0,
@@ -18,6 +18,9 @@ enum class ComponentType : uint8_t {
   kCollisionComponent = 3,
   kHealthComponent = 4,
   kCombatComponent = 5,
+  kTextureComponent = 6,
+  kSpriteComponent = 7,
+  kQuadComponent = 8,
 };
 
 struct Component {
@@ -66,7 +69,22 @@ struct CombatComponent : public Component {
   static ComponentType Type() { return ComponentType::kCombatComponent; }
 };
 
-struct TextureComponent {};
+struct TextureComponent : public Component {
+  static ComponentType Type() { return ComponentType::kTextureComponent; };
+};
+
+struct SpriteComponent : public Component {
+  static ComponentType Type() { return ComponentType::kSpriteComponent; };
+};
+
+struct QuadComponent : public Component {
+  glm::vec3 position;
+  glm::vec3 scale;
+  glm::vec3 color;
+  std::unique_ptr<Mesh> mesh{nullptr};
+
+  static ComponentType Type() { return ComponentType::kQuadComponent; };
+};
 
 }  // namespace musashi
 

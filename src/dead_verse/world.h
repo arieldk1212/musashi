@@ -9,16 +9,15 @@ class World {
  public:
   World();
 
-  void Init();
   void Update(float ts);
 
   void SpawnPlayer();
   void SpawnZombie();
 
-  static void InitTestEntity(const std::string& name);
-
- private:
-  void InitBasicEntities();
+  // Entity related
+  static void Init();
+  static void InitQuad(const std::string& name);
+  static void InitQuad3D(const std::string& name);
 };
 
 }  // namespace musashi

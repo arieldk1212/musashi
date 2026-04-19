@@ -3,25 +3,57 @@
 
 #include "entity/component_manager.h"
 #include "entity/components.h"
+#include "renderer/mesh.h"
 
 namespace musashi {
 
 World::World() {
-  InitTestEntity("Cube");
+  Init();
 }
 
-void World::InitTestEntity(const std::string& name) {
-  auto cube_entity = kECManager->CreateEntity(name);
+void World::Init() {
+  InitQuad3D("Quad3D");
+  InitQuad("Quad2D");
+}
+
+void World::InitQuad(const std::string& name) {
+  auto quad_entity = kECManager->CreateEntity(name);
 
   auto& transform = kECManager->AddComponent<TransformComponent>(
-      cube_entity.id, TransformComponent{});
+      quad_entity.id, TransformComponent{});
   transform.position = glm::vec3(0.0f, 0.0f, -3.0f);
   transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
 
-  kECManager->AddComponent<VelocityComponent>(cube_entity.id,
+  kECManager->AddComponent<VelocityComponent>(quad_entity.id,
                                               VelocityComponent{0.05f});
-  kECManager->AddComponent<TagInputComponent>(cube_entity.id,
+  kECManager->AddComponent<TagInputComponent>(quad_entity.id,
                                               TagInputComponent{});
+
+  auto& quad =
+      kECManager->AddComponent<QuadComponent>(quad_entity.id, QuadComponent{});
+  quad.position = transform.position;
+  quad.scale = transform.scale;
+  quad.mesh = std::make_unique<Mesh>(Quad2D::data, Quad2D::indices);
+}
+
+void World::InitQuad3D(const std::string& name) {
+  auto quad_entity = kECManager->CreateEntity(name);
+
+  auto& transform = kECManager->AddComponent<TransformComponent>(
+      quad_entity.id, TransformComponent{});
+  transform.position = glm::vec3(0.0f, 0.0f, -10.0f);
+  transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
+
+  kECManager->AddComponent<VelocityComponent>(quad_entity.id,
+                                              VelocityComponent{0.05f});
+  kECManager->AddComponent<TagInputComponent>(quad_entity.id,
+                                              TagInputComponent{});
+
+  auto& quad =
+      kECManager->AddComponent<QuadComponent>(quad_entity.id, QuadComponent{});
+  quad.position = transform.position;
+  quad.scale = transform.scale;
+  quad.mesh = std::make_unique<Mesh>(Quad3D::data, Quad3D::indices);
 }
 
 }  // namespace musashi

@@ -16,7 +16,7 @@ struct CameraDefaults {
   static constexpr float kZoom{45.0f};
   static constexpr float kSpeed{2.5f};
   static constexpr float kSensitivity{0.1f};
-  static constexpr float kCameraZStart{0.4f};
+  static constexpr float kCameraZStart{15.0f};
 };
 
 struct CameraSettings {

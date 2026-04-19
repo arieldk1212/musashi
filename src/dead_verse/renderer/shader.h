@@ -8,6 +8,8 @@
 
 namespace musashi {
 
+enum class ShaderName : uint8_t { kObjectShader };
+
 class Shader {
  public:
   Shader(const std::filesystem::path& vertex_path,

@@ -76,7 +76,7 @@ struct SparseSet : public SparseSetInterface {
       return;
     }
 
-    dense.push_back(value);
+    dense.emplace_back(std::move(value));
 
     auto dense_last_idx = dense.size() - 1;
     entities[idx][idx_chunk] = dense_last_idx;
@@ -221,8 +221,8 @@ class ComponentManager {
     auto mask = entity_masks_.Get(id);
     if (mask.has_value()) {
       mask.value()->set(type_idx);
-      return GetComponent<T>(id);
     }
+    return GetComponent<T>(id);
   }
 
   template <IsComponent T>
@@ -265,9 +265,15 @@ class ComponentManager {
   };
 
   void Init() {
-    RegisterComponent<TagInputComponent>();
     RegisterComponent<TransformComponent>();
+    RegisterComponent<TagInputComponent>();
     RegisterComponent<VelocityComponent>();
+    RegisterComponent<CollisionComponent>();
+    RegisterComponent<HealthComponent>();
+    RegisterComponent<CombatComponent>();
+    RegisterComponent<TextureComponent>();
+    RegisterComponent<SpriteComponent>();
+    RegisterComponent<QuadComponent>();
   }
 
   SparseSet<ComponentMask> entity_masks_;

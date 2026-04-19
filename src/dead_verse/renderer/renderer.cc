@@ -13,12 +13,11 @@ namespace musashi {
 
 void Renderer::Init() {
   glEnable(GL_DEPTH_TEST);
+
   AddShader(ShaderName::kObjectShader, "assets/shaders/object/vert.glsl",
             "assets/shaders/object/frag.glsl");
-  kLogger->Trace("RENDERER & SHADERS INITIALIZED");
   UseShader(ShaderName::kObjectShader);
-
-  InitCubeMesh();
+  kLogger->Trace("RENDERER & SHADERS INITIALIZED");
 }
 
 void Renderer::Render() {
@@ -28,44 +27,51 @@ void Renderer::Render() {
 
   auto projection = camera.camera.GetProjectionMatrix();
   auto view = camera.camera.GetViewMatrix();
-  view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+  // view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
-  RenderTestEntity(projection * view);
+  RenderQuad("Quad3D", projection * view);
+  RenderQuad("Quad2D", projection * view);
 }
 
-void Renderer::ShutDown() {
-  for (auto& [_, shader] : shaders_) {
-    shader->DeleteProgram();
-  }
+// TODO: Create a view that can iterate thru all the entities with quad
+// components instead of giving it names
+void Renderer::RenderQuad(const std::string& quad_entity, const glm::mat4& pv) {
+  auto& cube_transform_component =
+      kECManager->GetComponent<TransformComponent>(quad_entity);
+  // auto& cube_input_component =
+  //     kECManager->GetComponent<TagInputComponent>(quad_entity);
+  // auto& cube_velocity_component =
+  //     kECManager->GetComponent<VelocityComponent>(quad_entity);
+
+  // if (kPlatform->input_system.IsKeyPressed(KeyCode::kC)) {
+  //   cube_transform_component.position.x -=
+  //       cube_velocity_component.velocity;  // * delta_time
+  // }
+
+  auto model = glm::mat4(1.0f);
+  model = glm::scale(model, cube_transform_component.scale);
+  model = glm::translate(model, cube_transform_component.position);
+
+  auto mvp = pv * model;
+  Draw(ShaderName::kObjectShader, quad_entity, mvp);
 }
 
-void Renderer::Clear() {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void Renderer::Draw(ShaderName shader_name, VertexName name,
+void Renderer::Draw(ShaderName shader_name, const std::string& quad_entity,
                     const glm::mat4& mvp) {
   auto& shader = shaders_[shader_name];
 
   shader->Use();
   shader->SetMat4("uMVP", mvp);
 
-  vertex_buffers_[name]->Bind();
-  vertex_buffers_[name]->Draw();
+  auto& quad = kECManager->GetComponent<QuadComponent>(quad_entity);
+  quad.mesh->vertex.Bind();
+  quad.mesh->vertex.Draw();
 }
 
-void Renderer::InitCubeMesh() {
-  std::vector<Vertex> data = {{{-0.5f, -0.5f, 0.5f}},  {{0.5f, -0.5f, 0.5f}},
-                              {{0.5f, 0.5f, 0.5f}},    {{-0.5f, 0.5f, 0.5f}},
-                              {{-0.5f, -0.5f, -0.5f}}, {{0.5f, -0.5f, -0.5f}},
-                              {{0.5f, 0.5f, -0.5f}},   {{-0.5f, 0.5f, -0.5f}}};
-  std::vector<uint32_t> indices = {0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1,
-                                   5, 4, 7, 7, 6, 5, 4, 0, 3, 3, 7, 4,
-                                   3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4};
-
-  auto cube = std::make_unique<VertexBuffer>();
-  cube->Init(data, indices);
-  vertex_buffers_[VertexName::kCube] = std::move(cube);
+void Renderer::ShutDown() {
+  for (auto& [_, shader] : shaders_) {
+    shader->DeleteProgram();
+  }
 }
 
 void Renderer::UseShader(ShaderName shader_name) {
@@ -79,23 +85,8 @@ void Renderer::AddShader(ShaderName shader_name,
   shaders_[shader_name] = std::move(unique_shader);
 }
 
-void Renderer::RenderTestEntity(const glm::mat4& pv) {
-  auto& cube_component = kECManager->GetComponent<TransformComponent>("Cube");
-  auto& cube_input_component =
-      kECManager->GetComponent<TagInputComponent>("Cube");
-  auto& cube_velocity_component =
-      kECManager->GetComponent<VelocityComponent>("Cube");
-
-  if (kPlatform->input_system.IsKeyPressed(KeyCode::kC)) {
-    cube_component.position.x -= cube_velocity_component.velocity;
-  }
-
-  auto model = glm::mat4(1.0f);
-  model = glm::scale(model, cube_component.scale);
-  model = glm::translate(model, cube_component.position);
-
-  auto mvp = pv * model;
-  Draw(ShaderName::kObjectShader, VertexName::kCube, mvp);
+void Renderer::Clear() {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 }  // namespace musashi

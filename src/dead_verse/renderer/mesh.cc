@@ -1,15 +1,15 @@
-#include "vertex_buffer.h"
+#include "mesh.h"
 
 #include <glad/glad.h>
 
 namespace musashi {
 
-VertexBuffer::~VertexBuffer() {
+VertexData::~VertexData() {
   Destroy();
 }
 
-void VertexBuffer::Init(const std::vector<Vertex>& vertices,
-                        const std::vector<uint32_t>& indices) {
+void VertexData::Init(const std::vector<Vertex>& vertices,
+                      const std::vector<uint32_t>& indices) {
   vertices_count_ = static_cast<uint32_t>(vertices.size());
 
   glGenVertexArrays(1, &vao_);
@@ -32,11 +32,11 @@ void VertexBuffer::Init(const std::vector<Vertex>& vertices,
   SetupLayout();
 }
 
-void VertexBuffer::Bind() const {
+void VertexData::Bind() const {
   glBindVertexArray(vao_);
 }
 
-void VertexBuffer::Draw() const {
+void VertexData::Draw() const {
   if (index_count_ > 0) {
     glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, 0);
     return;
@@ -48,18 +48,18 @@ void VertexBuffer::Draw() const {
   }
 }
 
-void VertexBuffer::Destroy() {
+void VertexData::Destroy() {
   glDeleteVertexArrays(1, &vao_);
   glDeleteBuffers(1, &vbo_);
   glDeleteBuffers(1, &ibo_);
   vao_ = vbo_ = ibo_ = 0;
 }
 
-void VertexBuffer::Unbind() {
+void VertexData::Unbind() {
   glBindVertexArray(0);
 }
 
-void VertexBuffer::SetupLayout() {
+void VertexData::SetupLayout() {
   auto stride = sizeof(Vertex);
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride,
