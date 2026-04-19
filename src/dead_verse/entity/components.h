@@ -76,7 +76,7 @@ struct TextureComponent : public Component {
 };
 
 struct SpriteComponent : public Component {
-  std::shared_ptr<Sprite> sprite;
+  Sprite sprite;
 
   static ComponentType Type() { return ComponentType::kSpriteComponent; };
 };

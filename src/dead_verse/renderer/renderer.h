@@ -13,9 +13,9 @@ class Renderer {
 
   void Init();
   void Render();
-  void RenderQuad(const std::string& quad_entity, const glm::mat4& pv);
-  void Draw(ShaderName shader_name, const std::string& quad_entity,
-            const glm::mat4& mvp);
+  void RenderQuad(ShaderName shader_name, const std::string& quad_entity,
+                  const glm::mat4& pv);
+  void Draw(const std::string& quad_entity);
   void ShutDown();
 
   void AddShader(ShaderName shader_name,

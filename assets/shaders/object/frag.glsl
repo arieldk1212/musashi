@@ -1,15 +1,12 @@
 #version 330 core
 
 in vec3 FragPos;
-// in vec3 vNormal;
-// in vec2 vUv;
+in vec2 vUv;
 
-out vec4 FragColor;
+out vec4 Frag;
 
-uniform sampler2D tex_a;
+uniform sampler2D Zombie;
 
 void main() {
-    // Frag = texture(tex_a, vUv);
-    // Frag = FragPos;
-    FragColor = vec4(0.5, 0.5, 0.5, 1.0);
+    Frag = texture(Zombie, vUv);
 }

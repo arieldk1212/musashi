@@ -8,8 +8,8 @@
 
 namespace musashi {
 
-Texture::Texture(const std::filesystem::path& texture_path, bool flip) {
-  stbi_set_flip_vertically_on_load(flip);  // if it is flipped
+Texture::Texture(const std::filesystem::path& path) {
+  stbi_set_flip_vertically_on_load(1);
 
   glGenTextures(1, &id);
   glBindTexture(GL_TEXTURE_2D, id);
@@ -20,16 +20,18 @@ Texture::Texture(const std::filesystem::path& texture_path, bool flip) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   unsigned char* data =
-      stbi_load(texture_path.c_str(), &width, &height, &nr_channels, 0);
+      stbi_load(path.c_str(), &width, &height, &nr_channels, 0);
 
   if (data != nullptr) {
-    if (texture_path.extension() == ".png") {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-                   GL_UNSIGNED_BYTE, data);
-    } else {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                   GL_UNSIGNED_BYTE, data);
+    GLint format = GL_RGB;
+    if (nr_channels == 4) {
+      format = GL_RGBA;
+    } else if (nr_channels == 1) {
+      format = GL_RED;
     }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
   } else {
     kGlobal.logger->Error("Failed to load texture");
@@ -37,7 +39,20 @@ Texture::Texture(const std::filesystem::path& texture_path, bool flip) {
 
   stbi_image_free(data);
 
-  kGlobal.logger->Trace("Added Texture Successfully");
+  kGlobal.logger->Trace("ADDED TEXTURE: " + std::to_string(id));
+}
+
+Texture::~Texture() {
+  glDeleteTextures(1, &id);
+}
+
+void Texture::Bind(uint32_t slot) const {
+  glActiveTexture(GL_TEXTURE0 + slot);
+  glBindTexture(GL_TEXTURE_2D, id);
+}
+
+void Texture::Unbind() {
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 }  // namespace musashi

@@ -5,7 +5,6 @@
 
 #include "entity/component_manager.h"
 #include "entity/components.h"
-#include "platform/input.h"
 #include "platform/platform.h"
 #include "util/log.h"
 
@@ -28,13 +27,14 @@ void Renderer::Render() {
   auto projection = camera.camera.GetProjectionMatrix();
   auto view = camera.camera.GetViewMatrix();
 
-  RenderQuad("Quad3D", projection * view);
-  RenderQuad("Quad2D", projection * view);
+  RenderQuad(ShaderName::kObjectShader, "Quad3D", projection * view);
+  RenderQuad(ShaderName::kObjectShader, "Quad2D", projection * view);
 }
 
 // TODO: Create a view that can iterate thru all the entities with quad
 // components instead of giving it names
-void Renderer::RenderQuad(const std::string& quad_entity, const glm::mat4& pv) {
+void Renderer::RenderQuad(ShaderName shader_name,
+                          const std::string& quad_entity, const glm::mat4& pv) {
   auto& cube_transform_component =
       kECManager->GetComponent<TransformComponent>(quad_entity);
 
@@ -43,16 +43,20 @@ void Renderer::RenderQuad(const std::string& quad_entity, const glm::mat4& pv) {
   model = glm::translate(model, cube_transform_component.position);
 
   auto mvp = pv * model;
-  Draw(ShaderName::kObjectShader, quad_entity, mvp);
-}
 
-void Renderer::Draw(ShaderName shader_name, const std::string& quad_entity,
-                    const glm::mat4& mvp) {
   auto& shader = shaders_[shader_name];
 
   shader->Use();
   shader->SetMat4("uMVP", mvp);
 
+  auto& sprite = kECManager->GetComponent<SpriteComponent>(quad_entity);
+  shader->SetInt(sprite.sprite.name, sprite.sprite.slot);
+  sprite.sprite.source->Bind(sprite.sprite.slot);
+
+  Draw(quad_entity);
+}
+
+void Renderer::Draw(const std::string& quad_entity) {
   auto& quad = kECManager->GetComponent<QuadComponent>(quad_entity);
   quad.mesh->vertex.Bind();
   quad.mesh->vertex.Draw();

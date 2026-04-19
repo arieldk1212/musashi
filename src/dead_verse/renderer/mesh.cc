@@ -66,13 +66,9 @@ void VertexData::SetupLayout() {
                         (void*)offsetof(Vertex, pos));
   glEnableVertexAttribArray(0);
 
-  // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride,
-  //                       (void*)offsetof(Vertex, normal));
-  // glEnableVertexAttribArray(1);
-
-  // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride,
-  //                       (void*)offsetof(Vertex, uv));
-  // glEnableVertexAttribArray(2);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride,
+                        (void*)offsetof(Vertex, uv));
+  glEnableVertexAttribArray(1);
 
   glBindVertexArray(0);
 }

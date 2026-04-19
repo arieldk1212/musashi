@@ -26,8 +26,16 @@ void World::InitQuad(const std::string& name) {
 
   kECManager->AddComponent<VelocityComponent>(quad_entity.id,
                                               VelocityComponent{0.05f});
+
   kECManager->AddComponent<TagInputComponent>(quad_entity.id,
                                               TagInputComponent{});
+
+  std::filesystem::path sprite_path{"assets/sprites/Zombie_1/Idle.png"};
+  auto& sprite = kECManager->AddComponent<SpriteComponent>(quad_entity.id,
+                                                           SpriteComponent{});
+  sprite.sprite.source = std::make_shared<Texture>(sprite_path);
+  sprite.sprite.slot = 0;
+  sprite.sprite.name = "Zombie";
 
   auto& quad =
       kECManager->AddComponent<QuadComponent>(quad_entity.id, QuadComponent{});
@@ -46,8 +54,16 @@ void World::InitQuad3D(const std::string& name) {
 
   kECManager->AddComponent<VelocityComponent>(quad_entity.id,
                                               VelocityComponent{0.05f});
+
   kECManager->AddComponent<TagInputComponent>(quad_entity.id,
                                               TagInputComponent{});
+
+  std::filesystem::path sprite_path{"assets/textures/awesomeface.png"};
+  auto& sprite = kECManager->AddComponent<SpriteComponent>(quad_entity.id,
+                                                           SpriteComponent{});
+  sprite.sprite.source = std::make_shared<Texture>(sprite_path);
+  sprite.sprite.slot = 0;
+  sprite.sprite.name = "Zombie";
 
   auto& quad =
       kECManager->AddComponent<QuadComponent>(quad_entity.id, QuadComponent{});

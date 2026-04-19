@@ -10,8 +10,7 @@ namespace musashi {
 
 struct Vertex {
   glm::vec3 pos;
-  // glm::vec3 normal;
-  // glm::vec2 uv;
+  glm::vec2 uv;
 };
 
 class VertexData {
@@ -50,18 +49,31 @@ struct Mesh {
 };
 
 struct Quad2D {
-  inline static std::vector<Vertex> data = {{{0.5f, 0.5f, 0.0f}},
-                                            {{0.5f, -0.5f, 0.0f}},
-                                            {{-0.5f, -0.5f, 0.0f}},
-                                            {{-0.5f, 0.5f, 0.0f}}};
+  inline static std::vector<Vertex> data = {
+      {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f}},
+      {{0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
+      {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}},
+      {{-0.5f, 0.5f, 0.0f}, {0.0f, 1.0f}}};
+
   inline static std::vector<uint32_t> indices = {0, 1, 3, 1, 2, 3};
 };
 
 struct Quad3D {
   inline static std::vector<Vertex> data = {
-      {{-0.5f, -0.5f, 0.5f}}, {{0.5f, -0.5f, 0.5f}},   {{0.5f, 0.5f, 0.5f}},
-      {{-0.5f, 0.5f, 0.5f}},  {{-0.5f, -0.5f, -0.5f}}, {{0.5f, -0.5f, -0.5f}},
-      {{0.5f, 0.5f, -0.5f}},  {{-0.5f, 0.5f, -0.5f}}};
+      // NOTE: Without UVs
+      // {{-0.5f, -0.5f, 0.5f}}, {{0.5f, -0.5f, 0.5f}},   {{0.5f, 0.5f, 0.5f}},
+      // {{-0.5f, 0.5f, 0.5f}},  {{-0.5f, -0.5f, -0.5f}}, {{0.5f, -0.5f,
+      // -0.5f}},
+      // {{0.5f, 0.5f, -0.5f}},  {{-0.5f, 0.5f, -0.5f}}};
+
+      {{-0.5f, -0.5f, 0.5f}, {0.0f, 0.0f}},
+      {{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f}},
+      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f}},
+      {{-0.5f, 0.5f, 0.5f}, {0.0f, 1.0f}},
+      {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}},
+      {{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+      {{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}},
+      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}}};
   inline static std::vector<uint32_t> indices = {
       0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5,
       4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4};
