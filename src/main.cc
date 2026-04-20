@@ -1,0 +1,48 @@
+#include "dead_verse/entity/component_manager.h"
+#include "dead_verse/game/game.h"
+#include "dead_verse/game/game_state.h"
+#include "dead_verse/game/world.h"
+#include "dead_verse/global.h"
+#include "dead_verse/platform/platform.h"
+#include "dead_verse/renderer/renderer.h"
+#include "dead_verse/util/log.h"
+
+musashi::Global musashi::kGlobal;
+
+int main() {
+  musashi::GameSpecification specs;
+  specs.game_name = "Dead Verse";
+  specs.window_specs.width = 1000;
+  specs.window_specs.height = 800;
+  specs.window_specs.is_resizeable = true;
+
+  musashi::Logger logger(musashi::kLogBufferSize);
+  musashi::kGlobal.logger = &logger;
+
+  musashi::Platform platform(specs.window_specs);
+  musashi::kGlobal.platform = &platform;
+
+  musashi::Game game(specs);
+  musashi::kGlobal.game = &game;
+
+  musashi::Renderer renderer;
+  musashi::kGlobal.renderer = &renderer;
+
+  musashi::GameState state;
+  musashi::kGlobal.state = &state;
+
+  musashi::ComponentManager ec_manager;
+  musashi::kGlobal.ec_manager = &ec_manager;
+
+  musashi::World world;
+  musashi::kGlobal.world = &world;
+
+  // Main Logic
+  musashi::kGlobal.logger->Trace("LOGGING INITIALIZED");
+  musashi::kGlobal.game->Run();
+
+  // Cleanup
+  musashi::Global::Cleanup(musashi::kGlobal);
+
+  return 0;
+}
