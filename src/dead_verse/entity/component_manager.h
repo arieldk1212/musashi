@@ -244,6 +244,10 @@ class ComponentManager {
   [[nodiscard]] size_t GetComponentPoolSize() const {
     return component_pool_.size();
   }
+  [[nodiscard]] const std::unordered_map<std::string, EntityId>& GetEntities()
+      const {
+    return entities_;
+  }
 
   void Clear() {
     entities_.clear();

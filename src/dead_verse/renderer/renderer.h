@@ -15,6 +15,7 @@ class Renderer {
   void Render();
   void RenderQuad(ShaderName shader_name, const std::string& quad_entity,
                   const glm::mat4& pv);
+  void RenderSprite();
   void Draw(const std::string& quad_entity);
   void ShutDown();
 
