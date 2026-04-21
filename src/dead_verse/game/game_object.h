@@ -3,10 +3,14 @@
 
 namespace musashi {
 
+class Quad;
+
 class GameObject {
  public:
   virtual ~GameObject() = default;
 };
+
+struct GameObjectData {};
 
 class Zombie : public GameObject {
  public:

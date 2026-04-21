@@ -7,6 +7,10 @@
 
 namespace musashi {
 
+struct SpriteRenderer {
+  void Render();
+};
+
 class Renderer {
  public:
   Renderer() = default;
@@ -16,6 +20,7 @@ class Renderer {
   void RenderQuad(ShaderName shader_name, const std::string& quad_entity,
                   const glm::mat4& pv);
   void RenderSprite();
+  void RenderGameObject();
   void Draw(const std::string& quad_entity);
   void ShutDown();
 
@@ -27,6 +32,7 @@ class Renderer {
   static void Clear();
 
  private:
+  std::unique_ptr<SpriteRenderer> sprite_renderer_;
   std::unordered_map<ShaderName, std::unique_ptr<Shader>> shaders_;
 };
 

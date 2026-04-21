@@ -72,6 +72,10 @@ struct CombatComponent : public Component {
 };
 
 struct TextureComponent : public Component {
+  std::shared_ptr<Texture> source;
+  std::string name;
+  uint32_t slot;
+
   static ComponentType Type() { return ComponentType::kTextureComponent; };
 };
 

@@ -6,7 +6,6 @@
 #include "GLFW/glfw3.h"
 #include "platform/input.h"
 #include "platform/platform.h"
-#include "util/log.h"
 
 namespace musashi {
 

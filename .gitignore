@@ -44,3 +44,4 @@ build
 vcpkg_installed
 .cache
 .DS_Store
+.idea

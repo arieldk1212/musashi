@@ -22,13 +22,10 @@ void Renderer::Init() {
 void Renderer::Render() {
   Clear();
 
-  auto& camera = kPlatform->camera;
-
-  auto projection = camera.camera.GetProjectionMatrix();
-  auto view = camera.camera.GetViewMatrix();
-
-  RenderQuad(ShaderName::kObjectShader, "Quad3D", projection * view);
-  RenderQuad(ShaderName::kObjectShader, "Quad2D", projection * view);
+  RenderQuad(ShaderName::kObjectShader, "Quad3D",
+             kPlatform->camera.camera.GetViewProjectionMatrix());
+  RenderQuad(ShaderName::kObjectShader, "Quad1D",
+             kPlatform->camera.camera.GetViewProjectionMatrix());
 }
 
 // TODO: Create a view that can iterate thru all the entities with quad

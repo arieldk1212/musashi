@@ -15,7 +15,7 @@ struct SpriteData {
   glm::vec2 size;
   glm::vec2 origin;
   std::string name;
-  uint32_t slot;
+  uint32_t slot{0};
 };
 
 struct Sprite {
