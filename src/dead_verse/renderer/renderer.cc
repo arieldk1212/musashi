@@ -50,8 +50,8 @@ void Renderer::RenderQuad(ShaderName shader_name,
   shader->SetMat4("uMVP", mvp);
 
   auto& sprite = kECManager->GetComponent<SpriteComponent>(quad_entity);
-  shader->SetInt(sprite.sprite.name, sprite.sprite.slot);
-  sprite.sprite.source->Bind(sprite.sprite.slot);
+  shader->SetInt(sprite.sprite.data.name, sprite.sprite.data.slot);
+  sprite.sprite.source->Bind(sprite.sprite.data.slot);
 
   Draw(quad_entity);
 }

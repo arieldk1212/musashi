@@ -11,12 +11,16 @@
 
 namespace musashi {
 
-struct Sprite {
-  std::shared_ptr<Texture> source;
+struct SpriteData {
   glm::vec2 size;
   glm::vec2 origin;
-  uint32_t slot;
   std::string name;
+  uint32_t slot;
+};
+
+struct Sprite {
+  SpriteData data;
+  std::shared_ptr<Texture> source;
 };
 
 struct RenderedSprite {
