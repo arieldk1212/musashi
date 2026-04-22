@@ -1,0 +1,23 @@
+{
+	"debugger_configurations":
+	[
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Dead Verse Launch",
+			"program": "${folder}/build/src/main",
+			"args": [],
+			"cwd": "${folder}"
+		},
+	],
+	"folders":
+	[
+		{
+			"path": "/Users/arielkriheli/Projects/musashi"
+		}
+	],
+	"cmake":
+	{
+   		"build_folder": "$folder/build"
+	}
+}

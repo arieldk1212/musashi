@@ -67,7 +67,7 @@ struct HealthComponent : public Component {
   static ComponentType Type() { return ComponentType::kHealthComponent; }
 };
 
-struct CombatComponent : public Component {
+struct CombatComponent : public Component   {
   static ComponentType Type() { return ComponentType::kCombatComponent; }
 };
 
