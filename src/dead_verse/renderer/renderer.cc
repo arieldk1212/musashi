@@ -32,6 +32,9 @@ void Renderer::Render() {
 // components instead of giving it names
 void Renderer::RenderQuad(ShaderName shader_name,
                           const std::string& quad_entity, const glm::mat4& pv) {
+  auto& shader = shaders_[shader_name];
+  shader->Use();
+
   auto& cube_transform_component =
       kECManager->GetComponent<TransformComponent>(quad_entity);
 
@@ -40,8 +43,6 @@ void Renderer::RenderQuad(ShaderName shader_name,
   model = glm::translate(model, cube_transform_component.position);
 
   auto mvp = pv * model;
-
-  auto& shader = shaders_[shader_name];
 
   shader->Use();
   shader->SetMat4("uMVP", mvp);

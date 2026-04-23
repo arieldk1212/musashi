@@ -23,12 +23,14 @@ void PrespectiveCamera::Update() {
   vectors.up = glm::normalize(glm::cross(vectors.right, vectors.front));
 
   view_matrix = CalculateNewViewMatrix();
-
   projection_matrix =
       glm::perspective(glm::radians(settings.zoom),
                        kPlatform->window->GetWindowResolutionWidth() /
                            kPlatform->window->GetWindowResolutionHeight(),
                        0.1f, 100.0f);
+  // projection_matrix = glm::ortho(
+  //     0.0f, kPlatform->window->GetWindowResolutionWidth(),
+  //     kPlatform->window->GetWindowResolutionHeight(), 0.0f, -1.0f, 1.0f);
 
   view_projection_matrix = projection_matrix * view_matrix;
 }
