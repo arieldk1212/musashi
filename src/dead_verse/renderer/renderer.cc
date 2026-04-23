@@ -22,8 +22,8 @@ void Renderer::Init() {
 void Renderer::Render() {
   Clear();
 
-  RenderQuad(ShaderName::kObjectShader, "Quad3D",
-             kPlatform->camera.camera.GetViewProjectionMatrix());
+  // RenderQuad(ShaderName::kObjectShader, "Quad3D",
+  //            kPlatform->camera.camera.GetViewProjectionMatrix());
   RenderQuad(ShaderName::kObjectShader, "Quad2D",
              kPlatform->camera.camera.GetViewProjectionMatrix());
 }
@@ -47,8 +47,7 @@ void Renderer::RenderQuad(ShaderName shader_name,
   shader->SetMat4("uMVP", mvp);
 
   auto& sprite = kECManager->GetComponent<SpriteComponent>(quad_entity);
-  shader->SetInt(sprite.sprite.data.name, sprite.sprite.data.slot);
-  sprite.sprite.source->Bind(sprite.sprite.data.slot);
+  sprite.sprite.SetSprite(*shader);
 
   Draw(quad_entity);
 }
