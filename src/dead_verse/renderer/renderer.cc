@@ -24,7 +24,7 @@ void Renderer::Render() {
 
   RenderQuad(ShaderName::kObjectShader, "Quad3D",
              kPlatform->camera.camera.GetViewProjectionMatrix());
-  RenderQuad(ShaderName::kObjectShader, "Quad1D",
+  RenderQuad(ShaderName::kObjectShader, "Quad2D",
              kPlatform->camera.camera.GetViewProjectionMatrix());
 }
 

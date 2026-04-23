@@ -1,23 +1,72 @@
 {
+	"folders":
+	[
+		{
+			"path": "/Users/arielkriheli/Projects/musashi",
+		}
+	],
+	"cmake":
+	{
+   		"build_folder": "${folder}/build",
+	},
 	"debugger_configurations":
 	[
 		{
 			"type": "lldb",
 			"request": "launch",
-			"name": "Dead Verse Launch",
+			"name": "Launch",
 			"program": "${folder}/build/src/main",
 			"args": [],
-			"cwd": "${folder}"
+			"cwd": "${folder}",
 		},
 	],
-	"folders":
+	"build_systems":
 	[
 		{
-			"path": "/Users/arielkriheli/Projects/musashi"
+			"config": "Default",
+			"generator": "Unix Makefiles",
+			"name": "Default",
+			"target": "cmake_build",
+			"variants":
+			[
+				{
+            		"name": "game",
+					"build_target": "game",
+				},
+				{
+            		"name": "glm",
+					"build_target": "glm",
+				},
+				{
+					"build_target": "main",
+					"name": "main"
+				},
+				{
+					"artifact": "src/main",
+					"build_target": "main",
+					"name": "Run: main",
+					"target": "cmake_run"
+				},
+				{
+					"artifact": "src/main",
+					"build_target": "main",
+					"debug": true,
+					"name": "Run under LLDB: main",
+					"target": "cmake_run"
+				},
+				{
+					"build_target": "uninstall",
+					"name": "uninstall"
+				},
+				{
+					"name": "ctest",
+					"target": "ctest_run"
+				},
+			],
+			"working_dir": "$folder/build",
+			"env":
+			{
+			},
 		}
 	],
-	"cmake":
-	{
-   		"build_folder": "$folder/build"
-	}
 }

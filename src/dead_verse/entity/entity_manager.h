@@ -17,7 +17,7 @@ struct Entity {
       : id(id),
         name(std::move(entity_name)) {}
 
-  void Destroy() { id = kNullEntity; }
+        void Destroy() { id = kNullEntity; }
   [[nodiscard]] bool IsDestroyed() const { return id == kNullEntity; }
 
   EntityId id;
