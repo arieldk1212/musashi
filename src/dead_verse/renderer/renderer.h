@@ -5,22 +5,29 @@
 
 #include <unordered_map>
 
+#include "entity/component_manager.h"
+
 namespace musashi {
 
-struct SpriteRenderer {
-  void Render();
+class BaseRenderer {
+ public:
+  virtual ~BaseRenderer() = default;
+
+  virtual void Render() {}
 };
 
-class Renderer {
+struct SpriteRenderer : public BaseRenderer {
+  void Render(Shader& shader, SpriteComponent& sprite);
+};
+
+class Renderer : public BaseRenderer {
  public:
-  Renderer() = default;
+  Renderer();
 
   void Init();
-  void Render();
+  void Render() override;
   void RenderQuad(ShaderName shader_name, const std::string& quad_entity,
                   const glm::mat4& pv);
-  void RenderSprite();
-  void RenderGameObject();
   void Draw(const std::string& quad_entity);
   void ShutDown();
 

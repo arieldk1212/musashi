@@ -1,14 +1,20 @@
 #include "global.h"
 #include "renderer.h"
+#include "shader.h"
 
 #include <glad/glad.h>
 
-#include "entity/component_manager.h"
-#include "entity/components.h"
 #include "platform/platform.h"
 #include "util/log.h"
 
 namespace musashi {
+
+void SpriteRenderer::Render(Shader& shader, SpriteComponent& sprite) {
+  sprite.sprite.SetSprite(shader);
+}
+
+Renderer::Renderer()
+    : sprite_renderer_(std::make_unique<SpriteRenderer>()) {}
 
 void Renderer::Init() {
   glEnable(GL_DEPTH_TEST);
@@ -48,7 +54,7 @@ void Renderer::RenderQuad(ShaderName shader_name,
   shader->SetMat4("uMVP", mvp);
 
   auto& sprite = kECManager->GetComponent<SpriteComponent>(quad_entity);
-  sprite.sprite.SetSprite(*shader);
+  sprite_renderer_->Render(*shader, sprite);
 
   Draw(quad_entity);
 }

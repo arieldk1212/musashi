@@ -13,9 +13,8 @@
 namespace musashi {
 
 struct SpriteData {
-  // 128 / 21
   glm::vec2 size;
-  glm::vec2 origin; // INFO Offset
+  glm::vec2 origin;
   std::string name;
   uint32_t slot{0};
 };
