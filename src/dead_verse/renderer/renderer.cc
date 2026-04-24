@@ -11,6 +11,21 @@ namespace musashi {
 
 void SpriteRenderer::Render(Shader& shader, SpriteComponent& sprite) {
   sprite.sprite.SetSprite(shader);
+
+  glm::vec2 origin{1, 0};
+  glm::vec2 size{126, 126};
+  auto texture_width = static_cast<float>(sprite.sprite.source->width);
+  auto texture_height = static_cast<float>(sprite.sprite.source->height);
+
+  sprite.sprite.data.size = size;
+  sprite.sprite.data.origin = origin;
+
+  glm::vec2 uv_offset = {(origin.x * size.x) / texture_width,
+                         (origin.y * size.y) / texture_height};
+  glm::vec2 uv_scale = {size.x / texture_width, size.y / texture_height};
+
+  shader.SetVec2("uUvOffset", uv_offset);
+  shader.SetVec2("uUvScale", uv_scale);
 }
 
 Renderer::Renderer()
@@ -18,6 +33,8 @@ Renderer::Renderer()
 
 void Renderer::Init() {
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   AddShader(ShaderName::kObjectShader, "assets/shaders/object/vert.glsl",
             "assets/shaders/object/frag.glsl");
@@ -28,8 +45,6 @@ void Renderer::Init() {
 void Renderer::Render() {
   Clear();
 
-  // RenderQuad(ShaderName::kObjectShader, "Quad3D",
-  //            kPlatform->camera.camera.GetViewProjectionMatrix());
   RenderQuad(ShaderName::kObjectShader, "Quad2D",
              kPlatform->camera.camera.GetViewProjectionMatrix());
 }

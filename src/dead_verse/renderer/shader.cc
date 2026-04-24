@@ -118,6 +118,10 @@ void Shader::SetVec3(const std::string& name, const glm::vec3& vec) const {
   glUniform3fv(glGetUniformLocation(id_, name.c_str()), 1, &vec[0]);
 }
 
+void Shader::SetVec2(const std::string& name, const glm::vec2& vec) const {
+  glUniform2fv(glGetUniformLocation(id_, name.c_str()), 1, &vec[0]);
+}
+
 void Shader::CheckCompileErrors(uint16_t shader, const std::string& type) {
   int success = 0;
   std::array<char, 1024> info_log{};

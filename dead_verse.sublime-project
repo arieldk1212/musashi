@@ -2,12 +2,12 @@
 	"folders":
 	[
 		{
-			"path": "/Users/arielkriheli/Projects/musashi",
+			"path": ".",
 		}
 	],
 	"cmake":
 	{
-   		"build_folder": "${folder}/build",
+   		"build_folder": "${project_path}/build",
 	},
 	"debugger_configurations":
 	[
@@ -15,58 +15,36 @@
 			"type": "lldb",
 			"request": "launch",
 			"name": "Launch",
-			"program": "${folder}/build/src/main",
+			"program": "${project_path}/build/src/main",
 			"args": [],
-			"cwd": "${folder}",
+			"cwd": "${project_path}",
+			"terminal": "console",
 		},
 	],
 	"build_systems":
 	[
 		{
-			"config": "Default",
-			"generator": "Unix Makefiles",
-			"name": "Default",
+			"name": "Run",
+    		"shell_cmd": "./build/src/main",
+    		"working_dir": "${project_path}",
+		},
+		{
+			"env" : {},
+			"name": "Debug Build",
+			"config": "Debug",
 			"target": "cmake_build",
-			"variants":
-			[
-				{
-            		"name": "game",
-					"build_target": "game",
-				},
-				{
-            		"name": "glm",
-					"build_target": "glm",
-				},
-				{
-					"build_target": "main",
-					"name": "main"
-				},
-				{
-					"artifact": "src/main",
-					"build_target": "main",
-					"name": "Run: main",
-					"target": "cmake_run"
-				},
-				{
-					"artifact": "src/main",
-					"build_target": "main",
-					"debug": true,
-					"name": "Run under LLDB: main",
-					"target": "cmake_run"
-				},
-				{
-					"build_target": "uninstall",
-					"name": "uninstall"
-				},
-				{
-					"name": "ctest",
-					"target": "ctest_run"
-				},
-			],
-			"working_dir": "$folder/build",
-			"env":
-			{
-			},
+			"generator": "Unix Makefiles",
+			"working_dir": "${project_path}/build",
+			"variants": [],
+		},
+		{
+			"env" : {},
+			"name": "Release Build",
+			"config": "Release",
+			"target": "cmake_build",
+			"generator": "Unix Makefiles",
+			"working_dir": "${project_path}/build",
+			"variants": [],
 		}
 	],
 }
