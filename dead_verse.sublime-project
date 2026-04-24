@@ -1,0 +1,50 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+		}
+	],
+	"cmake":
+	{
+   		"build_folder": "${project_path}/build",
+	},
+	"debugger_configurations":
+	[
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Launch",
+			"program": "${project_path}/build/src/main",
+			"args": [],
+			"cwd": "${project_path}",
+			"terminal": "console",
+		},
+	],
+	"build_systems":
+	[
+		{
+			"name": "Run",
+    		"shell_cmd": "./build/src/main",
+    		"working_dir": "${project_path}",
+		},
+		{
+			"env" : {},
+			"name": "Debug Build",
+			"config": "Debug",
+			"target": "cmake_build",
+			"generator": "Unix Makefiles",
+			"working_dir": "${project_path}/build",
+			"variants": [],
+		},
+		{
+			"env" : {},
+			"name": "Release Build",
+			"config": "Release",
+			"target": "cmake_build",
+			"generator": "Unix Makefiles",
+			"working_dir": "${project_path}/build",
+			"variants": [],
+		}
+	],
+}

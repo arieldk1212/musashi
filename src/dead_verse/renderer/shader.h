@@ -23,6 +23,7 @@ class Shader {
   void SetFloat(const std::string& name, float value) const;
   void SetMat4(const std::string& name, const glm::mat4& mat) const;
   void SetVec3(const std::string& name, const glm::vec3& vec) const;
+  void SetVec2(const std::string& name, const glm::vec2& vec) const;
 
  private:
   static void CheckCompileErrors(uint16_t shader, const std::string& type);

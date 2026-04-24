@@ -124,7 +124,7 @@ struct SparseSet : public SparseSetInterface {
 
   std::vector<T> dense;                   // Dense (Components)
   std::vector<SparseChunk> entities;      // Sparse (Entities)
-  std::vector<DenseIdx> dense_to_entity;  // Components - > Entity Id
+  std::vector<DenseIdx> dense_to_entity;  // Components -> Entity Id
 };
 
 class ComponentManager {
@@ -178,15 +178,12 @@ class ComponentManager {
   template <IsComponent T>
   T& GetComponent(EntityId id) {
     auto type_idx = static_cast<size_t>(T::Type());
-
     auto& component_pool =
         *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
-
     auto component = component_pool.Get(id);
 
     if (!component.has_value()) {
       kLogger->Error("Entity Does Not Have This Component!");
-      assert(false);
     }
 
     return *component.value();
@@ -195,18 +192,25 @@ class ComponentManager {
   template <IsComponent T>
   T& GetComponent(const std::string& name) {
     auto type_idx = static_cast<size_t>(T::Type());
-
     auto& component_pool =
         *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
-
     auto component = component_pool.Get(entities_[name]);
 
     if (!component.has_value()) {
       kLogger->Error("Entity Does Not Have This Component!");
-      assert(false);
     }
 
     return *component.value();
+  }
+
+  template <IsComponent T>
+  bool HasComponent(const std::string& name) {
+    auto type_idx = static_cast<size_t>(T::Type());
+    auto& component_pool =
+        *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
+    auto component = component_pool.Get(entities_[name]);
+
+    return static_cast<bool>(component.has_value());
   }
 
   template <IsComponent T>
@@ -278,6 +282,7 @@ class ComponentManager {
     RegisterComponent<TextureComponent>();
     RegisterComponent<SpriteComponent>();
     RegisterComponent<QuadComponent>();
+    RegisterComponent<AnimationComponent>();
   }
 
   SparseSet<ComponentMask> entity_masks_;

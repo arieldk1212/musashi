@@ -1,5 +1,4 @@
 #include "game.h"
-#include "game_state.h"
 #include "global.h"
 
 #include "platform/platform.h"
