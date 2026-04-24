@@ -22,6 +22,7 @@ enum class ComponentType : uint8_t {
   kTextureComponent = 6,
   kSpriteComponent = 7,
   kQuadComponent = 8,
+  kAnimationComponent = 9,
 };
 
 struct Component {
@@ -67,7 +68,7 @@ struct HealthComponent : public Component {
   static ComponentType Type() { return ComponentType::kHealthComponent; }
 };
 
-struct CombatComponent : public Component   {
+struct CombatComponent : public Component {
   static ComponentType Type() { return ComponentType::kCombatComponent; }
 };
 
@@ -92,6 +93,10 @@ struct QuadComponent : public Component {
   std::unique_ptr<Mesh> mesh{nullptr};
 
   static ComponentType Type() { return ComponentType::kQuadComponent; };
+};
+
+struct AnimationComponent : public Component {
+  static ComponentType Type() { return ComponentType::kAnimationComponent; }
 };
 
 }  // namespace musashi

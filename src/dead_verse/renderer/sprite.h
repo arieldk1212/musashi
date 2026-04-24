@@ -1,7 +1,6 @@
 #ifndef SPRITE_H_
 #define SPRITE_H_
 
-#include <array>
 #include <memory>
 
 #include <glm/vec2.hpp>
@@ -27,11 +26,6 @@ struct Sprite {
     shader.SetInt(data.name, data.slot);
     source->Bind(data.slot);
   }
-};
-
-struct RenderedSprite {
-  std::shared_ptr<Texture> sheet;
-  std::array<glm::vec2, 4> uvs;
 };
 
 }  // namespace musashi

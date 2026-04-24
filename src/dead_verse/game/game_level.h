@@ -7,6 +7,9 @@
 
 namespace musashi {
 
+static constexpr int kZombieStartCount{10};
+static constexpr float kZombieSpawnMultiplier{0.5};
+
 struct GameLevel {
   std::vector<Zombie> zombies;
   void IsComplete();

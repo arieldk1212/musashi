@@ -6,29 +6,28 @@
 #include <string>
 #include <vector>
 
-#include "renderer/mesh.h"
-
 namespace musashi {
+
+static constexpr std::vector<std::pair<int, int>> kZombieSpawnLocations;
 
 // INFO: Responsible for objects, game world related stuff
 class World {
  public:
   World();
 
+  void Init();
   void Update(float ts);
 
-  void SpawnQuad(GameObjectData data);
-  void SpawnPlayer();
-  void SpawnZombie();
+  void SpawnPlayer() const;
+  void SpawnZombie() const;
 
-  // Entity related
-  static void Init();
-  static void InitQuad(const std::string& name, const std::vector<Vertex>& data,
-                       const std::vector<uint32_t>& indices);
-  static void InitQuad3D(const std::string& name);
+  static void InitBaseEntity(const std::string& name,
+                             bool third_dimension = false);
 
-    private:
-        std::vector<std::string> entities_;
+ private:
+  // NOTE: Represents current level
+  int level_{1};
+  Player player_;
 };
 
 }  // namespace musashi

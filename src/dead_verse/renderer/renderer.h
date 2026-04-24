@@ -26,6 +26,7 @@ class Renderer : public BaseRenderer {
 
   void Init();
   void Render() override;
+  void RenderWorld();
   void RenderQuad(ShaderName shader_name, const std::string& quad_entity,
                   const glm::mat4& pv);
   void Draw(const std::string& quad_entity);

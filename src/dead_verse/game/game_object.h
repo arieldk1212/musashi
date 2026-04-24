@@ -1,9 +1,9 @@
 #ifndef GAME_OBJECT_H_
 #define GAME_OBJECT_H_
 
-namespace musashi {
+#include <glm/vec2.hpp>
 
-class Quad;
+namespace musashi {
 
 class GameObject {
  public:
@@ -12,17 +12,32 @@ class GameObject {
 
 struct GameObjectData {};
 
-class Zombie : public GameObject {
- public:
-  // TODO: pos, velocity, size, destroyed..
- private:
+struct Zombie : public GameObject {
+  glm::vec2 scale;
+  glm::vec2 position;
+  glm::vec2 velocity;
+  bool destroyed{false};
+
+  void Create();
+  void Destory();
+  void Transform();
 };
+
 
 class Weapon : public GameObject {};
 
-class Bullet : public GameObject {};
+class Bullet : public GameObject {
+    void CheckHit();
+};
 
-class PowerUp : public GameObject {};
+class Perks : public GameObject {
+    void Destory();
+};
+
+struct Player : public GameObject {
+    Perks perks;
+    Weapon weapon;
+};
 
 }  // namespace musashi
 

@@ -32,8 +32,8 @@ Renderer::Renderer()
     : sprite_renderer_(std::make_unique<SpriteRenderer>()) {}
 
 void Renderer::Init() {
-  glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   AddShader(ShaderName::kObjectShader, "assets/shaders/object/vert.glsl",
@@ -47,6 +47,7 @@ void Renderer::Render() {
 
   RenderQuad(ShaderName::kObjectShader, "Quad2D",
              kPlatform->camera.camera.GetViewProjectionMatrix());
+  // RenderWorld
 }
 
 // TODO: Create a view that can iterate thru all the entities with quad
