@@ -5,7 +5,7 @@ in vec2 vUv;
 
 out vec4 Frag;
 
-uniform sampler2D Zombie;
+uniform sampler2D uZombie;
 uniform vec2 uUvOffset;
 uniform vec2 uUvScale;
 

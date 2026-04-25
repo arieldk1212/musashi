@@ -10,7 +10,7 @@ class World;
 class Logger;
 class Renderer;
 struct Platform;
-class GameState;
+struct State;
 class ComponentManager;
 
 struct Global {
@@ -30,7 +30,7 @@ struct Global {
   Logger* logger;
   Platform* platform;
   Renderer* renderer;
-  GameState* state;
+  State* state;
   ComponentManager* ec_manager;
 };
 

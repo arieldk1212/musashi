@@ -1,6 +1,6 @@
 #include "dead_verse/entity/component_manager.h"
 #include "dead_verse/game/game.h"
-#include "dead_verse/game/game_state.h"
+#include "dead_verse/game/state.h"
 #include "dead_verse/game/world.h"
 #include "dead_verse/global.h"
 #include "dead_verse/platform/platform.h"
@@ -28,7 +28,7 @@ int main() {
   musashi::Renderer renderer;
   musashi::kGlobal.renderer = &renderer;
 
-  musashi::GameState state;
+  musashi::State state;
   musashi::kGlobal.state = &state;
 
   musashi::ComponentManager ec_manager;
