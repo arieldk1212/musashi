@@ -13,11 +13,13 @@ static inline constexpr EntityId kNullEntity =
     std::numeric_limits<EntityId>::max();
 
 struct Entity {
+  Entity()
+      : id(kNullEntity) {}
   explicit Entity(EntityId id, std::string entity_name)
       : id(id),
         name(std::move(entity_name)) {}
 
-        void Destroy() { id = kNullEntity; }
+  void Destroy() { id = kNullEntity; }
   [[nodiscard]] bool IsDestroyed() const { return id == kNullEntity; }
 
   EntityId id;

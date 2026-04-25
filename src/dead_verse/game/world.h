@@ -1,33 +1,32 @@
 #ifndef WORLD_H_
 #define WORLD_H_
 
-#include "game_object.h"
+#include "objects.h"
 
+#include <memory>
 #include <string>
-#include <vector>
+
+#include "game/level.h"
+#include "game/state.h"
 
 namespace musashi {
 
-static constexpr std::vector<std::pair<int, int>> kZombieSpawnLocations;
-
-// INFO: Responsible for objects, game world related stuff
+// TODO: Implement State Machine Here
 class World {
  public:
   World();
 
+  // INFO: Init first level
   void Init();
   void Update(float ts);
+  void Render(State& state);
 
-  void SpawnPlayer() const;
-  void SpawnZombie() const;
-
-  static void InitBaseEntity(const std::string& name,
-                             bool third_dimension = false);
+  void InitPlayer(const std::string& name);
+  void InitZombie(const std::string& name);
 
  private:
-  // NOTE: Represents current level
-  int level_{1};
-  Player player_;
+  std::unique_ptr<Player> player_;
+  std::unique_ptr<LevelHandler> level_handler_;
 };
 
 }  // namespace musashi

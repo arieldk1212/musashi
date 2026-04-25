@@ -4,6 +4,7 @@
 
 #include <glad/glad.h>
 
+#include "entity/component_manager.h"
 #include "platform/platform.h"
 #include "util/log.h"
 
@@ -45,9 +46,10 @@ void Renderer::Init() {
 void Renderer::Render() {
   Clear();
 
+  Draw();
+
   RenderQuad(ShaderName::kObjectShader, "Quad2D",
              kPlatform->camera.camera.GetViewProjectionMatrix());
-  // RenderWorld
 }
 
 // TODO: Create a view that can iterate thru all the entities with quad
