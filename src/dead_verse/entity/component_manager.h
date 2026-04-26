@@ -283,6 +283,7 @@ class ComponentManager {
     RegisterComponent<SpriteComponent>();
     RegisterComponent<QuadComponent>();
     RegisterComponent<AnimationComponent>();
+    RegisterComponent<TagZombieComponent>();
   }
 
   SparseSet<ComponentMask> entity_masks_;

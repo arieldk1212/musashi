@@ -25,10 +25,6 @@ void World::Init() {
 void World::InitPlayer(const std::string& name) {
   PlayerBuilder player_builder;
 
-  // TransformComponent transform;
-  // transform.position = glm::vec3(0.0f, 0.0f, -8.0f);
-  // transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
-
   TagInputComponent input;
 
   player_ =
@@ -52,6 +48,7 @@ void World::InitZombie(const std::string& name) {
   quad.scale = transform.scale;
   quad.mesh = std::make_unique<Mesh>(Quad2D::data, Quad2D::indices);
 
+  // TODO: Change to animation
   std::filesystem::path sprite_path{"assets/sprites/Zombie_1/Dead.png"};
   SpriteComponent sprite;
   sprite.sprite.source = std::make_shared<Texture>(sprite_path);

@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 
+#include "entity/entity_manager.h"
 #include "game/level.h"
 #include "game/state.h"
 
@@ -24,7 +25,10 @@ class World {
   void InitPlayer(const std::string& name);
   void InitZombie(const std::string& name);
 
+  const std::vector<Entity>& GetWorldEntities() { return entities_; }
+
  private:
+  std::vector<Entity> entities_;
   std::unique_ptr<Player> player_;
   std::unique_ptr<LevelHandler> level_handler_;
 };

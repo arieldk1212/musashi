@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 
 #include "entity/component_manager.h"
+#include "entity/components.h"
+#include "game/world.h"
 #include "platform/platform.h"
 #include "util/log.h"
 
@@ -44,41 +46,33 @@ void Renderer::Init() {
 }
 
 void Renderer::Render() {
-  Clear();
-
-  Draw();
-
-  RenderQuad(ShaderName::kObjectShader, "Quad2D",
-             kPlatform->camera.camera.GetViewProjectionMatrix());
-}
-
-// TODO: Create a view that can iterate thru all the entities with quad
-// components instead of giving it names
-void Renderer::RenderQuad(ShaderName shader_name,
-                          const std::string& quad_entity, const glm::mat4& pv) {
-  auto& shader = shaders_[shader_name];
+  auto& shader = shaders_[ShaderName::kObjectShader];
   shader->Use();
 
-  auto& cube_transform_component =
-      kECManager->GetComponent<TransformComponent>(quad_entity);
+  const auto& pv = kPlatform->camera.camera.GetViewProjectionMatrix();
 
-  auto model = glm::mat4(1.0f);
-  model = glm::scale(model, cube_transform_component.scale);
-  model = glm::translate(model, cube_transform_component.position);
+  for (const auto& entity : kWorld->GetWorldEntities()) {
+    auto& transform_component =
+        kECManager->GetComponent<TransformComponent>(entity.id);
 
-  auto mvp = pv * model;
+    auto model = glm::mat4(1.0f);
+    model = glm::scale(model, transform_component.scale);
+    model = glm::translate(model, transform_component.position);
+    auto mvp = pv * model;
 
-  shader->Use();
-  shader->SetMat4("uMVP", mvp);
+    shader->Use();
+    shader->SetMat4("uMVP", mvp);
 
-  auto& sprite = kECManager->GetComponent<SpriteComponent>(quad_entity);
-  sprite_renderer_->Render(*shader, sprite);
+    auto& sprite = kECManager->GetComponent<SpriteComponent>(entity.id);
+    sprite_renderer_->Render(*shader, sprite);
 
-  Draw(quad_entity);
+    Draw(entity);
+  }
 }
 
-void Renderer::Draw(const std::string& quad_entity) {
-  auto& quad = kECManager->GetComponent<QuadComponent>(quad_entity);
+void Renderer::Draw(const Entity& entity) {
+  bool has_quad = kECManager->HasComponent<QuadComponent>(entity.name);
+  auto& quad = kECManager->GetComponent<QuadComponent>(entity.name);
   quad.mesh->vertex.Bind();
   quad.mesh->vertex.Draw();
 }

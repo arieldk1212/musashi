@@ -23,6 +23,7 @@ enum class ComponentType : uint8_t {
   kSpriteComponent = 7,
   kQuadComponent = 8,
   kAnimationComponent = 9,
+  kZombieComponent = 10,
 };
 
 struct Component {
@@ -97,6 +98,10 @@ struct QuadComponent : public Component {
 
 struct AnimationComponent : public Component {
   static ComponentType Type() { return ComponentType::kAnimationComponent; }
+};
+
+struct TagZombieComponent : public Component {
+  static ComponentType Type() { return ComponentType::kZombieComponent; }
 };
 
 }  // namespace musashi

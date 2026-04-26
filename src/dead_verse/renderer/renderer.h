@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 #include "entity/components.h"
+#include "entity/entity_manager.h"
 
 namespace musashi {
 
@@ -25,11 +26,11 @@ class Renderer : public BaseRenderer {
   Renderer();
 
   void Init();
+
   void Render() override;
-  void RenderQuad(ShaderName shader_name, const std::string& quad_entity,
-                  const glm::mat4& pv);
-  void Draw();
-  void Draw(const std::string& quad_entity);
+
+  void Draw(const Entity& entity);
+
   void ShutDown();
 
   void AddShader(ShaderName shader_name,
