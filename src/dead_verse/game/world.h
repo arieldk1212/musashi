@@ -1,12 +1,13 @@
 #ifndef WORLD_H_
 #define WORLD_H_
 
-#include "objects.h"
+#include "player.h"
+#include "zombie.h"
 
 #include <memory>
 #include <string>
 
-#include "entity/entity_manager.h"
+#include "entity/component_manager.h"
 #include "game/level.h"
 #include "game/state.h"
 
@@ -15,7 +16,7 @@ namespace musashi {
 // TODO: Implement State Machine Here
 class World {
  public:
-  World();
+  explicit World(ComponentManager& ec);
 
   // INFO: Init first level
   void Init();
@@ -25,10 +26,12 @@ class World {
   void InitPlayer(const std::string& name);
   void InitZombie(const std::string& name);
 
-  const std::vector<Entity>& GetWorldEntities() { return entities_; }
+  const std::vector<Zombie>& GetZombies() {
+    return level_handler_->level.zombies;
+  }
 
  private:
-  std::vector<Entity> entities_;
+  ComponentManager* ec_;
   std::unique_ptr<Player> player_;
   std::unique_ptr<LevelHandler> level_handler_;
 };

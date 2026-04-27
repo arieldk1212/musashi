@@ -3,13 +3,13 @@
 
 #include "components.h"
 #include "entity_manager.h"
-#include "global.h"
 
 #include <array>
 #include <atomic>
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <utility>
 
 #include "util/log.h"
 
@@ -131,10 +131,12 @@ class ComponentManager {
  public:
   using ComponentMask = std::bitset<kNumberOfComponents>;
 
-  ComponentManager() {
+  explicit ComponentManager(Logger& logger)
+      : logger_(logger) {
     component_pool_.resize(kNumberOfComponents);
     Init();
   }
+  ~ComponentManager() { Clear(); }
 
   Entity CreateEntity(const std::string& entity_name = "Entity") {
     auto id = ComponentRegistry::GenerateEntityId();
@@ -143,7 +145,7 @@ class ComponentManager {
       entities_[entity_name] = id.value();
       return Entity{id.value(), entity_name};
     }
-    kLogger->Error("Reached Entity Capacity! Quitting..");
+    logger_.Error("Reached Entity Capacity! Quitting..");
     assert(false);
   }
 
@@ -163,7 +165,7 @@ class ComponentManager {
     entities_.erase(entity.name);
     entity.Destroy();
 
-    kLogger->Trace("Entity Deleted: " + entity.name);
+    logger_.Trace("Entity Deleted: " + entity.name);
   }
 
   template <IsComponent T>
@@ -183,7 +185,7 @@ class ComponentManager {
     auto component = component_pool.Get(id);
 
     if (!component.has_value()) {
-      kLogger->Error("Entity Does Not Have This Component!");
+      logger_.Error("Entity Does Not Have This Component!");
     }
 
     return *component.value();
@@ -197,7 +199,7 @@ class ComponentManager {
     auto component = component_pool.Get(entities_[name]);
 
     if (!component.has_value()) {
-      kLogger->Error("Entity Does Not Have This Component!");
+      logger_.Error("Entity Does Not Have This Component!");
     }
 
     return *component.value();
@@ -286,9 +288,34 @@ class ComponentManager {
     RegisterComponent<TagZombieComponent>();
   }
 
+  Logger& logger_;
   SparseSet<ComponentMask> entity_masks_;
   std::unordered_map<std::string, EntityId> entities_;
   std::vector<std::unique_ptr<SparseSetInterface>> component_pool_;
+};
+
+template <typename T>
+struct EntityBuilder {
+  explicit EntityBuilder(ComponentManager& ec)
+      : ec(ec) {}
+  T obj;
+  ComponentManager& ec;
+
+  EntityBuilder<T>& Create(const std::string& name) {
+    obj.entity = ec.CreateEntity(name);
+    return *this;
+  }
+
+  template <IsComponent Component>
+  EntityBuilder<T>& WithComponent(Component component) {
+    ec.AddComponent<Component>(obj.entity.id, std::move(component));
+    return *this;
+  }
+
+  T Build() {
+    T new_obj = std::exchange(obj, T{});
+    return new_obj;
+  }
 };
 
 }  // namespace musashi

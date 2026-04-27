@@ -7,9 +7,11 @@
 
 namespace musashi {
 
+enum class LevelStates : uint8_t { kPreLevel, kLevelBegin, kLevelEnd };
+
 struct Level {
   std::vector<Zombie> zombies;
-  bool state;
+  LevelStates state{LevelStates::kPreLevel};
 
   void Init() {}
   void Draw() {}

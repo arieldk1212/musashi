@@ -29,22 +29,19 @@
     		"working_dir": "${project_path}",
 		},
 		{
-			"env" : {},
 			"name": "Debug Build",
-			"config": "Debug",
-			"target": "cmake_build",
-			"generator": "Unix Makefiles",
-			"working_dir": "${project_path}/build",
-			"variants": [],
+			"shell_cmd": "cmake -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build -j8",
+			"working_dir": "${project_path}",
 		},
 		{
-			"env" : {},
 			"name": "Release Build",
-			"config": "Release",
-			"target": "cmake_build",
-			"generator": "Unix Makefiles",
-			"working_dir": "${project_path}/build",
-			"variants": [],
-		}
+			"shell_cmd": "cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j8",
+			"working_dir": "${project_path}",
+		},
+		{
+			"name": "Clear Build",
+			"shell_cmd": "rm -rf build",
+			"working_dir": "${project_path}",
+		},
 	],
 }

@@ -1,17 +1,16 @@
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
-#include "global.h"
 #include "object.h"
 
 #include <array>
 #include <unordered_set>
 
-#include "entity/component_manager.h"
-
 namespace musashi {
 
 static constexpr uint8_t kMaxPlayerWeapons{2};
+static constexpr uint8_t kPrimaryWeaponIdx{0};
+static constexpr uint8_t kSecondaryWeaponIdx{1};
 
 enum class Perks : uint8_t { kStamina, kJuggernaut, kNuke, kCount };
 
@@ -31,10 +30,12 @@ struct Player : public Object {
   Entity entity;
   bool destroyed{false};
 
-  // TODO: Set transform at a random location, with base settings
-  Player() = default;
-
-  void Init() override {}
+  void Init() override {
+    perks.clear();
+    Weapon primary;
+    weapons[kPrimaryWeaponIdx] = std::move(primary);
+    weapons[kPrimaryWeaponIdx].Init();
+  }
   void Destory() override {}
   void HandleInput();
   void Update();
@@ -42,25 +43,7 @@ struct Player : public Object {
 
   PlayerSettings settings;
   std::unordered_set<Perks> perks;
-  std::array<Weapon, kMaxPlayerWeapons> weapon;
-};
-
-struct PlayerBuilder {
-  std::unique_ptr<Player> player;
-
-  PlayerBuilder& Create(const std::string& name) {
-    player = std::make_unique<Player>();
-    player->entity = kECManager->CreateEntity(name);
-    return *this;
-  }
-
-  template <IsComponent T>
-  PlayerBuilder& WithComponent(T component) {
-    kECManager->AddComponent<T>(player->entity.id, std::move(component));
-    return *this;
-  }
-
-  std::unique_ptr<Player> Build() { return std::move(player); };
+  std::array<Weapon, kMaxPlayerWeapons> weapons;
 };
 
 }  // namespace musashi

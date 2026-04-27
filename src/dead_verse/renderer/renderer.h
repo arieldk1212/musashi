@@ -3,10 +3,12 @@
 
 #include "shader.h"
 
+#include <memory>
 #include <unordered_map>
 
-#include "entity/components.h"
-#include "entity/entity_manager.h"
+#include "entity/component_manager.h"
+#include "game/world.h"
+#include "platform/platform.h"
 
 namespace musashi {
 
@@ -18,31 +20,34 @@ class BaseRenderer {
 };
 
 struct SpriteRenderer : public BaseRenderer {
-  void Render(Shader& shader, SpriteComponent& sprite);
+  void Render(Shader& program, SpriteComponent& sprite);
 };
 
 class Renderer : public BaseRenderer {
  public:
-  Renderer();
+  explicit Renderer(Logger& logger, Platform& platform, ComponentManager& ec);
 
   void Init();
 
-  void Render() override;
+  void Render(std::shared_ptr<World> world);
 
   void Draw(const Entity& entity);
 
   void ShutDown();
 
-  void AddShader(ShaderName shader_name,
-                 const std::filesystem::path& vertex_path,
-                 const std::filesystem::path& fragment_path);
-  void UseShader(ShaderName shader_name);
+  void AddProgram(ShaderName shader_name,
+                  const std::filesystem::path& vertex_path,
+                  const std::filesystem::path& fragment_path);
+  void UseProgram(ShaderName shader_name);
 
   static void Clear();
 
  private:
+  Logger* logger_;
+  Platform* platform_;
+  ComponentManager* ec_;
   std::unique_ptr<SpriteRenderer> sprite_renderer_;
-  std::unordered_map<ShaderName, std::unique_ptr<Shader>> shaders_;
+  std::unordered_map<ShaderName, std::unique_ptr<Shader>> programs_;
 };
 
 }  // namespace musashi

@@ -14,6 +14,7 @@ class Shader {
  public:
   Shader(const std::filesystem::path& vertex_path,
          const std::filesystem::path& fragment_path);
+  ~Shader() { DeleteProgram(); }
 
   void Use() const;
   void DeleteProgram() const;

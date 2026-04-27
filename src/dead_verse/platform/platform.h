@@ -2,22 +2,21 @@
 #define PLATFORM_H_
 
 #include "input.h"
-#include "window.h"
-
-#include <memory>
 
 #include "util/camera.h"
+#include "util/log.h"
 
 namespace musashi {
 
 struct Platform {
-  explicit Platform(const WindowSpecification& specifications);
+  explicit Platform(Logger& logger, const WindowSpecification& specifications);
 
   void Init();
   void Clear();
-  void Destroy() const;
+  void Destroy();
   void Update(float ts);
 
+  Logger* logger;
   std::shared_ptr<Window> window;
   InputSystem input_system;
   PrespectiveCameraController camera;
