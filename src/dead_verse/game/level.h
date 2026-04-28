@@ -7,9 +7,11 @@
 
 namespace musashi {
 
+enum class LevelStates : uint8_t { kPreLevel, kLevelBegin, kLevelEnd };
+
 struct Level {
   std::vector<Zombie> zombies;
-  bool state;
+  LevelStates state{LevelStates::kPreLevel};
 
   void Init() {}
   void Draw() {}
@@ -22,6 +24,7 @@ struct LevelHandler {
   int current_level{1};
   int zombie_count{kZombieStartCount};
 
+  static constexpr int kZombieDebugCount{1};
   static constexpr int kZombieStartCount{10};
   static constexpr float kZombieSpawnMultiplier{0.5};
 

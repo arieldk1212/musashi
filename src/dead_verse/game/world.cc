@@ -1,50 +1,45 @@
-#include "global.h"
 #include "object.h"
 #include "player.h"
 #include "world.h"
 #include "zombie.h"
 
-#include "entity/components.h"
+#include <filesystem>
+
+#include "entity/component_manager.h"
 #include "renderer/mesh.h"
 
 namespace musashi {
 
-World::World() {
+World::World(ComponentManager& ec)
+    : ec_(&ec),
+      level_handler_(std::make_unique<LevelHandler>()) {
   Init();
 }
 
 void World::Init() {
   InitPlayer("Wood");
-  ObjectHandler::InitObject(*player_);
-  for (int i = 0; i < level_handler_->zombie_count; ++i) {
+  player_->Init();
+
+  for (int i = 0; i < GetZombieCount(); ++i) {
     InitZombie("Zombie" + std::to_string(i));
-    ObjectHandler::InitObject(level_handler_->level.zombies[i]);
   }
 }
 
 void World::InitPlayer(const std::string& name) {
-  PlayerBuilder player_builder;
+  EntityBuilder<Player> player_builder(*ec_);
 
-  // TransformComponent transform;
-  // transform.position = glm::vec3(0.0f, 0.0f, -8.0f);
-  // transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
-
-  TagInputComponent input;
-
-  player_ =
-      std::move(player_builder
-                    .Create(name)
-                    // .WithComponent(std::move(transform))
+  auto player = player_builder.Create(name)
                     .WithComponent<VelocityComponent>(VelocityComponent{0.05})
-                    .WithComponent<TagInputComponent>(std::move(input))
-                    .Build());
+                    .WithComponent<TagInputComponent>(TagInputComponent{})
+                    .Build();
+  player_ = std::make_unique<Player>(std::move(player));
 }
 
 void World::InitZombie(const std::string& name) {
-  ZombieBuilder zombie_builder;
+  EntityBuilder<Zombie> zombie_builder(*ec_);
 
   TransformComponent transform;
-  transform.position = glm::vec3(0.0f, 0.0f, -8.0f);
+  transform.position = RandomSpawnPosition();
   transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
 
   QuadComponent quad;
@@ -52,6 +47,7 @@ void World::InitZombie(const std::string& name) {
   quad.scale = transform.scale;
   quad.mesh = std::make_unique<Mesh>(Quad2D::data, Quad2D::indices);
 
+  // TODO: Change to animation
   std::filesystem::path sprite_path{"assets/sprites/Zombie_1/Dead.png"};
   SpriteComponent sprite;
   sprite.sprite.source = std::make_shared<Texture>(sprite_path);
@@ -60,6 +56,7 @@ void World::InitZombie(const std::string& name) {
 
   auto zombie = zombie_builder.Create(name)
                     .WithComponent<TransformComponent>(std::move(transform))
+                    .WithComponent<TagZombieComponent>(TagZombieComponent{})
                     .WithComponent<QuadComponent>(std::move(quad))
                     .WithComponent<SpriteComponent>(std::move(sprite))
                     .Build();

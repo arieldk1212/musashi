@@ -3,8 +3,13 @@
 
 #include <string>
 
+// clang-format off
+#include <glad/glad.h>
+// clang-format on
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
+
+#include "util/log.h"
 
 namespace musashi {
 
@@ -21,7 +26,7 @@ struct WindowSpecification {
 
 class Window {
  public:
-  explicit Window(const WindowSpecification& specs);
+  explicit Window(Logger& logger, const WindowSpecification& specs);
   ~Window();
 
   void Create();
@@ -49,6 +54,7 @@ class Window {
   }
 
  private:
+  Logger* logger_;
   GLFWwindow* window_{nullptr};
   WindowSpecification specifications_;
 };

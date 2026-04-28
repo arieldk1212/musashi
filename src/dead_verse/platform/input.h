@@ -1,10 +1,13 @@
 #ifndef INPUT_H_
 #define INPUT_H_
 
+#include "window.h"
+
+#include <memory>
+#include <unordered_map>
+
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
-
-#include "unordered_map"
 
 namespace musashi {
 
@@ -144,7 +147,7 @@ enum class KeyCode : uint16_t {
 
 class InputSystem {
  public:
-  InputSystem() = default;
+  explicit InputSystem(std::shared_ptr<Window> window);
 
   void Init(Mode mode = Mode::kCursorDisabled);
   [[nodiscard]] Mode GetCursorMode() const { return cursor_mode_; }
@@ -153,8 +156,8 @@ class InputSystem {
                      int mods);
 
   // NOTE: OpenGL Current Action
-  static bool KeyPressed(KeyCode key_code);
-  static bool MouseButtonPressed(KeyCode key_code);
+  bool KeyPressed(KeyCode key_code);
+  bool MouseButtonPressed(KeyCode key_code);
 
   // NOTE: Key State
   bool IsKeyPressed(KeyCode key_code);
@@ -164,9 +167,10 @@ class InputSystem {
   void SetKey(KeyCode key_code) { keys_[key_code] = true; }
   void UnsetKey(KeyCode key_code) { keys_[key_code] = false; }
 
-  static glm::vec2 GetMousePosition();
+  glm::vec2 GetMousePosition();
 
  private:
+  std::shared_ptr<Window> window_;
   Mode cursor_mode_{Mode::kCursorHidden};
   std::unordered_map<KeyCode, bool> keys_;
 };

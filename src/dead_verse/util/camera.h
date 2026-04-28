@@ -2,9 +2,12 @@
 #define CAMERA_H_
 
 #include <cstdint>
+#include <memory>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "platform/input.h"
 
 namespace musashi {
 
@@ -38,10 +41,6 @@ struct CameraVectors {
 struct Camera {
   virtual ~Camera() = default;
 
-  virtual void Update() = 0;
-
-  virtual void SetPosition(const glm::vec3& position) = 0;
-
   virtual const glm::mat4& GetViewMatrix() = 0;
   virtual const glm::mat4& GetProjectionMatrix() = 0;
   virtual const glm::mat4& GetViewProjectionMatrix() = 0;
@@ -50,12 +49,7 @@ struct Camera {
 struct PrespectiveCamera : public Camera {
   explicit PrespectiveCamera(const glm::vec3& position);
 
-  void Update() override;
-
-  void SetPosition(const glm::vec3& new_position) override {
-    position = new_position;
-    Update();
-  }
+  void Update(std::shared_ptr<Window> window);
 
   [[nodiscard]] glm::mat4 CalculateNewViewMatrix() const {
     return glm::lookAt(position, position + vectors.front, vectors.up);
@@ -82,12 +76,13 @@ struct PrespectiveCameraController {
   };
 
   explicit PrespectiveCameraController(
+      std::shared_ptr<Window> window,
       const glm::vec3& position = glm::vec3(0.0f, 0.0f,
                                             CameraDefaults::kCameraZStart));
 
   void Init();
   // NOTE: API
-  void Update(float delta_time);
+  void Update(float delta_time, InputSystem& input_system);
 
   // NOTE: Dont use below
   void CallbackScroll(float y_offset);
@@ -96,6 +91,7 @@ struct PrespectiveCameraController {
 
   PrespectiveCamera camera;
   CameraMouseOffset mouse_offset;
+  std::shared_ptr<Window> window;
 };
 
 }  // namespace musashi

@@ -1,4 +1,3 @@
-#include "global.h"
 #include "texture.h"
 
 #include <glad/glad.h>
@@ -33,13 +32,9 @@ Texture::Texture(const std::filesystem::path& path) {
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA,
                  GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
-  } else {
-    kGlobal.logger->Error("Failed to load texture");
   }
 
   stbi_image_free(data);
-
-  kGlobal.logger->Trace("ADDED TEXTURE: " + std::to_string(id));
 }
 
 Texture::~Texture() {

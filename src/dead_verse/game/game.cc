@@ -1,42 +1,36 @@
-#include "game.h"
-#include "global.h"
 
-#include "platform/platform.h"
-#include "renderer/renderer.h"
-#include "util/log.h"
-#include "util/time.h"
+#include "game.h"
 
 namespace musashi {
 
-Game::Game(const GameSpecification& specs)
-    : specifications_(specs) {
+Game::Game(GameDependencies& dependencies, const GameSpecification& specs)
+    : dependencies_(&dependencies),
+      specifications_(specs),
+      state_(std::make_unique<State>()) {
   Init();
 }
 
 Game::~Game() noexcept {
-  glfwTerminate();
-  kPlatform->Destroy();
-  kRenderer->ShutDown();
   Stop();
+  glfwTerminate();
 }
 
 void Game::Init() {
   glfwInit();
-  kPlatform->Init();
-  kLogger->Trace("APPLICATION CREATED");
+  dependencies_->platform.Init();
+  dependencies_->renderer.Init();
+  world_ = std::make_shared<World>(dependencies_->ec);
 }
 
 void Game::Run() {
-  kRenderer->Init();
-
   running_ = true;
 
   time_.Init();
 
   while (running_) {
-    kPlatform->window->PollEvents();
+    dependencies_->platform.window->PollEvents();
 
-    if (kPlatform->window->ShouldClose()) {
+    if (dependencies_->platform.window->ShouldClose()) {
       Stop();
       break;
     }
@@ -53,10 +47,13 @@ void Game::Run() {
       time_.points.elapsed_time -= Time::kFixedDeltaTime;
     }
 
-    kPlatform->camera.Update(time_.points.delta_time);
+    dependencies_->platform.camera.Update(time_.points.delta_time,
+                                          dependencies_->platform.input_system);
 
-    kRenderer->Render();
-    kPlatform->window->Update();
+    dependencies_->renderer.Render(world_);
+    dependencies_->platform.window->Update();
+
+    musashi::Renderer::Clear();
   }
 }
 
@@ -66,11 +63,6 @@ void Game::Update(float ts) {
   //     kECManager->GetComponent<TagInputComponent>(quad_entity);
   // auto& cube_velocity_component =
   //     kECManager->GetComponent<VelocityComponent>(quad_entity);
-
-  // if (kPlatform->input_system.IsKeyPressed(KeyCode::kC)) {
-  //   cube_transform_component.position.x -=
-  //       cube_velocity_component.velocity;  // * delta_time
-  // }
 }
 
 };  // namespace musashi

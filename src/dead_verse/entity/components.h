@@ -9,9 +9,6 @@
 
 namespace musashi {
 
-// Number of unique component type.
-static inline constexpr int kNumberOfComponents{9};
-
 enum class ComponentType : uint8_t {
   kTransformComponent = 0,
   kInputComponent = 1,
@@ -23,7 +20,11 @@ enum class ComponentType : uint8_t {
   kSpriteComponent = 7,
   kQuadComponent = 8,
   kAnimationComponent = 9,
+  kZombieComponent = 10,
 };
+
+// Number of unique component type.
+static inline constexpr int kNumberOfComponents{11};
 
 struct Component {
   virtual ~Component() = default;
@@ -45,10 +46,6 @@ struct TransformComponent : public Component {
   glm::vec3 scale{0.0f};
 
   static ComponentType Type() { return ComponentType::kTransformComponent; }
-};
-
-struct TagInputComponent : public Component {
-  static ComponentType Type() { return ComponentType::kInputComponent; }
 };
 
 struct VelocityComponent : public Component {
@@ -97,6 +94,14 @@ struct QuadComponent : public Component {
 
 struct AnimationComponent : public Component {
   static ComponentType Type() { return ComponentType::kAnimationComponent; }
+};
+
+struct TagInputComponent : public Component {
+  static ComponentType Type() { return ComponentType::kInputComponent; }
+};
+
+struct TagZombieComponent : public Component {
+  static ComponentType Type() { return ComponentType::kZombieComponent; }
 };
 
 }  // namespace musashi

@@ -1,7 +1,7 @@
 #include "camera.h"
-#include "global.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "GLFW/glfw3.h"
 #include "platform/input.h"
@@ -12,7 +12,7 @@ namespace musashi {
 PrespectiveCamera::PrespectiveCamera(const glm::vec3& position)
     : position(position) {}
 
-void PrespectiveCamera::Update() {
+void PrespectiveCamera::Update(std::shared_ptr<Window> window) {
   glm::vec3 front;
   front.x = cos(glm::radians(settings.yaw)) * cos(glm::radians(settings.pitch));
   front.y = sin(glm::radians(settings.pitch));
@@ -23,23 +23,21 @@ void PrespectiveCamera::Update() {
   vectors.up = glm::normalize(glm::cross(vectors.right, vectors.front));
 
   view_matrix = CalculateNewViewMatrix();
-  projection_matrix =
-      glm::perspective(glm::radians(settings.zoom),
-                       kPlatform->window->GetWindowResolutionWidth() /
-                           kPlatform->window->GetWindowResolutionHeight(),
-                       0.1f, 100.0f);
-  // projection_matrix = glm::ortho(
-  //     0.0f, kPlatform->window->GetWindowResolutionWidth(),
-  //     kPlatform->window->GetWindowResolutionHeight(), 0.0f, -1.0f, 1.0f);
+  projection_matrix = glm::perspective(
+      glm::radians(settings.zoom),
+      window->GetWindowResolutionWidth() / window->GetWindowResolutionHeight(),
+      0.1f, 100.0f);
 
   view_projection_matrix = projection_matrix * view_matrix;
 }
 
 PrespectiveCameraController::PrespectiveCameraController(
-    const glm::vec3& position)
-    : camera(position) {}
+    std::shared_ptr<Window> window, const glm::vec3& position)
+    : camera(position),
+      window(window) {}
 
 void PrespectiveCameraController::Init() {
+  // glfwSetWindowUserPointer(window->GetHandler(), this);
   auto wrapper_mouse = [](GLFWwindow* window, double x, double y) {
     static_cast<Platform*>(glfwGetWindowUserPointer(window))
         ->camera.CallbackMouse(x, y);
@@ -50,13 +48,12 @@ void PrespectiveCameraController::Init() {
         ->camera.CallbackScroll(static_cast<float>(y));
   };
 
-  glfwSetCursorPosCallback(kPlatform->window->GetHandler(), wrapper_mouse);
-  glfwSetScrollCallback(kPlatform->window->GetHandler(), wrapper_scroll);
+  glfwSetCursorPosCallback(window->GetHandler(), wrapper_mouse);
+  glfwSetScrollCallback(window->GetHandler(), wrapper_scroll);
 }
 
-void PrespectiveCameraController::Update(float delta_time) {
-  auto& input_system = kPlatform->input_system;
-
+void PrespectiveCameraController::Update(float delta_time,
+                                         InputSystem& input_system) {
   if (input_system.IsKeyPressed(KeyCode::kW)) {
     CameraProcessKeyboard(CameraMovement::kForward, delta_time);
   }
@@ -90,7 +87,7 @@ void PrespectiveCameraController::CameraProcessKeyboard(
   }
   camera.position.y = 0.0f;  // FPS
 
-  camera.Update();
+  camera.Update(window);
 }
 
 void PrespectiveCameraController::CallbackMouse(double x_pos, double y_pos) {
@@ -120,7 +117,7 @@ void PrespectiveCameraController::CallbackMouse(double x_pos, double y_pos) {
   camera.settings.pitch =
       std::clamp(camera.settings.pitch, kLowerView, kUpperView);
 
-  camera.Update();
+  camera.Update(window);
 }
 
 void PrespectiveCameraController::CallbackScroll(float y_offset) {
@@ -130,7 +127,7 @@ void PrespectiveCameraController::CallbackScroll(float y_offset) {
   camera.settings.zoom -= y_offset;
   camera.settings.zoom = std::clamp(camera.settings.zoom, kMinZoom, kMaxZoom);
 
-  camera.Update();
+  camera.Update(window);
 }
 
 }  // namespace musashi

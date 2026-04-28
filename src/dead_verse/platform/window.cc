@@ -1,26 +1,21 @@
-// clang-format off
-#include <glad/glad.h>
-// clang-format on
-//
-#include "global.h"
-#include "platform.h"
 #include "window.h"
 
-#include "util/log.h"
+#include "platform/platform.h"
 
 namespace musashi {
 
-Window::Window(const WindowSpecification& specs)
-    : specifications_(specs) {}
+Window::Window(Logger& logger, const WindowSpecification& specs)
+    : logger_(&logger),
+      specifications_(specs) {}
 
 Window::~Window() {
   Destroy();
-  kLogger->Trace("Window Destroyed");
+  logger_->Trace("WINDOW DESTROYED");
 }
 
 void Window::Create() {
   if (!glfwInit()) {
-    kLogger->Critical("Failed To Initialize GLFW");
+    logger_->Critical("Failed To Initialize GLFW");
     assert(false);
   }
 
@@ -40,16 +35,16 @@ void Window::Create() {
                              specifications_.title.c_str(), nullptr, nullptr);
   if (window_ == nullptr) {
     glfwTerminate();
-    kLogger->Critical("Failed To Create GLFW Window");
+    logger_->Critical("Failed To Create GLFW Window");
     assert(false);
   }
   glfwMakeContextCurrent(window_);
   if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
-    kLogger->Critical("Failed To Initialize Glad");
+    logger_->Critical("Failed To Initialize Glad");
     assert(false);
   }
 
-  glfwSetWindowUserPointer(window_, kPlatform);
+  // glfwSetWindowUserPointer(window_, this);
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
   SetVSync(true);
@@ -70,7 +65,6 @@ void Window::Destroy() {
   if (window_ != nullptr) {
     glfwDestroyWindow(window_);
   }
-  window_ = nullptr;
 }
 
 void Window::Update() {
@@ -109,7 +103,7 @@ void Window::FramebufferSizeCallback(GLFWwindow* window, int width,
                                      int height) {
   // kPlatform->window->specifications_.width = width;
   // kPlatform->window->specifications_.height = height;
-  auto frame_buffer = kPlatform->window->GetFrameBufferSize();
+  auto frame_buffer = GetFrameBufferSize();
   glViewport(0, 0, frame_buffer.x, frame_buffer.y);
 }
 
