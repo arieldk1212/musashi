@@ -12,6 +12,7 @@ Platform::Platform(Logger& logger, const WindowSpecification& specifications)
 
 void Platform::Init() {
   window->Create();
+  glfwSetWindowUserPointer(window->GetHandler(), this);
   input_system.Init();
   camera.Init();
 }

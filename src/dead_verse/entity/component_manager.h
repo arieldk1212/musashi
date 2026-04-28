@@ -132,7 +132,7 @@ class ComponentManager {
   using ComponentMask = std::bitset<kNumberOfComponents>;
 
   explicit ComponentManager(Logger& logger)
-      : logger_(logger) {
+      : logger_(&logger) {
     component_pool_.resize(kNumberOfComponents);
     Init();
   }
@@ -145,7 +145,7 @@ class ComponentManager {
       entities_[entity_name] = id.value();
       return Entity{id.value(), entity_name};
     }
-    logger_.Error("Reached Entity Capacity! Quitting..");
+    logger_->Error("Reached Entity Capacity! Quitting..");
     assert(false);
   }
 
@@ -165,7 +165,7 @@ class ComponentManager {
     entities_.erase(entity.name);
     entity.Destroy();
 
-    logger_.Trace("Entity Deleted: " + entity.name);
+    logger_->Trace("Entity Deleted: " + entity.name);
   }
 
   template <IsComponent T>
@@ -185,7 +185,7 @@ class ComponentManager {
     auto component = component_pool.Get(id);
 
     if (!component.has_value()) {
-      logger_.Error("Entity Does Not Have This Component!");
+      logger_->Error("Entity Does Not Have This Component!");
     }
 
     return *component.value();
@@ -199,7 +199,7 @@ class ComponentManager {
     auto component = component_pool.Get(entities_[name]);
 
     if (!component.has_value()) {
-      logger_.Error("Entity Does Not Have This Component!");
+      logger_->Error("Entity Does Not Have This Component!");
     }
 
     return *component.value();
@@ -288,7 +288,7 @@ class ComponentManager {
     RegisterComponent<TagZombieComponent>();
   }
 
-  Logger& logger_;
+  Logger* logger_;
   SparseSet<ComponentMask> entity_masks_;
   std::unordered_map<std::string, EntityId> entities_;
   std::vector<std::unique_ptr<SparseSetInterface>> component_pool_;

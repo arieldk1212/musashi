@@ -20,21 +20,18 @@ void World::Init() {
   InitPlayer("Wood");
   player_->Init();
 
-  for (int i = 0; i < level_handler_->zombie_count; ++i) {
+  for (int i = 0; i < GetZombieCount(); ++i) {
     InitZombie("Zombie" + std::to_string(i));
-    ObjectHandler::InitObject(level_handler_->level.zombies[i]);
   }
 }
 
 void World::InitPlayer(const std::string& name) {
-  // PlayerBuilder player_builder;
   EntityBuilder<Player> player_builder(*ec_);
 
-  auto player =
-      std::move(player_builder.Create(name)
+  auto player = player_builder.Create(name)
                     .WithComponent<VelocityComponent>(VelocityComponent{0.05})
                     .WithComponent<TagInputComponent>(TagInputComponent{})
-                    .Build());
+                    .Build();
   player_ = std::make_unique<Player>(std::move(player));
 }
 
@@ -58,8 +55,8 @@ void World::InitZombie(const std::string& name) {
   sprite.sprite.data.name = "uZombie";
 
   auto zombie = zombie_builder.Create(name)
-                    .WithComponent<TagZombieComponent>(TagZombieComponent{})
                     .WithComponent<TransformComponent>(std::move(transform))
+                    .WithComponent<TagZombieComponent>(TagZombieComponent{})
                     .WithComponent<QuadComponent>(std::move(quad))
                     .WithComponent<SpriteComponent>(std::move(sprite))
                     .Build();

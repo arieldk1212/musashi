@@ -6,7 +6,6 @@ namespace musashi {
 Game::Game(GameDependencies& dependencies, const GameSpecification& specs)
     : dependencies_(&dependencies),
       specifications_(specs),
-      world_(std::make_shared<World>(dependencies_->ec)),
       state_(std::make_unique<State>()) {
   Init();
 }
@@ -18,12 +17,14 @@ Game::~Game() noexcept {
 
 void Game::Init() {
   glfwInit();
+  dependencies_->platform.Init();
+  dependencies_->renderer.Init();
+  world_ = std::make_shared<World>(dependencies_->ec);
 }
 
 void Game::Run() {
   running_ = true;
 
-  dependencies_->renderer.Init();
   time_.Init();
 
   while (running_) {
@@ -51,6 +52,8 @@ void Game::Run() {
 
     dependencies_->renderer.Render(world_);
     dependencies_->platform.window->Update();
+
+    musashi::Renderer::Clear();
   }
 }
 

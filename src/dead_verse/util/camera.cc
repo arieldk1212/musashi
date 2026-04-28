@@ -5,6 +5,7 @@
 
 #include "GLFW/glfw3.h"
 #include "platform/input.h"
+#include "platform/platform.h"
 
 namespace musashi {
 
@@ -26,27 +27,25 @@ void PrespectiveCamera::Update(std::shared_ptr<Window> window) {
       glm::radians(settings.zoom),
       window->GetWindowResolutionWidth() / window->GetWindowResolutionHeight(),
       0.1f, 100.0f);
-  // projection_matrix = glm::ortho(
-  //     0.0f, kPlatform->window->GetWindowResolutionWidth(),
-  //     kPlatform->window->GetWindowResolutionHeight(), 0.0f, -1.0f, 1.0f);
 
   view_projection_matrix = projection_matrix * view_matrix;
 }
 
 PrespectiveCameraController::PrespectiveCameraController(
     std::shared_ptr<Window> window, const glm::vec3& position)
-    : camera(position) {}
+    : camera(position),
+      window(window) {}
 
 void PrespectiveCameraController::Init() {
-  glfwSetWindowUserPointer(window->GetHandler(), this);
+  // glfwSetWindowUserPointer(window->GetHandler(), this);
   auto wrapper_mouse = [](GLFWwindow* window, double x, double y) {
-    static_cast<PrespectiveCameraController*>(glfwGetWindowUserPointer(window))
-        ->CallbackMouse(x, y);
+    static_cast<Platform*>(glfwGetWindowUserPointer(window))
+        ->camera.CallbackMouse(x, y);
   };
 
   auto wrapper_scroll = [](GLFWwindow* window, double x, double y) {
-    static_cast<PrespectiveCameraController*>(glfwGetWindowUserPointer(window))
-        ->CallbackScroll(static_cast<float>(y));
+    static_cast<Platform*>(glfwGetWindowUserPointer(window))
+        ->camera.CallbackScroll(static_cast<float>(y));
   };
 
   glfwSetCursorPosCallback(window->GetHandler(), wrapper_mouse);

@@ -48,3 +48,4 @@ vcpkg_installed
 *.sublime-workspace
 CMakeFiles
 CMakeCache.txt
+cmake-build-debug

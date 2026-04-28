@@ -10,5 +10,5 @@ uniform mat4 uMVP;
 void main() {
     vUv = aUv;
 
-    gl_Position = uMVP * vec4(aPos, 1.0);;
+    gl_Position = uMVP * vec4(aPos, 1.0);
 }

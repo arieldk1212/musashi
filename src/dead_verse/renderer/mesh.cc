@@ -8,8 +8,8 @@ VertexData::~VertexData() {
   Destroy();
 }
 
-void VertexData::Init(const std::vector<Vertex>& vertices,
-                      const std::vector<uint32_t>& indices) {
+void VertexData::Init(const std::array<Vertex, 4>& vertices,
+                      const std::array<uint32_t, 6>& indices) {
   vertices_count_ = static_cast<uint32_t>(vertices.size());
 
   glGenVertexArrays(1, &vao_);

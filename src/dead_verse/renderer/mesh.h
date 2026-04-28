@@ -1,7 +1,7 @@
 #ifndef MESH_H_
 #define MESH_H_
 
-#include <vector>
+#include <array>
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -18,8 +18,8 @@ class VertexData {
   VertexData() = default;
   ~VertexData();
 
-  void Init(const std::vector<Vertex>& vertices,
-            const std::vector<uint32_t>& indices = {});
+  void Init(const std::array<Vertex, 4>& vertices,
+            const std::array<uint32_t, 6>& indices = {});
 
   void Bind() const;
   void Draw() const;
@@ -38,10 +38,11 @@ class VertexData {
 
 struct Mesh {
   VertexData vertex;
-  std::vector<Vertex> data;
-  std::vector<uint32_t> indices;
+  std::array<Vertex, 4> data;
+  std::array<uint32_t, 6> indices;
 
-  Mesh(const std::vector<Vertex>& data, const std::vector<uint32_t>& indices)
+  Mesh(const std::array<Vertex, 4>& data,
+       const std::array<uint32_t, 6>& indices)
       : data(data),
         indices(indices) {
     vertex.Init(data, indices);
@@ -49,28 +50,34 @@ struct Mesh {
 };
 
 struct Quad2D {
-  inline static std::vector<Vertex> data = {
-      {{0.5f, 0.5f, 0.0f}, {1.0f, 1.0f}},
-      {{0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
-      {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}},
-      {{-0.5f, 0.5f, 0.0f}, {0.0f, 1.0f}}};
+  static constexpr std::array<Vertex, 4> data = {
+      {{.pos = glm::vec3(0.5f, 0.5f, 0.0f), .uv = glm::vec2(1.0f, 1.0f)},
+       {.pos = glm::vec3(0.5f, -0.5f, 0.0f), .uv = glm::vec2(1.0f, 0.0f)},
+       {.pos = glm::vec3(-0.5f, -0.5f, 0.0f), .uv = glm::vec2(0.0f, 0.0f)},
+       {.pos = glm::vec3(-0.5f, 0.5f, 0.0f), .uv = glm::vec2(0.0f, 1.0f)}}};
 
-  inline static std::vector<uint32_t> indices = {0, 1, 3, 1, 2, 3};
+  static constexpr std::array<uint32_t, 6> indices = {0, 1, 3, 1, 2, 3};
 };
 
 struct Quad3D {
-  inline static std::vector<Vertex> data = {
-      {{-0.5f, -0.5f, 0.5f}, {0.0f, 0.0f}},
-      {{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f}},
-      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f}},
-      {{-0.5f, 0.5f, 0.5f}, {0.0f, 1.0f}},
-      {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}},
-      {{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
-      {{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}},
-      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}}};
-  inline static std::vector<uint32_t> indices = {
-      0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1, 5, 4, 7, 7, 6, 5,
-      4, 0, 3, 3, 7, 4, 3, 2, 6, 6, 7, 3, 4, 5, 1, 1, 0, 4};
+  static constexpr std::array<Vertex, 8> data = {
+      {{.pos = glm::vec3(-0.5f, -0.5f, 0.5f), .uv = glm::vec2(0.0f, 0.0f)},
+       {.pos = glm::vec3(0.5f, -0.5f, 0.5f), .uv = glm::vec2(1.0f, 0.0f)},
+       {.pos = glm::vec3(0.5f, 0.5f, 0.5f), .uv = glm::vec2(1.0f, 1.0f)},
+       {.pos = glm::vec3(-0.5f, 0.5f, 0.5f), .uv = glm::vec2(0.0f, 1.0f)},
+       {.pos = glm::vec3(-0.5f, -0.5f, -0.5f), .uv = glm::vec2(1.0f, 0.0f)},
+       {.pos = glm::vec3(0.5f, -0.5f, -0.5f), .uv = glm::vec2(0.0f, 0.0f)},
+       {.pos = glm::vec3(0.5f, 0.5f, -0.5f), .uv = glm::vec2(0.0f, 1.0f)},
+       {.pos = glm::vec3(-0.5f, 0.5f, -0.5f), .uv = glm::vec2(1.0f, 1.0f)}}};
+
+  static constexpr std::array<uint32_t, 36> indices = {
+      0, 1, 2, 2, 3, 0,  // Front
+      1, 5, 6, 6, 2, 1,  // Right
+      5, 4, 7, 7, 6, 5,  // Back
+      4, 0, 3, 3, 7, 4,  // Left
+      3, 2, 6, 6, 7, 3,  // Top
+      4, 5, 1, 1, 0, 4   // Bottom
+  };
 };
 
 }  // namespace musashi

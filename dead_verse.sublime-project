@@ -29,6 +29,11 @@
     		"working_dir": "${project_path}",
 		},
 		{
+			"name": "Run with Build",
+    		"shell_cmd": "cmake -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build -j8 && ./build/src/main",
+    		"working_dir": "${project_path}",
+		},
+		{
 			"name": "Debug Build",
 			"shell_cmd": "cmake -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build -j8",
 			"working_dir": "${project_path}",

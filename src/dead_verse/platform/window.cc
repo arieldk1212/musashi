@@ -1,5 +1,7 @@
 #include "window.h"
 
+#include "platform/platform.h"
+
 namespace musashi {
 
 Window::Window(Logger& logger, const WindowSpecification& specs)
@@ -8,7 +10,7 @@ Window::Window(Logger& logger, const WindowSpecification& specs)
 
 Window::~Window() {
   Destroy();
-  logger_->Trace("Window Destroyed");
+  logger_->Trace("WINDOW DESTROYED");
 }
 
 void Window::Create() {
@@ -42,7 +44,7 @@ void Window::Create() {
     assert(false);
   }
 
-  glfwSetWindowUserPointer(window_, this);
+  // glfwSetWindowUserPointer(window_, this);
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
   SetVSync(true);
@@ -53,8 +55,8 @@ void Window::Create() {
   glViewport(0, 0, frame_buffer.x, frame_buffer.y);
 
   auto wrapper_frame_buffer = [](GLFWwindow* window, int width, int height) {
-    static_cast<Window*>(glfwGetWindowUserPointer(window))
-        ->FramebufferSizeCallback(window, width, height);
+    static_cast<Platform*>(glfwGetWindowUserPointer(window))
+        ->window->FramebufferSizeCallback(window, width, height);
   };
   glfwSetFramebufferSizeCallback(window_, wrapper_frame_buffer);
 }

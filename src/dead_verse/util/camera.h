@@ -41,8 +41,6 @@ struct CameraVectors {
 struct Camera {
   virtual ~Camera() = default;
 
-  virtual void Update() {};
-
   virtual const glm::mat4& GetViewMatrix() = 0;
   virtual const glm::mat4& GetProjectionMatrix() = 0;
   virtual const glm::mat4& GetViewProjectionMatrix() = 0;
