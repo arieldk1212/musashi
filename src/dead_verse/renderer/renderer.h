@@ -12,18 +12,11 @@
 
 namespace musashi {
 
-class BaseRenderer {
- public:
-  virtual ~BaseRenderer() = default;
-
-  virtual void Render() {}
-};
-
-struct SpriteRenderer : public BaseRenderer {
+struct SpriteRenderer {
   void Render(Shader& program, SpriteComponent& sprite);
 };
 
-class Renderer : public BaseRenderer {
+class Renderer {
  public:
   explicit Renderer(Logger& logger, Platform& platform, ComponentManager& ec);
 

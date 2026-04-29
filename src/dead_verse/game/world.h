@@ -30,7 +30,9 @@ class World {
     return level_handler_->level.zombies;
   }
 
-  size_t GetZombieCount() const { return level_handler_->zombie_count; }
+  [[nodiscard]] int GetZombieCount() const {
+    return level_handler_->zombie_count;
+  }
 
  private:
   ComponentManager* ec_;

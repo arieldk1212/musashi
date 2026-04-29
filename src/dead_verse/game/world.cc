@@ -50,7 +50,7 @@ void World::InitZombie(const std::string& name) {
   // TODO: Change to animation
   std::filesystem::path sprite_path{"assets/sprites/Zombie_1/Dead.png"};
   SpriteComponent sprite;
-  sprite.sprite.source = std::make_shared<Texture>(sprite_path);
+  sprite.sprite.source = std::make_unique<Texture>(sprite_path);
   sprite.sprite.data.slot = 0;
   sprite.sprite.data.name = "uZombie";
 

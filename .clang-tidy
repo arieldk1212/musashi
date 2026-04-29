@@ -11,7 +11,7 @@ Checks: >
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-pro-type-vararg,
   -cppcoreguidelines-pro-type-reinterpret-cast,
-  -cppcoreguidelines-avoid-const-or-ref-data-members
+  -cppcoreguidelines-avoid-const-or-ref-data-members,
   -cppcoreguidelines-owning-memory,
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -cppcoreguidelines-pro-type-const-cast,
@@ -34,6 +34,7 @@ Checks: >
   -readability-named-parameter,
   -google-readability-todo,
   -google-runtime-references,
+
 
 # WarningsAsErrors: 'bugprone-*,performance-*,cppcoreguidelines-virtual-class-destructor'
 
