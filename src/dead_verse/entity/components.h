@@ -1,6 +1,10 @@
 #ifndef COMPONENTS_H_
 #define COMPONENTS_H_
 
+#include "entity_manager.h"
+
+#include <unordered_map>
+
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
@@ -16,15 +20,14 @@ enum class ComponentType : uint8_t {
   kCollisionComponent = 3,
   kHealthComponent = 4,
   kCombatComponent = 5,
-  kTextureComponent = 6,
-  kSpriteComponent = 7,
-  kQuadComponent = 8,
-  kAnimationComponent = 9,
-  kZombieComponent = 10,
+  kSpriteComponent = 6,
+  kQuadComponent = 7,
+  kAnimationComponent = 8,
+  kZombieComponent = 9,
 };
 
 // Number of unique component type.
-static inline constexpr int kNumberOfComponents{11};
+static inline constexpr int kNumberOfComponents{10};
 
 struct Component {
   virtual ~Component() = default;
@@ -69,14 +72,6 @@ struct CombatComponent : public Component {
   static ComponentType Type() { return ComponentType::kCombatComponent; }
 };
 
-struct TextureComponent : public Component {
-  std::unique_ptr<Texture> source;
-  std::string name;
-  uint32_t slot;
-
-  static ComponentType Type() { return ComponentType::kTextureComponent; };
-};
-
 struct SpriteComponent : public Component {
   Sprite sprite;
 
@@ -102,6 +97,43 @@ struct TagInputComponent : public Component {
 
 struct TagZombieComponent : public Component {
   static ComponentType Type() { return ComponentType::kZombieComponent; }
+};
+
+struct EntityRegistry {
+  static constexpr EntityId kBaseEntity{0};
+
+  static std::optional<EntityId> GenerateEntityId() {
+    static std::atomic<EntityId> next{kBaseEntity + 1};
+    if (next == kMaxEntities) {
+      return std::nullopt;
+    }
+    return next.fetch_add(1);
+  }
+};
+
+class ComponentRegistry {
+ public:
+  ComponentRegistry() = default;
+
+  template <IsComponent T>
+  void Register(std::string name, ComponentType type,
+                std::function<void(T)> register_method) {
+    register_method();
+    IncrementSize();
+    components_[std::move(name)] = GetComponentsSize();
+  }
+
+  [[nodiscard]] static int GetComponentsSize() { return kCurrentSize; }
+
+ private:
+  static void IncrementSize() {
+    static std::atomic<int> size{kCurrentSize + 1};
+    size.fetch_add(1);
+  }
+
+  static constexpr int kCurrentSize{0};
+
+  std::unordered_map<std::string, uint8_t> components_;
 };
 
 }  // namespace musashi

@@ -2,10 +2,8 @@
 #define COMPONENT_MANAGER_H_
 
 #include "components.h"
-#include "entity_manager.h"
 
 #include <array>
-#include <atomic>
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -139,7 +137,7 @@ class ComponentManager {
   ~ComponentManager() { Clear(); }
 
   Entity CreateEntity(const std::string& entity_name = "Entity") {
-    auto id = ComponentRegistry::GenerateEntityId();
+    auto id = EntityRegistry::GenerateEntityId();
     if (id.has_value()) {
       entity_masks_.Add(id.value(), ComponentMask{});
       entities_[entity_name] = id.value();
@@ -262,18 +260,6 @@ class ComponentManager {
   }
 
  private:
-  struct ComponentRegistry {
-    static constexpr EntityId kBaseEntity{0};
-
-    static std::optional<EntityId> GenerateEntityId() {
-      static std::atomic<EntityId> next{kBaseEntity + 1};
-      if (next == kMaxEntities) {
-        return std::nullopt;
-      }
-      return next.fetch_add(1);
-    }
-  };
-
   void Init() {
     RegisterComponent<TransformComponent>();
     RegisterComponent<TagInputComponent>();
@@ -281,7 +267,6 @@ class ComponentManager {
     RegisterComponent<CollisionComponent>();
     RegisterComponent<HealthComponent>();
     RegisterComponent<CombatComponent>();
-    RegisterComponent<TextureComponent>();
     RegisterComponent<SpriteComponent>();
     RegisterComponent<QuadComponent>();
     RegisterComponent<AnimationComponent>();
@@ -289,6 +274,7 @@ class ComponentManager {
   }
 
   Logger* logger_;
+  ComponentRegistry registry_;
   SparseSet<ComponentMask> entity_masks_;
   std::unordered_map<std::string, EntityId> entities_;
   std::vector<std::unique_ptr<SparseSetInterface>> component_pool_;
