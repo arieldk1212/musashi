@@ -274,7 +274,6 @@ class ComponentManager {
   }
 
   Logger* logger_;
-  ComponentRegistry registry_;
   SparseSet<ComponentMask> entity_masks_;
   std::unordered_map<std::string, EntityId> entities_;
   std::vector<std::unique_ptr<SparseSetInterface>> component_pool_;

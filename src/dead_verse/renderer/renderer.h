@@ -4,11 +4,11 @@
 #include "shader.h"
 
 #include <memory>
-#include <unordered_map>
 
 #include "entity/component_manager.h"
 #include "game/world.h"
 #include "platform/platform.h"
+#include "renderer/resource_manager.h"
 
 namespace musashi {
 
@@ -18,7 +18,8 @@ struct SpriteRenderer {
 
 class Renderer {
  public:
-  explicit Renderer(Logger& logger, Platform& platform, ComponentManager& ec);
+  explicit Renderer(Logger& logger, Platform& platform, ComponentManager& ec,
+                    ResourceManager& resource_manager);
 
   void Init();
 
@@ -28,19 +29,14 @@ class Renderer {
 
   void ShutDown();
 
-  void AddProgram(ShaderName shader_name,
-                  const std::filesystem::path& vertex_path,
-                  const std::filesystem::path& fragment_path);
-  void UseProgram(ShaderName shader_name);
-
   static void Clear();
 
  private:
   Logger* logger_;
   Platform* platform_;
   ComponentManager* ec_;
+  ResourceManager* resource_manager_;
   std::unique_ptr<SpriteRenderer> sprite_renderer_;
-  std::unordered_map<ShaderName, std::unique_ptr<Shader>> programs_;
 };
 
 }  // namespace musashi

@@ -8,8 +8,6 @@
 
 namespace musashi {
 
-enum class ShaderName : uint8_t { kObjectShader };
-
 class Shader {
  public:
   using ShaderId = uint8_t;

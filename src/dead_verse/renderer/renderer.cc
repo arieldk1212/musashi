@@ -1,5 +1,7 @@
 #include "renderer.h"
 
+#include "renderer/resource_manager.h"
+
 namespace musashi {
 
 void SpriteRenderer::Render(Shader& program, SpriteComponent& sprite) {
@@ -21,26 +23,27 @@ void SpriteRenderer::Render(Shader& program, SpriteComponent& sprite) {
   program.SetVec2("uUvScale", uv_scale);
 }
 
-Renderer::Renderer(Logger& logger, Platform& platform, ComponentManager& ec)
+Renderer::Renderer(Logger& logger, Platform& platform, ComponentManager& ec,
+                   ResourceManager& resource_manager)
     : logger_(&logger),
       platform_(&platform),
       ec_(&ec),
-      sprite_renderer_(std::make_unique<SpriteRenderer>()) {}
+      sprite_renderer_(std::make_unique<SpriteRenderer>()),
+      resource_manager_(&resource_manager) {}
 
 void Renderer::Init() {
   glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  AddProgram(ShaderName::kObjectShader, "assets/shaders/object/vert.glsl",
-             "assets/shaders/object/frag.glsl");
-  UseProgram(ShaderName::kObjectShader);
+  resource_manager_->InitResources();
   logger_->Trace("RENDERER & SHADERS INITIALIZED");
 }
 
 void Renderer::Render(std::shared_ptr<World> world) {
-  auto& program = programs_[ShaderName::kObjectShader];
-  program->Use();
+  auto& program = resource_manager_->GetProgram(
+      ResourceManager::ProgramName::kObjectShader);
+  program.Use();
 
   const auto& pv = platform_->camera.camera.GetViewProjectionMatrix();
 
@@ -55,11 +58,11 @@ void Renderer::Render(std::shared_ptr<World> world) {
       model = glm::translate(model, transform_component.position);
       auto mvp = pv * model;
 
-      program->Use();
-      program->SetMat4("uMVP", mvp);
+      program.Use();
+      program.SetMat4("uMVP", mvp);
 
       auto& sprite = ec_->GetComponent<SpriteComponent>(zombie_entity.id);
-      sprite_renderer_->Render(*program, sprite);
+      sprite_renderer_->Render(program, sprite);
 
       Draw(zombie_entity);
     }
@@ -76,18 +79,7 @@ void Renderer::Draw(const Entity& entity) {
 }
 
 void Renderer::ShutDown() {
-  programs_.clear();
-}
-
-void Renderer::UseProgram(ShaderName shader_name) {
-  programs_[shader_name]->Use();
-}
-
-void Renderer::AddProgram(ShaderName shader_name,
-                          const std::filesystem::path& vertex_path,
-                          const std::filesystem::path& fragment_path) {
-  auto program = std::make_unique<Shader>(vertex_path, fragment_path);
-  programs_[shader_name] = std::move(program);
+  resource_manager_->ClearResources();
 }
 
 void Renderer::Clear() {
