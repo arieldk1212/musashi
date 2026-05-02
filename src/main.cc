@@ -16,7 +16,7 @@ int main() {
 
   // Game
   musashi::GameDependencies dependencies(logger, renderer, platform, ec);
-  musashi::Game game(dependencies, specs);
+  musashi::Game game(dependencies, resource_manager, specs);
 
   // Entrypoint
   logger.Trace("GAME STARTING..");

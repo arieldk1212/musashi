@@ -1,10 +1,11 @@
-
 #include "game.h"
 
 namespace musashi {
 
-Game::Game(GameDependencies& dependencies, const GameSpecification& specs)
+Game::Game(GameDependencies& dependencies, ResourceManager& resource_manager,
+           const GameSpecification& specs)
     : dependencies_(&dependencies),
+      resource_manager_(&resource_manager),
       specifications_(specs),
       state_(std::make_unique<State>()) {
   Init();
@@ -19,7 +20,8 @@ void Game::Init() {
   glfwInit();
   dependencies_->platform.Init();
   dependencies_->renderer.Init();
-  world_ = std::make_shared<World>(dependencies_->logger, dependencies_->ec);
+  world_ = std::make_shared<World>(&dependencies_->logger, &dependencies_->ec,
+                                   resource_manager_);
 }
 
 void Game::Run() {

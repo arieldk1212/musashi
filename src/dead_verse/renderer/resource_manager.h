@@ -18,10 +18,7 @@ class ResourceManager {
 
   enum class ShaderName : uint8_t { kObjectShader };
   enum class TextureName : uint8_t {
-    kZombieOneTexture,
-    kZombieTwoTexture,
-    kZombieThreeTexture,
-    kZombieFourTexture
+    kZombiesSheet,
   };
 
   using Program = Shader;
@@ -32,6 +29,8 @@ class ResourceManager {
                "assets/shaders/object/vert.glsl",
                "assets/shaders/object/frag.glsl");
     UseProgram(ResourceManager::ShaderName::kObjectShader);
+    AddTexture(TextureName::kZombiesSheet,
+               "assets/sprites/zombies/sprite_sheet.png");
   }
   void ClearResources() {
     textures_.clear();

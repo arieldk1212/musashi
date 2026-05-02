@@ -1,18 +1,13 @@
 #include "object.h"
-#include "player.h"
 #include "world.h"
-#include "zombie.h"
-
-#include <filesystem>
-
-#include "entity/component_manager.h"
-#include "renderer/mesh.h"
 
 namespace musashi {
 
-World::World(Logger& logger, ComponentManager& ec)
-    : logger_(&logger),
-      ec_(&ec),
+World::World(Logger* logger, ComponentManager* ec,
+             ResourceManager* resource_manager)
+    : logger_(logger),
+      ec_(ec),
+      resource_manager_(resource_manager),
       level_handler_(std::make_unique<LevelHandler>()) {
   Init();
 }
@@ -55,17 +50,21 @@ void World::InitZombie(const std::string& name) {
   quad.mesh = std::make_unique<Mesh>(Quad2D::data, Quad2D::indices);
 
   // TODO: Change to animation
-  std::filesystem::path sprite_path{"assets/sprites/Zombie_1/Dead.png"};
   SpriteComponent sprite;
-  sprite.sprite.source = std::make_shared<Texture>(sprite_path);
+  sprite.sprite.source = resource_manager_->GetTexture(
+      ResourceManager::TextureName::kZombiesSheet);
   sprite.sprite.data.slot = 0;
   sprite.sprite.data.name = "uZombie";
+  sprite.sprite.data.size = {126, 126};
+  // TODO: Change for each zombie type
+  sprite.sprite.data.origin = {6, 7};
 
   auto zombie = zombie_builder.Create(name)
                     .WithComponent<TransformComponent>(std::move(transform))
                     .WithComponent<TagZombieComponent>(TagZombieComponent{})
                     .WithComponent<QuadComponent>(std::move(quad))
                     .WithComponent<SpriteComponent>(std::move(sprite))
+                    .WithComponent<AnimationComponent>(AnimationComponent{})
                     .Build();
   level_handler_->level->zombies.emplace_back(std::move(zombie));
 }

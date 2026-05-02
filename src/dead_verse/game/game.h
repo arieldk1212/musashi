@@ -36,6 +36,7 @@ struct GameDependencies {
 class Game {
  public:
   explicit Game(GameDependencies& dependencies,
+                ResourceManager& resource_manager,
                 const GameSpecification& specs = GameSpecification());
   ~Game() noexcept;
 
@@ -48,6 +49,7 @@ class Game {
   Time time_;
   bool running_{false};
   GameDependencies* dependencies_;
+  ResourceManager* resource_manager_;
   GameSpecification specifications_;
   std::shared_ptr<World> world_;
   std::unique_ptr<State> state_;

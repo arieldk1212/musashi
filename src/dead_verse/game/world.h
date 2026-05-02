@@ -10,6 +10,7 @@
 #include "entity/component_manager.h"
 #include "game/level.h"
 #include "game/state.h"
+#include "renderer/resource_manager.h"
 #include "util/log.h"
 
 namespace musashi {
@@ -17,9 +18,9 @@ namespace musashi {
 // TODO: Implement State Machine Here
 class World {
  public:
-  World(Logger& logger, ComponentManager& ec);
+  World(Logger* logger, ComponentManager* ec,
+        ResourceManager* resource_manager);
 
-  // INFO: Init first level
   void Init();
   void Update(float ts);
   void Render(State& state);
@@ -40,6 +41,7 @@ class World {
   Logger* logger_;
   ComponentManager* ec_;
   std::unique_ptr<Player> player_;
+  ResourceManager* resource_manager_;
   std::unique_ptr<LevelHandler> level_handler_;
 };
 

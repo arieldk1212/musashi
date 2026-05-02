@@ -12,10 +12,6 @@
 
 namespace musashi {
 
-struct SpriteRenderer {
-  void Render(Shader& program, SpriteComponent& sprite);
-};
-
 class Renderer {
  public:
   explicit Renderer(Logger& logger, Platform& platform, ComponentManager& ec,
@@ -23,11 +19,16 @@ class Renderer {
 
   void Init();
 
-  void Render(std::shared_ptr<World> world);
   void RenderFrame();
+  void Render(std::shared_ptr<World> world);
+  void RenderSprite(Shader& program, SpriteComponent& sprite);
+  void RenderAnimation(Shader& program, AnimationComponent& animation,
+                       SpriteComponent& sprite);
 
   void Draw();  // NOTE: Draw all entities
   void Draw(const Entity& entity);
+
+  bool IsStaticEntity(const Entity& entity);
 
   void ShutDown();
 
@@ -38,7 +39,6 @@ class Renderer {
   Platform* platform_;
   ComponentManager* ec_;
   ResourceManager* resource_manager_;
-  std::unique_ptr<SpriteRenderer> sprite_renderer_;
 };
 
 }  // namespace musashi
