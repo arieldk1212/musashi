@@ -19,7 +19,7 @@ void Game::Init() {
   glfwInit();
   dependencies_->platform.Init();
   dependencies_->renderer.Init();
-  world_ = std::make_shared<World>(dependencies_->ec);
+  world_ = std::make_shared<World>(dependencies_->logger, dependencies_->ec);
 }
 
 void Game::Run() {
@@ -30,8 +30,12 @@ void Game::Run() {
   while (running_) {
     dependencies_->platform.window->PollEvents();
 
+    dependencies_->platform.camera.Update(time_.points.delta_time,
+                                          dependencies_->platform.input_system);
+
     if (dependencies_->platform.window->ShouldClose()) {
       Stop();
+      dependencies_->logger.Critical("PANIC");
       break;
     }
 
@@ -47,12 +51,9 @@ void Game::Run() {
       time_.points.elapsed_time -= Time::kFixedDeltaTime;
     }
 
-    dependencies_->platform.camera.Update(time_.points.delta_time,
-                                          dependencies_->platform.input_system);
-
     dependencies_->renderer.Render(world_);
-    dependencies_->platform.window->Update();
 
+    dependencies_->platform.window->Update();
     musashi::Renderer::Clear();
   }
 }

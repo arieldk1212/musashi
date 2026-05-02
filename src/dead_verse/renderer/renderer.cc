@@ -28,8 +28,8 @@ Renderer::Renderer(Logger& logger, Platform& platform, ComponentManager& ec,
     : logger_(&logger),
       platform_(&platform),
       ec_(&ec),
-      sprite_renderer_(std::make_unique<SpriteRenderer>()),
-      resource_manager_(&resource_manager) {}
+      resource_manager_(&resource_manager),
+      sprite_renderer_(std::make_unique<SpriteRenderer>()) {}
 
 void Renderer::Init() {
   glEnable(GL_BLEND);
@@ -69,8 +69,11 @@ void Renderer::Render(std::shared_ptr<World> world) {
   }
 }
 
+void Renderer::Draw() {}
+
 void Renderer::Draw(const Entity& entity) {
-  bool has_quad = ec_->HasComponent<QuadComponent>(entity.name);
+  bool has_quad{false};
+  has_quad = ec_->HasComponent<QuadComponent>(entity.name);
   if (has_quad) {
     auto& quad = ec_->GetComponent<QuadComponent>(entity.name);
     quad.mesh->vertex.Bind();

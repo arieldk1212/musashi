@@ -10,18 +10,25 @@
 
 namespace musashi {
 
-World::World(ComponentManager& ec)
-    : ec_(&ec),
+World::World(Logger& logger, ComponentManager& ec)
+    : logger_(&logger),
+      ec_(&ec),
       level_handler_(std::make_unique<LevelHandler>()) {
   Init();
 }
 
+void World::InitTiles() {}
+
 void World::Init() {
+  InitTiles();
+
   InitPlayer("Wood");
   player_->Init();
+  logger_->Trace("Player Created");
 
   for (int i = 0; i < GetZombieCount(); ++i) {
     InitZombie("Zombie" + std::to_string(i));
+    logger_->Trace("Zombie Created");
   }
 }
 
@@ -60,7 +67,7 @@ void World::InitZombie(const std::string& name) {
                     .WithComponent<QuadComponent>(std::move(quad))
                     .WithComponent<SpriteComponent>(std::move(sprite))
                     .Build();
-  level_handler_->level.zombies.emplace_back(std::move(zombie));
+  level_handler_->level->zombies.emplace_back(std::move(zombie));
 }
 
 }  // namespace musashi

@@ -2,10 +2,10 @@
 #include "renderer/resource_manager.h"
 
 int main() {
-  musashi::GameSpecification specs = {.game_name = "Dead Verse",
-                                      .window_specs.width = 1000,
-                                      .window_specs.height = 800,
-                                      .window_specs.is_resizeable = true};
+  musashi::GameSpecification specs{.game_name = "Dead Verse",
+                                   .window_specs.width = 1000,
+                                   .window_specs.height = 800,
+                                   .window_specs.is_resizeable = true};
 
   // Engine Dependencies
   musashi::Logger logger(musashi::kLogBufferSize);

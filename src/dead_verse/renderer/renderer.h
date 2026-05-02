@@ -24,7 +24,9 @@ class Renderer {
   void Init();
 
   void Render(std::shared_ptr<World> world);
+  void RenderFrame();
 
+  void Draw();  // NOTE: Draw all entities
   void Draw(const Entity& entity);
 
   void ShutDown();
