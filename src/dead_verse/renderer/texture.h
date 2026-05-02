@@ -5,11 +5,13 @@
 
 namespace musashi {
 
+using TextureId = uint32_t;
+
 struct Texture {
   int width{0};
   int height{0};
   int nr_channels{0};
-  unsigned int id{0};
+  TextureId id{0};
 
   explicit Texture(const std::filesystem::path& path);
   ~Texture();

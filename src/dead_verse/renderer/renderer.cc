@@ -1,46 +1,31 @@
 #include "renderer.h"
 
+#include "entity/components.h"
+#include "entity/entity_manager.h"
+#include "renderer/resource_manager.h"
+
 namespace musashi {
 
-void SpriteRenderer::Render(Shader& program, SpriteComponent& sprite) {
-  sprite.sprite.SetSprite(program);
-
-  glm::vec2 origin{1, 0};
-  glm::vec2 size{126, 126};
-  auto texture_width = static_cast<float>(sprite.sprite.source->width);
-  auto texture_height = static_cast<float>(sprite.sprite.source->height);
-
-  sprite.sprite.data.size = size;
-  sprite.sprite.data.origin = origin;
-
-  glm::vec2 uv_offset = {(origin.x * size.x) / texture_width,
-                         (origin.y * size.y) / texture_height};
-  glm::vec2 uv_scale = {size.x / texture_width, size.y / texture_height};
-
-  program.SetVec2("uUvOffset", uv_offset);
-  program.SetVec2("uUvScale", uv_scale);
-}
-
-Renderer::Renderer(Logger& logger, Platform& platform, ComponentManager& ec)
+Renderer::Renderer(Logger& logger, Platform& platform, ComponentManager& ec,
+                   ResourceManager& resource_manager)
     : logger_(&logger),
       platform_(&platform),
       ec_(&ec),
-      sprite_renderer_(std::make_unique<SpriteRenderer>()) {}
+      resource_manager_(&resource_manager) {}
 
 void Renderer::Init() {
   glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  AddProgram(ShaderName::kObjectShader, "assets/shaders/object/vert.glsl",
-             "assets/shaders/object/frag.glsl");
-  UseProgram(ShaderName::kObjectShader);
+  resource_manager_->InitResources();
   logger_->Trace("RENDERER & SHADERS INITIALIZED");
 }
 
 void Renderer::Render(std::shared_ptr<World> world) {
-  auto& program = programs_[ShaderName::kObjectShader];
-  program->Use();
+  auto& program = resource_manager_->GetProgram(
+      ResourceManager::ProgramName::kObjectShader);
+  program.Use();
 
   const auto& pv = platform_->camera.camera.GetViewProjectionMatrix();
 
@@ -55,19 +40,51 @@ void Renderer::Render(std::shared_ptr<World> world) {
       model = glm::translate(model, transform_component.position);
       auto mvp = pv * model;
 
-      program->Use();
-      program->SetMat4("uMVP", mvp);
+      program.Use();
+      program.SetMat4("uMVP", mvp);
 
       auto& sprite = ec_->GetComponent<SpriteComponent>(zombie_entity.id);
-      sprite_renderer_->Render(*program, sprite);
+      if (!IsStaticEntity(zombie_entity)) {
+        auto& animation =
+            ec_->GetComponent<AnimationComponent>(zombie_entity.id);
+        RenderAnimation(program, animation, sprite);
+      } else {
+        RenderSprite(program, sprite);
+      }
 
       Draw(zombie_entity);
     }
   }
 }
 
+void Renderer::RenderSprite(Shader& program, SpriteComponent& sprite) {
+  // TODO: Abstract this method, make it cleaner.
+  sprite.sprite.SetSprite(program);
+
+  auto texture_width = static_cast<float>(sprite.sprite.source->width);
+  auto texture_height = static_cast<float>(sprite.sprite.source->height);
+
+  auto size = sprite.sprite.data.size;
+  auto origin = sprite.sprite.data.origin;
+
+  glm::vec2 uv_offset = {(origin.x * size.x) / texture_width,
+                         (origin.y * size.y) / texture_height};
+  glm::vec2 uv_scale = {size.x / texture_width, size.y / texture_height};
+
+  program.SetVec2("uUvOffset", uv_offset);
+  program.SetVec2("uUvScale", uv_scale);
+}
+
+void Renderer::RenderAnimation(Shader& program, AnimationComponent& animation,
+                               SpriteComponent& sprite) {
+  RenderSprite(program, sprite);
+}
+
+void Renderer::Draw() {}
+
 void Renderer::Draw(const Entity& entity) {
-  bool has_quad = ec_->HasComponent<QuadComponent>(entity.name);
+  bool has_quad{false};
+  has_quad = ec_->HasComponent<QuadComponent>(entity.name);
   if (has_quad) {
     auto& quad = ec_->GetComponent<QuadComponent>(entity.name);
     quad.mesh->vertex.Bind();
@@ -75,19 +92,12 @@ void Renderer::Draw(const Entity& entity) {
   }
 }
 
+bool Renderer::IsStaticEntity(const Entity& entity) {
+  return ec_->HasComponent<AnimationComponent>(entity.name);
+}
+
 void Renderer::ShutDown() {
-  programs_.clear();
-}
-
-void Renderer::UseProgram(ShaderName shader_name) {
-  programs_[shader_name]->Use();
-}
-
-void Renderer::AddProgram(ShaderName shader_name,
-                          const std::filesystem::path& vertex_path,
-                          const std::filesystem::path& fragment_path) {
-  auto program = std::make_unique<Shader>(vertex_path, fragment_path);
-  programs_[shader_name] = std::move(program);
+  resource_manager_->ClearResources();
 }
 
 void Renderer::Clear() {

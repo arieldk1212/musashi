@@ -18,16 +18,12 @@ class Object {
   [[nodiscard]] virtual EntityId GetObjectId() const { return kNullEntity; };
 };
 
-// TODO: Implement the randomness when spawing on the screen.
 static inline glm::vec3 RandomSpawnPosition() {
   static std::random_device rd;
   static std::mt19937 gen(rd());
-  static std::uniform_int_distribution<> distr(-10, 0);
+  static std::uniform_real_distribution<> distr(-10.0f, 0.0f);
 
-  glm::vec3 position{0.0f, 0.0f, 0.0f};
-
-  position.z = static_cast<float>(distr(gen));
-  return position;
+  return glm::vec3{0.0f, 0.0f, distr(gen)};
 }
 
 }  // namespace musashi

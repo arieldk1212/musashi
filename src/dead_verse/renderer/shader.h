@@ -8,10 +8,10 @@
 
 namespace musashi {
 
-enum class ShaderName : uint8_t { kObjectShader };
-
 class Shader {
  public:
+  using ShaderId = uint8_t;
+
   Shader(const std::filesystem::path& vertex_path,
          const std::filesystem::path& fragment_path);
   ~Shader() { DeleteProgram(); }
@@ -29,7 +29,7 @@ class Shader {
  private:
   static void CheckCompileErrors(uint16_t shader, const std::string& type);
 
-  uint8_t id_;
+  ShaderId id_;
 };
 
 }  // namespace musashi

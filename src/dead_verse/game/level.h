@@ -13,20 +13,18 @@ struct Level {
   std::vector<Zombie> zombies;
   LevelStates state{LevelStates::kPreLevel};
 
-  void Init() {}
-  void Draw() {}
-  void Load() {}
-  void Reset() {}
+  void Init(LevelStates init_state) { state = init_state; }
+  void Reset() { zombies.clear(); }
 };
 
 struct LevelHandler {
-  Level level;
+  std::unique_ptr<Level> level;
   int current_level{1};
-  int zombie_count{kZombieStartCount};
+  float zombie_count{kZombieStartCount};
 
   static constexpr int kZombieDebugCount{1};
   static constexpr int kZombieStartCount{10};
-  static constexpr float kZombieSpawnMultiplier{0.5};
+  static constexpr float kZombieSpawnMultiplier{1.5};
 
   LevelHandler();
   ~LevelHandler() = default;
@@ -36,7 +34,8 @@ struct LevelHandler {
   LevelHandler(LevelHandler&&) = delete;
   LevelHandler& operator=(LevelHandler&&) = delete;
 
-  void InitLevel();
+  void InitLevel() const;
+  void StartLevel();
   void ResetLevel();
   void IncreaseLevel();
 };

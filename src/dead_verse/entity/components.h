@@ -1,6 +1,8 @@
 #ifndef COMPONENTS_H_
 #define COMPONENTS_H_
 
+#include "entity_manager.h"
+
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
@@ -10,21 +12,20 @@
 namespace musashi {
 
 enum class ComponentType : uint8_t {
-  kTransformComponent = 0,
-  kInputComponent = 1,
-  kVelocityComponent = 2,
-  kCollisionComponent = 3,
-  kHealthComponent = 4,
-  kCombatComponent = 5,
-  kTextureComponent = 6,
-  kSpriteComponent = 7,
-  kQuadComponent = 8,
-  kAnimationComponent = 9,
-  kZombieComponent = 10,
+  kTransformComponent,
+  kInputComponent,
+  kVelocityComponent,
+  kCollisionComponent,
+  kHealthComponent,
+  kCombatComponent,
+  kSpriteComponent,
+  kQuadComponent,
+  kAnimationComponent,
+  kZombieComponent,
+  kCount
 };
-
-// Number of unique component type.
-static inline constexpr int kNumberOfComponents{11};
+static inline constexpr int kNumberOfComponents =
+    static_cast<int>(ComponentType::kCount);
 
 struct Component {
   virtual ~Component() = default;
@@ -69,14 +70,6 @@ struct CombatComponent : public Component {
   static ComponentType Type() { return ComponentType::kCombatComponent; }
 };
 
-struct TextureComponent : public Component {
-  std::shared_ptr<Texture> source;
-  std::string name;
-  uint32_t slot;
-
-  static ComponentType Type() { return ComponentType::kTextureComponent; };
-};
-
 struct SpriteComponent : public Component {
   Sprite sprite;
 
@@ -102,6 +95,18 @@ struct TagInputComponent : public Component {
 
 struct TagZombieComponent : public Component {
   static ComponentType Type() { return ComponentType::kZombieComponent; }
+};
+
+struct EntityRegistry {
+  static constexpr EntityId kBaseEntity{0};
+
+  static std::optional<EntityId> GenerateEntityId() {
+    static std::atomic<EntityId> next{kBaseEntity + 1};
+    if (next == kMaxEntities) {
+      return std::nullopt;
+    }
+    return next.fetch_add(1);
+  }
 };
 
 }  // namespace musashi

@@ -7,16 +7,21 @@
 
 namespace musashi {
 
+enum class ZombieType : uint8_t {
+  // TODO: For each zombie type we need to create the sprite sheet coordinates
+  // vector, something like that.
+  // TODO: Also add base name.
+  kFemale,
+  kMale,
+  kSkirtFemale,
+  kBaldMale,
+};
+
 struct Zombie : public Object {
   Entity entity;
   bool destroyed{false};
 
   void Destory() override { destroyed = true; }
-  // void Transform(const glm::vec3& position) const {
-  //   auto& transform =
-  //   kECManager->GetComponent<TransformComponent>(entity.id);
-  //   transform.position = position;
-  // }
 
   [[nodiscard]] EntityId GetObjectId() const override { return entity.id; }
 };
