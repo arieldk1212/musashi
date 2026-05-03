@@ -29,10 +29,11 @@ static const std::unordered_map<ZombieType, std::string>& ZombieTypeNameMap() {
 
 struct MaleZombie {
   ZombieType type{ZombieType::kMale};
-  glm::vec2 default_coordinates;
-  std::array<float, 3> x_sprite_coordinates;
-  std::array<float, 3> y_sprite_coordinates;
-  std::unordered_map<ObjectAnimation, std::vector<float>> animations;
+  glm::vec2 default_coordinates{0, 7};
+  std::array<int, 2> x_sprite_coordinates{13, 15};
+  std::array<int, 2> y_sprite_coordinates{8, 7};
+  std::unordered_map<ObjectAnimation, std::pair<int, int>> animations = {
+      {ObjectAnimation::kMove, {y_sprite_coordinates[1], {}}}};
 };
 
 struct Zombie : public Object {

@@ -10,6 +10,6 @@ uniform vec2 uUvOffset;
 uniform sampler2D uZombie;
 
 void main() {
-    vec2 SpriteUv = uUvOffset + (vUv * uUvScale);
-    Frag = texture(uZombie, SpriteUv);
+  vec2 SpriteUv = uUvOffset + (vUv * uUvScale);
+  Frag = texture(uZombie, SpriteUv);
 }

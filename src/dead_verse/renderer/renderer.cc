@@ -14,9 +14,9 @@ Renderer::Renderer(Logger& logger, Platform& platform, ComponentManager& ec,
       resource_manager_(&resource_manager) {}
 
 void Renderer::Init() {
-  glEnable(GL_BLEND);
+  // glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   resource_manager_->InitResources();
   logger_->Trace("RENDERER & SHADERS INITIALIZED");

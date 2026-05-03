@@ -3,8 +3,6 @@
 #include <glad/glad.h>
 #include <vendor/stb_image.h>
 
-#include "util/log.h"
-
 namespace musashi {
 
 Texture::Texture(const std::filesystem::path& path) {
