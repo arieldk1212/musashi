@@ -33,7 +33,7 @@ class World {
     return level_handler_->level->zombies;
   }
 
-  [[nodiscard]] int GetZombieCount() const {
+  [[nodiscard]] int GetLevelZombieCount() const {
     return static_cast<int>(level_handler_->zombie_count);
   }
 

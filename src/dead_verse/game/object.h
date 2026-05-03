@@ -9,6 +9,15 @@
 
 namespace musashi {
 
+enum class ObjectAnimation : uint8_t {
+  kMove,
+  kStatic,
+  kAttack,
+  kShoot,
+  kDead,
+  kHit,
+};
+
 class Object {
  public:
   virtual ~Object() = default;

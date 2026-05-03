@@ -24,6 +24,7 @@ enum class ComponentType : uint8_t {
   kZombieComponent,
   kCount
 };
+
 static inline constexpr int kNumberOfComponents =
     static_cast<int>(ComponentType::kCount);
 
@@ -86,6 +87,7 @@ struct QuadComponent : public Component {
 };
 
 struct AnimationComponent : public Component {
+  // TODO: Should hold a vector/unordered_map of actions.
   static ComponentType Type() { return ComponentType::kAnimationComponent; }
 };
 

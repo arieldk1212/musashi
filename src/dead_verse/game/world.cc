@@ -21,7 +21,7 @@ void World::Init() {
   player_->Init();
   logger_->Trace("Player Created");
 
-  for (int i = 0; i < GetZombieCount(); ++i) {
+  for (int i = 0; i < GetLevelZombieCount(); ++i) {
     InitZombie("Zombie" + std::to_string(i));
     logger_->Trace("Zombie Created");
   }
@@ -47,16 +47,15 @@ void World::InitZombie(const std::string& name) {
   QuadComponent quad;
   quad.position = transform.position;
   quad.scale = transform.scale;
-  quad.mesh = std::make_unique<Mesh>(Quad2D::data, Quad2D::indices);
+  quad.mesh = std::make_unique<Mesh>(Quad2D::kData, Quad2D::kIndices);
 
-  // TODO: Change to animation
+  // TODO: Here init default sprite coordinates for specific zombie type.
   SpriteComponent sprite;
   sprite.sprite.source = resource_manager_->GetTexture(
       ResourceManager::TextureName::kZombiesSheet);
   sprite.sprite.data.slot = 0;
   sprite.sprite.data.name = "uZombie";
   sprite.sprite.data.size = {126, 126};
-  // TODO: Change for each zombie type
   sprite.sprite.data.origin = {6, 7};
 
   auto zombie = zombie_builder.Create(name)

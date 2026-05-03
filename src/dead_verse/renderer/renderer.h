@@ -25,10 +25,12 @@ class Renderer {
   void RenderAnimation(Shader& program, AnimationComponent& animation,
                        SpriteComponent& sprite);
 
-  void Draw();  // NOTE: Draw all entities
+  void Draw();
   void Draw(const Entity& entity);
 
   bool IsStaticEntity(const Entity& entity);
+  void AttachSprite(Shader& program, SpriteComponent& sprite);
+  void ComputeEntityCoordinates(Shader& program, TransformComponent& transform);
 
   void ShutDown();
 

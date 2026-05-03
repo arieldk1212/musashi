@@ -15,6 +15,7 @@ struct Platform {
   PrespectiveCameraController camera;
 
   explicit Platform(Logger& logger, const WindowSpecification& specifications);
+  ~Platform() = default;
 
   Platform(const Platform&) = delete;
   Platform& operator=(const Platform&) = delete;
