@@ -12,7 +12,7 @@ namespace musashi {
 
 enum class ObjectAnimation : uint8_t {
   kMove,
-  kStatic,
+  kIdle,
   kAttack,
   kShoot,
   kDead,
@@ -20,7 +20,6 @@ enum class ObjectAnimation : uint8_t {
 };
 
 struct AnimationFrame {
-  glm::vec2 size;
   glm::vec2 origin;
 };
 

@@ -140,6 +140,7 @@ class ComponentManager {
     auto id = EntityRegistry::GenerateEntityId();
     if (id.has_value()) {
       entity_masks_.Add(id.value(), ComponentMask{});
+      // TODO: Add check for uniqueness.
       entities_[entity_name] = id.value();
       return Entity{id.value(), entity_name};
     }

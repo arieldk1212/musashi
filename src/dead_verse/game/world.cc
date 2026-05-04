@@ -24,9 +24,10 @@ void World::Init() {
   player_->Init();
   logger_->Trace("Player Created");
 
+  const auto& MaleZombie = ZombieTypeNameMap().at(ZombieType::kMale);
   for (int i = 0; i < GetLevelZombieCount(); ++i) {
-    InitZombie("Zombie" + std::to_string(i));
-    logger_->Trace("Zombie Created");
+    InitZombie(MaleZombie + std::to_string(i));
+    logger_->Trace(MaleZombie + " Created");
   }
 }
 
