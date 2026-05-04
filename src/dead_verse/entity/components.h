@@ -6,6 +6,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
+#include "game/object.h"
 #include "renderer/mesh.h"
 #include "renderer/sprite.h"
 
@@ -87,7 +88,9 @@ struct QuadComponent : public Component {
 };
 
 struct AnimationComponent : public Component {
-  // TODO: Should hold a vector/unordered_map of actions.
+  float elapsed;
+  float duration;
+  ObjectAnimation current_animation;
   static ComponentType Type() { return ComponentType::kAnimationComponent; }
 };
 

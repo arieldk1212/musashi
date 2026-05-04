@@ -81,8 +81,8 @@ void Renderer::AttachSprite(Shader& program, SpriteComponent& sprite) {
   auto texture_width = static_cast<float>(sprite.sprite.source->width);
   auto texture_height = static_cast<float>(sprite.sprite.source->height);
 
-  auto& size = sprite.sprite.data.size;
-  auto& origin = sprite.sprite.data.origin;
+  const auto& size = sprite.sprite.data.size;
+  const auto& origin = sprite.sprite.data.origin;
 
   glm::vec2 uv_offset = {(origin.x * size.x) / texture_width,
                          (origin.y * size.y) / texture_height};

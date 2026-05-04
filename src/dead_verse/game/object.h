@@ -3,6 +3,7 @@
 
 #include <random>
 
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
 #include "entity/entity_manager.h"
@@ -17,6 +18,14 @@ enum class ObjectAnimation : uint8_t {
   kDead,
   kHit,
 };
+
+struct AnimationFrame {
+  glm::vec2 size;
+  glm::vec2 origin;
+};
+
+using AnimationList = std::vector<AnimationFrame>;
+using Animations = std::unordered_map<ObjectAnimation, AnimationList>;
 
 class Object {
  public:

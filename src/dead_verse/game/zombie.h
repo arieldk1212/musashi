@@ -32,8 +32,9 @@ struct MaleZombie {
   glm::vec2 default_coordinates{0, 7};
   std::array<int, 2> x_sprite_coordinates{13, 15};
   std::array<int, 2> y_sprite_coordinates{8, 7};
-  std::unordered_map<ObjectAnimation, std::pair<int, int>> animations = {
-      {ObjectAnimation::kMove, {y_sprite_coordinates[1], {}}}};
+  // std::unordered_map<ObjectAnimation, std::pair<int, int>> animations = {
+  //     {ObjectAnimation::kMove, {y_sprite_coordinates[1], 6}}};
+  Animations animations;
 };
 
 struct Zombie : public Object {

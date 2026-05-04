@@ -1,6 +1,9 @@
 #include "object.h"
 #include "world.h"
 
+#include "entity/components.h"
+#include "game/zombie.h"
+
 namespace musashi {
 
 World::World(Logger* logger, ComponentManager* ec,
@@ -58,10 +61,12 @@ void World::InitZombie(const std::string& name) {
   sprite.sprite.data.size = {126, 126};
   sprite.sprite.data.origin = {6, 7};
 
+  AnimationComponent animation;
+
   auto zombie = zombie_builder.Create(name)
-                    .WithComponent<TransformComponent>(std::move(transform))
-                    .WithComponent<TagZombieComponent>(TagZombieComponent{})
                     .WithComponent<QuadComponent>(std::move(quad))
+                    .WithComponent<TagZombieComponent>(TagZombieComponent{})
+                    .WithComponent<TransformComponent>(std::move(transform))
                     .WithComponent<SpriteComponent>(std::move(sprite))
                     .WithComponent<AnimationComponent>(AnimationComponent{})
                     .Build();
