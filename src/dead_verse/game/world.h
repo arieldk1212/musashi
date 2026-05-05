@@ -27,13 +27,13 @@ class World {
 
   void InitTiles();
   void InitPlayer(const std::string& name);
-  void InitZombie(const std::string& name);
+  void InitZombie(ZombieType type, int i = 0);
 
   const std::vector<Zombie>& GetZombies() {
     return level_handler_->level->zombies;
   }
 
-  [[nodiscard]] int GetZombieCount() const {
+  [[nodiscard]] int GetLevelZombieCount() const {
     return static_cast<int>(level_handler_->zombie_count);
   }
 

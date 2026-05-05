@@ -6,6 +6,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
+#include "game/object.h"
 #include "renderer/mesh.h"
 #include "renderer/sprite.h"
 
@@ -24,6 +25,7 @@ enum class ComponentType : uint8_t {
   kZombieComponent,
   kCount
 };
+
 static inline constexpr int kNumberOfComponents =
     static_cast<int>(ComponentType::kCount);
 
@@ -86,6 +88,8 @@ struct QuadComponent : public Component {
 };
 
 struct AnimationComponent : public Component {
+  int current_frame{0};
+  ObjectAnimation current_animation;
   static ComponentType Type() { return ComponentType::kAnimationComponent; }
 };
 

@@ -3,11 +3,31 @@
 
 #include <random>
 
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
 #include "entity/entity_manager.h"
 
 namespace musashi {
+
+enum class ObjectAnimation : uint8_t {
+  kStatic,  // INFO: Static stand
+  kIdle,    // INFO: Dynamic stand
+  kMove,
+  kAttack,
+  kShoot,
+  kDead,
+  kHit,
+};
+
+struct AnimationFrame {
+  float elapsed{0.0f};
+  float duration{0.5f};
+  glm::vec2 origin;
+};
+
+using AnimationList = std::vector<AnimationFrame>;
+using Animations = std::unordered_map<ObjectAnimation, AnimationList>;
 
 class Object {
  public:

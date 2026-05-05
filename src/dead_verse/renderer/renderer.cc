@@ -2,7 +2,10 @@
 
 #include "entity/components.h"
 #include "entity/entity_manager.h"
+#include "game/object.h"
+#include "game/zombie.h"
 #include "renderer/resource_manager.h"
+#include "util/time.h"
 
 namespace musashi {
 
@@ -27,56 +30,48 @@ void Renderer::Render(std::shared_ptr<World> world) {
       ResourceManager::ProgramName::kObjectShader);
   program.Use();
 
-  const auto& pv = platform_->camera.camera.GetViewProjectionMatrix();
-
   for (const auto& zombie : world->GetZombies()) {
     const auto& zombie_entity = zombie.entity;
-    if (ec_->HasComponent<TagZombieComponent>(zombie_entity.name)) {
-      auto& transform_component =
-          ec_->GetComponent<TransformComponent>(zombie_entity.id);
 
-      auto model = glm::mat4(1.0f);
-      model = glm::scale(model, transform_component.scale);
-      model = glm::translate(model, transform_component.position);
-      auto mvp = pv * model;
+    auto& transform_component =
+        ec_->GetComponent<TransformComponent>(zombie_entity.id);
+    ComputeEntityCoordinates(program, transform_component);
 
-      program.Use();
-      program.SetMat4("uMVP", mvp);
-
-      auto& sprite = ec_->GetComponent<SpriteComponent>(zombie_entity.id);
-      if (!IsStaticEntity(zombie_entity)) {
-        auto& animation =
-            ec_->GetComponent<AnimationComponent>(zombie_entity.id);
-        RenderAnimation(program, animation, sprite);
-      } else {
-        RenderSprite(program, sprite);
-      }
-
-      Draw(zombie_entity);
+    auto& sprite = ec_->GetComponent<SpriteComponent>(zombie_entity.id);
+    if (IsDynamicEntity(zombie_entity)) {
+      auto& animation = ec_->GetComponent<AnimationComponent>(zombie_entity.id);
+      RenderAnimation(program, animation, sprite, zombie.type);
+    } else {
+      RenderSprite(program, sprite);
     }
+
+    Draw(zombie_entity);
   }
 }
 
 void Renderer::RenderSprite(Shader& program, SpriteComponent& sprite) {
-  // TODO: Abstract this method, make it cleaner.
-  sprite.sprite.SetSprite(program);
-
-  auto texture_width = static_cast<float>(sprite.sprite.source->width);
-  auto texture_height = static_cast<float>(sprite.sprite.source->height);
-
-  auto size = sprite.sprite.data.size;
-  auto origin = sprite.sprite.data.origin;
-
-  glm::vec2 uv_offset = {(origin.x * size.x) / texture_width,
-                         (origin.y * size.y) / texture_height};
-  glm::vec2 uv_scale = {size.x / texture_width, size.y / texture_height};
-
-  program.SetVec2("uUvOffset", uv_offset);
-  program.SetVec2("uUvScale", uv_scale);
+  AttachSprite(program, sprite);
 }
 
 void Renderer::RenderAnimation(Shader& program, AnimationComponent& animation,
-                               SpriteComponent& sprite) {
+                               SpriteComponent& sprite, ZombieType type) {
+  auto& animations = zombie_animations::GetZombieAnimations(type);
+  auto& frames = animations.at(animation.current_animation);
+  auto& frame = frames.at(animation.current_frame);
+
+  sprite.sprite.data.origin = frame.origin;
+
+  frame.elapsed += Time::kFixedDeltaTime;
+
+  if (frame.elapsed >= frame.duration) {
+    frame.elapsed = 0;
+
+    ++animation.current_frame;
+    if (animation.current_frame >= static_cast<int>(frames.size())) {
+      animation.current_frame = 0;
+    }
+  }
+
   RenderSprite(program, sprite);
 }
 
@@ -92,8 +87,39 @@ void Renderer::Draw(const Entity& entity) {
   }
 }
 
-bool Renderer::IsStaticEntity(const Entity& entity) {
+bool Renderer::IsDynamicEntity(const Entity& entity) {
   return ec_->HasComponent<AnimationComponent>(entity.name);
+}
+
+void Renderer::AttachSprite(Shader& program, SpriteComponent& sprite) {
+  sprite.sprite.SetSprite(program);
+
+  auto texture_width = static_cast<float>(sprite.sprite.source->width);
+  auto texture_height = static_cast<float>(sprite.sprite.source->height);
+
+  const auto& size = sprite.sprite.data.size;
+  const auto& origin = sprite.sprite.data.origin;
+
+  glm::vec2 uv_offset = {(origin.x * size.x) / texture_width,
+                         (origin.y * size.y) / texture_height};
+  glm::vec2 uv_scale = {size.x / texture_width, size.y / texture_height};
+
+  program.SetVec2("uUvOffset", uv_offset);
+  program.SetVec2("uUvScale", uv_scale);
+}
+
+void Renderer::ComputeEntityCoordinates(Shader& program,
+                                        TransformComponent& transform) {
+  const auto& pv = platform_->camera.camera.GetViewProjectionMatrix();
+
+  auto model = glm::mat4(1.0f);
+  model = glm::scale(model, transform.scale);
+  model = glm::translate(model, transform.position);
+
+  auto mvp = pv * model;
+
+  program.Use();
+  program.SetMat4("uMVP", mvp);
 }
 
 void Renderer::ShutDown() {

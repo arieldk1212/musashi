@@ -137,6 +137,10 @@ class ComponentManager {
   ~ComponentManager() { Clear(); }
 
   Entity CreateEntity(const std::string& entity_name = "Entity") {
+    if (entities_.contains(entity_name)) {
+      // INFO: If already exists..
+      return Entity{entities_[entity_name], entity_name};
+    }
     auto id = EntityRegistry::GenerateEntityId();
     if (id.has_value()) {
       entity_masks_.Add(id.value(), ComponentMask{});
@@ -210,7 +214,7 @@ class ComponentManager {
         *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
     auto component = component_pool.Get(entities_[name]);
 
-    return static_cast<bool>(component.has_value());
+    return component.has_value();
   }
 
   template <IsComponent T>

@@ -50,17 +50,17 @@ struct Mesh {
 };
 
 struct Quad2D {
-  static constexpr std::array<Vertex, 4> data = {
+  static constexpr std::array<Vertex, 4> kData = {
       {{.pos = glm::vec3(0.5f, 0.5f, 0.0f), .uv = glm::vec2(1.0f, 1.0f)},
        {.pos = glm::vec3(0.5f, -0.5f, 0.0f), .uv = glm::vec2(1.0f, 0.0f)},
        {.pos = glm::vec3(-0.5f, -0.5f, 0.0f), .uv = glm::vec2(0.0f, 0.0f)},
        {.pos = glm::vec3(-0.5f, 0.5f, 0.0f), .uv = glm::vec2(0.0f, 1.0f)}}};
 
-  static constexpr std::array<uint32_t, 6> indices = {0, 1, 3, 1, 2, 3};
+  static constexpr std::array<uint32_t, 6> kIndices = {0, 1, 3, 1, 2, 3};
 };
 
 struct Quad3D {
-  static constexpr std::array<Vertex, 8> data = {
+  static constexpr std::array<Vertex, 8> kData = {
       {{.pos = glm::vec3(-0.5f, -0.5f, 0.5f), .uv = glm::vec2(0.0f, 0.0f)},
        {.pos = glm::vec3(0.5f, -0.5f, 0.5f), .uv = glm::vec2(1.0f, 0.0f)},
        {.pos = glm::vec3(0.5f, 0.5f, 0.5f), .uv = glm::vec2(1.0f, 1.0f)},
@@ -70,7 +70,7 @@ struct Quad3D {
        {.pos = glm::vec3(0.5f, 0.5f, -0.5f), .uv = glm::vec2(0.0f, 1.0f)},
        {.pos = glm::vec3(-0.5f, 0.5f, -0.5f), .uv = glm::vec2(1.0f, 1.0f)}}};
 
-  static constexpr std::array<uint32_t, 36> indices = {
+  static constexpr std::array<uint32_t, 36> kIndices = {
       0, 1, 2, 2, 3, 0,  // Front
       1, 5, 6, 6, 2, 1,  // Right
       5, 4, 7, 7, 6, 5,  // Back

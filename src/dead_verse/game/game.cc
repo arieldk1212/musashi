@@ -54,6 +54,7 @@ void Game::Run() {
     }
 
     dependencies_->renderer.Render(world_);
+    dependencies_->physics.Update(world_);
 
     dependencies_->platform.window->Update();
     musashi::Renderer::Clear();

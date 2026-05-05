@@ -44,9 +44,7 @@ void Window::Create() {
     assert(false);
   }
 
-  // glfwSetWindowUserPointer(window_, this);
-
-  glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
+  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   SetVSync(true);
 
   glfwSetWindowSize(window_, specifications_.width, specifications_.height);
