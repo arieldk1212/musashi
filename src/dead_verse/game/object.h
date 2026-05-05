@@ -21,6 +21,8 @@ enum class ObjectAnimation : uint8_t {
 };
 
 struct AnimationFrame {
+  float elapsed{0.0f};
+  float duration{0.5f};
   glm::vec2 origin;
 };
 

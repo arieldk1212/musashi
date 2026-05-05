@@ -39,8 +39,8 @@ inline auto& GetZombieTypeNameMap() {
 namespace zombie_animations {
 
 struct MaleZombieAnimations {
-  static auto& GetAnimations() {
-    static const Animations kMaleZombieAnimations = {
+  static auto& GetMaleAnimations() {
+    static Animations kMaleZombieAnimations = {
         {ObjectAnimation::kMove,
          {AnimationFrame{.origin{6, 7}}, AnimationFrame{.origin{7, 7}},
           AnimationFrame{.origin{8, 7}}, AnimationFrame{.origin{9, 7}},
@@ -53,30 +53,48 @@ struct MaleZombieAnimations {
 
 struct FemaleZombieAnimations {
   static auto& GetFemaleZombieAnimations() {
-    static const Animations kFemaleZombieAnimations = {};
+    static Animations kFemaleZombieAnimations = {};
     return kFemaleZombieAnimations;
   }
 };
 
 struct BaldMaleZombieAnimations {
   static auto& GetBaldMaleZombieAnimations() {
-    static const Animations kBaldMaleZombieAnimations = {};
+    static Animations kBaldMaleZombieAnimations = {};
     return kBaldMaleZombieAnimations;
   }
 };
 
 struct SkirtFemaleZombieAnimations {
   static auto& GetSkirtFemaleZombieAnimations() {
-    static const Animations kSkirtFemaleZombieAnimations = {};
+    static Animations kSkirtFemaleZombieAnimations = {};
     return kSkirtFemaleZombieAnimations;
   }
 };
+
+static inline Animations& GetZombieAnimations(ZombieType type) {
+  switch (type) {
+    case ZombieType::kMale:
+      return MaleZombieAnimations::GetMaleAnimations();
+      break;
+    case ZombieType::kFemale:
+      return FemaleZombieAnimations::GetFemaleZombieAnimations();
+      break;
+    case ZombieType::kBaldMale:
+      return BaldMaleZombieAnimations::GetBaldMaleZombieAnimations();
+      break;
+    case ZombieType::kSkirtFemale:
+      return SkirtFemaleZombieAnimations::GetSkirtFemaleZombieAnimations();
+      break;
+  }
+}
 
 }  // namespace zombie_animations
 
 struct Zombie : public Object {
   Entity entity;
   bool destroyed{false};
+  ZombieType type;
 
   void Destory() override { destroyed = true; }
 

@@ -88,8 +88,7 @@ struct QuadComponent : public Component {
 };
 
 struct AnimationComponent : public Component {
-  float elapsed;
-  float duration;
+  int current_frame{0};
   ObjectAnimation current_animation;
   static ComponentType Type() { return ComponentType::kAnimationComponent; }
 };

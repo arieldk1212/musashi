@@ -54,7 +54,7 @@ void World::InitZombie(ZombieType type, int i) {
   quad.mesh = std::make_unique<Mesh>(Quad2D::kData, Quad2D::kIndices);
 
   AnimationComponent animation;
-  animation.current_animation = ObjectAnimation::kStatic;
+  animation.current_animation = ObjectAnimation::kMove;
 
   SpriteComponent sprite;
   sprite.sprite.source = resource_manager_->GetTexture(
@@ -72,6 +72,8 @@ void World::InitZombie(ZombieType type, int i) {
                     .WithComponent<SpriteComponent>(std::move(sprite))
                     .WithComponent<AnimationComponent>(std::move(animation))
                     .Build();
+  zombie.type = type;
+
   level_handler_->level->zombies.emplace_back(std::move(zombie));
   logger_->Trace(name + " Created");
 }

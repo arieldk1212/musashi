@@ -2,7 +2,10 @@
 
 #include "entity/components.h"
 #include "entity/entity_manager.h"
+#include "game/object.h"
+#include "game/zombie.h"
 #include "renderer/resource_manager.h"
+#include "util/time.h"
 
 namespace musashi {
 
@@ -14,9 +17,9 @@ Renderer::Renderer(Logger& logger, Platform& platform, ComponentManager& ec,
       resource_manager_(&resource_manager) {}
 
 void Renderer::Init() {
-  // glEnable(GL_BLEND);
+  glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
-  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   resource_manager_->InitResources();
   logger_->Trace("RENDERER & SHADERS INITIALIZED");
@@ -35,9 +38,9 @@ void Renderer::Render(std::shared_ptr<World> world) {
     ComputeEntityCoordinates(program, transform_component);
 
     auto& sprite = ec_->GetComponent<SpriteComponent>(zombie_entity.id);
-    if (!IsStaticEntity(zombie_entity)) {
+    if (IsDynamicEntity(zombie_entity)) {
       auto& animation = ec_->GetComponent<AnimationComponent>(zombie_entity.id);
-      RenderAnimation(program, animation, sprite);
+      RenderAnimation(program, animation, sprite, zombie.type);
     } else {
       RenderSprite(program, sprite);
     }
@@ -51,11 +54,24 @@ void Renderer::RenderSprite(Shader& program, SpriteComponent& sprite) {
 }
 
 void Renderer::RenderAnimation(Shader& program, AnimationComponent& animation,
-                               SpriteComponent& sprite) {
-  // TODO: Iterate thru the animation sprite coordinates and change it in the
-  // sprite component.
-  // TODO: Should collect info from each zombie about the current action
-  // (static, moving, attacking, dying).
+                               SpriteComponent& sprite, ZombieType type) {
+  auto& animations = zombie_animations::GetZombieAnimations(type);
+  auto& frames = animations.at(animation.current_animation);
+  auto& frame = frames.at(animation.current_frame);
+
+  sprite.sprite.data.origin = frame.origin;
+
+  frame.elapsed += Time::kFixedDeltaTime;
+
+  if (frame.elapsed >= frame.duration) {
+    frame.elapsed = 0;
+
+    ++animation.current_frame;
+    if (animation.current_frame >= static_cast<int>(frames.size())) {
+      animation.current_frame = 0;
+    }
+  }
+
   RenderSprite(program, sprite);
 }
 
@@ -71,7 +87,7 @@ void Renderer::Draw(const Entity& entity) {
   }
 }
 
-bool Renderer::IsStaticEntity(const Entity& entity) {
+bool Renderer::IsDynamicEntity(const Entity& entity) {
   return ec_->HasComponent<AnimationComponent>(entity.name);
 }
 

@@ -1,6 +1,7 @@
 #ifndef GAME_H_
 #define GAME_H_
 
+#include "physics.h"
 #include "state.h"
 #include "world.h"
 
@@ -22,15 +23,17 @@ struct GameSpecification {
 
 struct GameDependencies {
   GameDependencies(Logger& logger, Renderer& renderer, Platform& platform,
-                   ComponentManager& ec)
+                   ComponentManager& ec, Physics& physics)
       : logger(logger),
         platform(platform),
         renderer(renderer),
-        ec(ec) {}
+        ec(ec),
+        physics(physics) {}
   Logger& logger;
   Platform& platform;
   Renderer& renderer;
   ComponentManager& ec;
+  Physics& physics;
 };
 
 class Game {

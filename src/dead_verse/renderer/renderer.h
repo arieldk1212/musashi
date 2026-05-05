@@ -23,12 +23,12 @@ class Renderer {
   void Render(std::shared_ptr<World> world);
   void RenderSprite(Shader& program, SpriteComponent& sprite);
   void RenderAnimation(Shader& program, AnimationComponent& animation,
-                       SpriteComponent& sprite);
+                       SpriteComponent& sprite, ZombieType type);
 
   void Draw();
   void Draw(const Entity& entity);
 
-  bool IsStaticEntity(const Entity& entity);
+  bool IsDynamicEntity(const Entity& entity);
   void AttachSprite(Shader& program, SpriteComponent& sprite);
   void ComputeEntityCoordinates(Shader& program, TransformComponent& transform);
 

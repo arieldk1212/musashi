@@ -14,9 +14,11 @@ int main() {
   musashi::ComponentManager ec(logger);
   musashi::ResourceManager resource_manager(logger);
   musashi::Renderer renderer(logger, platform, ec, resource_manager);
+  musashi::Physics physics(logger);
 
   // Game
-  musashi::GameDependencies dependencies(logger, renderer, platform, ec);
+  musashi::GameDependencies dependencies(logger, renderer, platform, ec,
+                                         physics);
   musashi::Game game(dependencies, resource_manager, kSpecs);
 
   // Entrypoint

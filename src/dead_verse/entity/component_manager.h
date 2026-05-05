@@ -214,7 +214,7 @@ class ComponentManager {
         *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
     auto component = component_pool.Get(entities_[name]);
 
-    return static_cast<bool>(component.has_value());
+    return component.has_value();
   }
 
   template <IsComponent T>
