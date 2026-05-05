@@ -27,7 +27,7 @@ class World {
 
   void InitTiles();
   void InitPlayer(const std::string& name);
-  void InitZombie(const std::string& name);
+  void InitZombie(ZombieType type, int i = 0);
 
   const std::vector<Zombie>& GetZombies() {
     return level_handler_->level->zombies;

@@ -11,8 +11,9 @@
 namespace musashi {
 
 enum class ObjectAnimation : uint8_t {
+  kStatic,  // INFO: Static stand
+  kIdle,    // INFO: Dynamic stand
   kMove,
-  kIdle,
   kAttack,
   kShoot,
   kDead,

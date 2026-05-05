@@ -137,10 +137,13 @@ class ComponentManager {
   ~ComponentManager() { Clear(); }
 
   Entity CreateEntity(const std::string& entity_name = "Entity") {
+    if (entities_.contains(entity_name)) {
+      // INFO: If already exists..
+      return Entity{entities_[entity_name], entity_name};
+    }
     auto id = EntityRegistry::GenerateEntityId();
     if (id.has_value()) {
       entity_masks_.Add(id.value(), ComponentMask{});
-      // TODO: Add check for uniqueness.
       entities_[entity_name] = id.value();
       return Entity{id.value(), entity_name};
     }

@@ -1,6 +1,8 @@
 #include "object.h"
 #include "world.h"
 
+#include <string>
+
 #include "entity/components.h"
 #include "game/zombie.h"
 
@@ -22,12 +24,9 @@ void World::Init() {
 
   InitPlayer("Wood");
   player_->Init();
-  logger_->Trace("Player Created");
 
-  const auto& MaleZombie = ZombieTypeNameMap().at(ZombieType::kMale);
   for (int i = 0; i < GetLevelZombieCount(); ++i) {
-    InitZombie(MaleZombie + std::to_string(i));
-    logger_->Trace(MaleZombie + " Created");
+    InitZombie(ZombieType::kMale, i);
   }
 }
 
@@ -39,9 +38,10 @@ void World::InitPlayer(const std::string& name) {
                     .WithComponent<TagInputComponent>(TagInputComponent{})
                     .Build();
   player_ = std::make_unique<Player>(std::move(player));
+  logger_->Trace("Main Player Created");
 }
 
-void World::InitZombie(const std::string& name) {
+void World::InitZombie(ZombieType type, int i) {
   EntityBuilder<Zombie> zombie_builder(*ec_);
 
   TransformComponent transform;
@@ -53,25 +53,27 @@ void World::InitZombie(const std::string& name) {
   quad.scale = transform.scale;
   quad.mesh = std::make_unique<Mesh>(Quad2D::kData, Quad2D::kIndices);
 
-  // TODO: Here init default sprite coordinates for specific zombie type.
+  AnimationComponent animation;
+  animation.current_animation = ObjectAnimation::kStatic;
+
   SpriteComponent sprite;
   sprite.sprite.source = resource_manager_->GetTexture(
       ResourceManager::TextureName::kZombiesSheet);
   sprite.sprite.data.slot = 0;
   sprite.sprite.data.name = "uZombie";
   sprite.sprite.data.size = {126, 126};
-  sprite.sprite.data.origin = {6, 7};
+  sprite.sprite.data.origin = GetZombieTypeStaticMap().at(type);
 
-  AnimationComponent animation;
-
+  const auto& name = GetZombieTypeNameMap().at(type) + std::to_string(++i);
   auto zombie = zombie_builder.Create(name)
                     .WithComponent<QuadComponent>(std::move(quad))
                     .WithComponent<TagZombieComponent>(TagZombieComponent{})
                     .WithComponent<TransformComponent>(std::move(transform))
                     .WithComponent<SpriteComponent>(std::move(sprite))
-                    .WithComponent<AnimationComponent>(AnimationComponent{})
+                    .WithComponent<AnimationComponent>(std::move(animation))
                     .Build();
   level_handler_->level->zombies.emplace_back(std::move(zombie));
+  logger_->Trace(name + " Created");
 }
 
 }  // namespace musashi
