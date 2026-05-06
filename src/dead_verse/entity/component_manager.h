@@ -9,6 +9,7 @@
 #include <optional>
 #include <utility>
 
+#include "entity/entity_manager.h"
 #include "util/log.h"
 
 namespace musashi {
@@ -29,30 +30,36 @@ struct SparseSetInterface {
 
 template <typename T>
 struct SparseSet : public SparseSetInterface {
-  explicit SparseSet(size_t size = kMaxComponentsSize) {
-    // TODO: Check optimization for it instead of "resize".
-    dense.reserve(size);
-    dense_to_entity.reserve(size);
-  }
   struct Chunk {
     // Pagination
     static constexpr uint16_t kMaxChunkSize{2048};
     static uint16_t GetChunkNumber(EntityId id) { return id / kMaxChunkSize; }
     static uint16_t GetIndexInChunk(EntityId id) { return id % kMaxChunkSize; }
   };
+
   using DenseIdx = EntityId;
   using SparseChunk = std::array<size_t, Chunk::kMaxChunkSize>;
 
-  std::optional<T*> Get(EntityId id) {
-    auto idx = Chunk::GetChunkNumber(id);         // Get Chunk Value
-    auto idx_chunk = Chunk::GetIndexInChunk(id);  // Index In Chunk
+  explicit SparseSet(size_t size = kMaxComponentsSize) {
+    // TODO: Check optimization for it instead of "resize".
+    dense.reserve(size);
+    dense_to_entity.reserve(size);
+    entities.reserve(kMaxEntities);
+  }
 
+  std::optional<T*> Get(EntityId id) {
+    auto idx = Chunk::GetChunkNumber(id);  // Get Chunk Value
+    if (idx >= entities.size()) {
+      return std::nullopt;
+    }
+
+    auto idx_chunk = Chunk::GetIndexInChunk(id);  // Index In Chunk
     size_t idx_dense = entities[idx][idx_chunk];  // Index In Dense
 
-    if (idx_dense != kNullEntity) {
-      return &dense[idx_dense];
+    if (idx_dense == kNullEntity || idx_dense >= dense.size()) {
+      return std::nullopt;
     }
-    return std::nullopt;
+    return &dense[idx_dense];
   }
 
   // NOTE: Create entity if null, Add Component to it.
@@ -211,9 +218,8 @@ class ComponentManager {
   bool HasComponent(const std::string& name) {
     auto type_idx = static_cast<size_t>(T::Type());
     auto& component_pool =
-        *static_cast<SparseSet<T>*>(component_pool_[type_idx].get());
+        *static_cast<SparseSet<T>*>(component_pool_.at(type_idx).get());
     auto component = component_pool.Get(entities_[name]);
-
     return component.has_value();
   }
 

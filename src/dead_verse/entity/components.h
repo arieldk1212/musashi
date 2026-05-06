@@ -3,6 +3,8 @@
 
 #include "entity_manager.h"
 
+#include <stdexcept>
+
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
@@ -107,6 +109,7 @@ struct EntityRegistry {
   static std::optional<EntityId> GenerateEntityId() {
     static std::atomic<EntityId> next{kBaseEntity + 1};
     if (next == kMaxEntities) {
+      throw std::runtime_error("Reached Entity Capacity");
       return std::nullopt;
     }
     return next.fetch_add(1);
