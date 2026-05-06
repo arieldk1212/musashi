@@ -44,7 +44,6 @@ struct SparseSet : public SparseSetInterface {
     // TODO: Check optimization for it instead of "resize".
     dense.reserve(size);
     dense_to_entity.reserve(size);
-    entities.reserve(kMaxEntities);
   }
 
   std::optional<T*> Get(EntityId id) {
