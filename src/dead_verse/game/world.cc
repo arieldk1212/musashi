@@ -17,6 +17,10 @@ World::World(Logger* logger, ComponentManager* ec,
   Init();
 }
 
+void World::InitLevel() {
+  level_handler_->InitLevel();
+}
+
 void World::InitTiles() {}
 
 void World::Init() {
@@ -54,14 +58,14 @@ void World::InitZombie(ZombieType type, int i) {
   quad.mesh = std::make_unique<Mesh>(Quad2D::kData, Quad2D::kIndices);
 
   AnimationComponent animation;
-  animation.current_animation = ObjectAnimation::kMove;
+  animation.current_animation = ObjectAnimation::kHit;
 
   SpriteComponent sprite;
   sprite.sprite.source = resource_manager_->GetTexture(
       ResourceManager::TextureName::kZombiesSheet);
   sprite.sprite.data.slot = 0;
   sprite.sprite.data.name = "uZombie";
-  sprite.sprite.data.size = {126, 126};
+  sprite.sprite.data.size = {130, 126};
   sprite.sprite.data.origin = GetZombieTypeStaticMap().at(type);
 
   const auto& name = GetZombieTypeNameMap().at(type) + std::to_string(++i);
