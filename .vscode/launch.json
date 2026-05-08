@@ -2,17 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Main (LLDB)",
-            "type": "cppdbg",
+            "type": "lldb-dap",
             "request": "launch",
-            "program": "${workspaceFolder}/build/src/main", 
+            "name": "Launch",
+            "program": "${workspaceFolder}/build/src/main",
             "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/src", 
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb",
-            "preLaunchTask": "CMake: build" 
-        }
+            "env": [],
+            "cwd": "${workspaceFolder}"
+        },
     ]
 }
