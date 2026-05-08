@@ -15,9 +15,9 @@ enum class ObjectAnimation : uint8_t {
   kIdle,    // INFO: Dynamic stand
   kMove,
   kAttack,
+  kHit,
   kShoot,
   kDead,
-  kHit,
 };
 
 struct AnimationFrame {

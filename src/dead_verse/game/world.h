@@ -9,7 +9,6 @@
 
 #include "entity/component_manager.h"
 #include "game/level.h"
-#include "game/state.h"
 #include "renderer/resource_manager.h"
 #include "util/log.h"
 
@@ -22,9 +21,7 @@ class World {
         ResourceManager* resource_manager);
 
   void Init();
-  void Update(float ts);
-  void Render(State& state);
-
+  void InitLevel();
   void InitTiles();
   void InitPlayer(const std::string& name);
   void InitZombie(ZombieType type, int i = 0);

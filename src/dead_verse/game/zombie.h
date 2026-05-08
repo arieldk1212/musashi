@@ -46,7 +46,22 @@ struct MaleZombieAnimations {
           AnimationFrame{.origin{8, 7}}, AnimationFrame{.origin{9, 7}},
           AnimationFrame{.origin{10, 7}}, AnimationFrame{.origin{11, 7}},
           AnimationFrame{.origin{12, 7}}, AnimationFrame{.origin{13, 7}},
-          AnimationFrame{.origin{14, 7}}, AnimationFrame{.origin{15, 7}}}}};
+          AnimationFrame{.origin{14, 7}}, AnimationFrame{.origin{15, 7}}}},
+        {ObjectAnimation::kIdle,
+         {AnimationFrame{.duration = 1.0f, .origin{0, 7}},
+          {AnimationFrame{.duration = 1.0f, .origin{0, 8}}}}},
+        {ObjectAnimation::kAttack,
+         {AnimationFrame{.duration = 0.8, .origin{0, 8}},
+          AnimationFrame{.origin{1, 8}}, AnimationFrame{.origin{2, 8}},
+          AnimationFrame{.origin{3, 8}}, AnimationFrame{.origin{4, 8}}}},
+        {ObjectAnimation::kHit,
+         {AnimationFrame{.duration = 0.8, .origin{10, 8}},
+          AnimationFrame{.origin{11, 8}}, AnimationFrame{.origin{12, 8}},
+          AnimationFrame{.origin{13, 8}}}},
+        {ObjectAnimation::kDead,
+         {AnimationFrame{.origin{5, 8}}, AnimationFrame{.origin{6, 8}},
+          AnimationFrame{.origin{7, 8}}, AnimationFrame{.origin{8, 8}},
+          AnimationFrame{.origin{9, 8}}}}};
     return kMaleZombieAnimations;
   }
 };
@@ -93,8 +108,8 @@ static inline Animations& GetZombieAnimations(ZombieType type) {
 
 struct Zombie : public Object {
   Entity entity;
-  bool destroyed{false};
   ZombieType type;
+  bool destroyed{false};
 
   void Destory() override { destroyed = true; }
 

@@ -1,5 +1,8 @@
 #include "game.h"
 
+#include "game/state.h"
+#include "game/world.h"
+
 namespace musashi {
 
 Game::Game(GameDependencies& dependencies, ResourceManager& resource_manager,
@@ -67,6 +70,14 @@ void Game::Update(float ts) {
   //     kECManager->GetComponent<TagInputComponent>(quad_entity);
   // auto& cube_velocity_component =
   //     kECManager->GetComponent<VelocityComponent>(quad_entity);
+
+  switch (state_->state) {
+    case State::States::kStartState:
+    case State::States::kMenuState:
+    case State::States::kGameActiveState:
+    case State::States::kGameEndState:
+      break;
+  }
 }
 
 };  // namespace musashi
