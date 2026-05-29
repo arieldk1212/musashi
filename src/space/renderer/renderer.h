@@ -19,13 +19,9 @@ class Renderer {
 
   void Init();
 
-  void RenderFrame();
   void Render(std::shared_ptr<World> world);
   void RenderSprite(Shader& program, SpriteComponent& sprite);
-  void RenderAnimation(Shader& program, AnimationComponent& animation,
-                       SpriteComponent& sprite, ZombieType type);
 
-  void Draw();
   void Draw(const Entity& entity);
 
   bool IsDynamicEntity(const Entity& entity);

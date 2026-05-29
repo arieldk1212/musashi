@@ -1,5 +1,5 @@
-#include "dead_verse/game/game.h"
 #include "renderer/resource_manager.h"
+#include "space/game/game.h"
 
 int main() {
   static constexpr musashi::GameSpecification kSpecs = {
