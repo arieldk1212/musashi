@@ -23,7 +23,7 @@ class Ui {
     (void)io;
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window->GetHandler(), true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+    ImGui_ImplOpenGL3_Init(kGlslVersion);
   }
   ~Ui() {
     ImGui_ImplOpenGL3_Shutdown();

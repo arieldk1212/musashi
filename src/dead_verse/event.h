@@ -16,16 +16,19 @@ class Event {
   virtual void RegisterEvent() = 0;
 };
 
-enum class EventCategories : uint8_t {};
+enum class EventCategories : uint8_t {
+  kCollisionEvent,
+  kHitEvent,
+};
 
 class EventHandler {
  public:
-  using EventQueue = std::queue<Event>;
+  using EventQueue = std::queue<std::unique_ptr<Event>>;
 
-  EventHandler();
+  EventHandler() = default;
 
-  void Notify(EventCategories category, Event event) {
-    events_[category] = std::move(event);
+  void Notify(EventCategories category, std::unique_ptr<Event> event) {
+    events_[category].push(std::move(event));
   }
 
  private:

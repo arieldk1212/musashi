@@ -14,7 +14,6 @@
 
 namespace musashi {
 
-// TODO: Implement State Machine Here
 class World {
  public:
   World(Logger* logger, ComponentManager* ec,

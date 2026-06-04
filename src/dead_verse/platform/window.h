@@ -13,8 +13,9 @@
 
 namespace musashi {
 
-constexpr int kDefaultWidth = 1920;
-constexpr int kDefaultHeight = 1080;
+static constexpr int kDefaultWidth = 1920;
+static constexpr int kDefaultHeight = 1080;
+static constexpr const char* kGlslVersion = "#version 330";
 
 struct WindowSpecification {
   bool vsync{false};

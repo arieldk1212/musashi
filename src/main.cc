@@ -1,4 +1,5 @@
 #include "dead_verse/game/game.h"
+#include "dead_verse/ui/ui.h"
 #include "renderer/resource_manager.h"
 
 int main() {
@@ -11,6 +12,7 @@ int main() {
   // Engine Dependencies
   musashi::Logger logger(musashi::kLogBufferSize);
   musashi::Platform platform(logger, kSpecs.window_specs);
+  musashi::Ui ui(platform.window);
   musashi::ComponentManager ec(logger);
   musashi::ResourceManager resource_manager(logger);
   musashi::Renderer renderer(logger, platform, ec, resource_manager);
