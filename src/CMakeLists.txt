@@ -1,6 +1,6 @@
 # glad
-add_library(glad STATIC ${PROJECT_SOURCE_DIR}/vendor/glad/src/glad.c)
-target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/vendor/glad/include)
+add_library(glad STATIC ${PROJECT_SOURCE_DIR}/third_party/glad/src/glad.c)
+target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/third_party/glad/include)
 
 # imgui
 set(IMGUI_SOURCES
