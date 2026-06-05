@@ -3,6 +3,7 @@
 
 #include "entity_manager.h"
 
+#include <atomic>
 #include <stdexcept>
 
 #include <glm/mat4x4.hpp>

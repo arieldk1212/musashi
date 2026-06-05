@@ -3,6 +3,7 @@
 
 #include "zombie.h"
 
+#include <memory>
 #include <vector>
 
 namespace musashi {

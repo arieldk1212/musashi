@@ -4,6 +4,7 @@
 #include "components.h"
 
 #include <array>
+#include <bitset>
 #include <cstdint>
 #include <memory>
 #include <optional>

@@ -5,9 +5,7 @@
 int main() {
   static constexpr musashi::GameSpecification kSpecs = {
       .game_name = "Dead Verse",
-      .window_specs.width = 1700,
-      .window_specs.height = 1100,
-      .window_specs.is_resizeable = true};
+      .window_specs = {.is_resizeable = true, .width = 1700, .height = 1100}};
 
   // Engine Dependencies
   musashi::Logger logger(musashi::kLogBufferSize);
