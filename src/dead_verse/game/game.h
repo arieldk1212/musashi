@@ -17,7 +17,7 @@
 namespace musashi {
 
 struct GameSpecification {
-  std::string game_name = "Dead Verse";
+  std::string game_name = "Test Game";
   WindowSpecification window_specs;
 };
 
