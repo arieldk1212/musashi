@@ -2,6 +2,7 @@
 #define OBJECT_H_
 
 #include <random>
+#include <unordered_map>
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -11,8 +12,8 @@
 namespace musashi {
 
 enum class ObjectAnimation : uint8_t {
-  kStatic,  // INFO: Static stand
-  kIdle,    // INFO: Dynamic stand
+  kStatic,
+  kIdle,
   kMove,
   kAttack,
   kHit,
@@ -27,7 +28,20 @@ struct AnimationFrame {
 };
 
 using AnimationList = std::vector<AnimationFrame>;
-using Animations = std::unordered_map<ObjectAnimation, AnimationList>;
+using AnimationObject = std::unordered_map<ObjectAnimation, AnimationList>;
+using AnimationPack = std::unordered_map<std::string, AnimationObject>;
+
+class Animations {
+ public:
+  Animations() = default;
+
+  void AddAnimationsPack(std::string pack, const AnimationObject& animations);
+  void RemoveAnimationsPack(std::string_view pack);
+  AnimationObject& GetAnimations(std::string_view pack);
+
+ private:
+  AnimationPack* animations_;
+};
 
 class Object {
  public:

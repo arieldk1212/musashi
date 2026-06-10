@@ -20,7 +20,7 @@ static constexpr const char* kGlslVersion = "#version 330";
 struct WindowSpecification {
   bool vsync{false};
   bool is_resizeable{false};
-  std::string title{"Test Window"};
+  std::string title{"Test Game"};
   uint32_t width{kDefaultWidth};
   uint32_t height{kDefaultHeight};
 };

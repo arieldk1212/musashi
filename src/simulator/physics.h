@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "game/world.h"
+#include "musashi/world.h"
 #include "util/log.h"
 
 namespace musashi {

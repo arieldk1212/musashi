@@ -1,12 +1,12 @@
-#include "game.h"
+#include "musashi.h"
 
-#include "game/state.h"
-#include "game/world.h"
+#include "musashi/state.h"
 
 namespace musashi {
 
-Game::Game(GameDependencies& dependencies, ResourceManager& resource_manager,
-           const GameSpecification& specs)
+Musashi::Musashi(SimulatorDependencies& dependencies,
+                 ResourceManager& resource_manager,
+                 const SimulatorSpecifications& specs)
     : dependencies_(&dependencies),
       resource_manager_(&resource_manager),
       specifications_(specs),
@@ -14,12 +14,12 @@ Game::Game(GameDependencies& dependencies, ResourceManager& resource_manager,
   Init();
 }
 
-Game::~Game() noexcept {
+Musashi::~Musashi() noexcept {
   Stop();
   glfwTerminate();
 }
 
-void Game::Init() {
+void Musashi::Init() {
   glfwInit();
   dependencies_->platform.Init();
   dependencies_->renderer.Init();
@@ -27,7 +27,7 @@ void Game::Init() {
                                    resource_manager_);
 }
 
-void Game::Run() {
+void Musashi::Run() {
   running_ = true;
 
   time_.Init();
@@ -64,7 +64,7 @@ void Game::Run() {
   }
 }
 
-void Game::Update(float ts) {
+void Musashi::Update(float ts) {
   // TODO: Play with states here.
   // auto& cube_input_component =
   //     kECManager->GetComponent<TagInputComponent>(quad_entity);

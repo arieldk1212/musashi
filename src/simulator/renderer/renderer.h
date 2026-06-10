@@ -6,9 +6,11 @@
 #include <memory>
 
 #include "entity/component_manager.h"
-#include "game/world.h"
+#include "musashi/object.h"
+#include "musashi/world.h"
 #include "platform/platform.h"
 #include "renderer/resource_manager.h"
+#include "util/time.h"
 
 namespace musashi {
 
@@ -23,7 +25,26 @@ class Renderer {
   void Render(std::shared_ptr<World> world);
   void RenderSprite(Shader& program, SpriteComponent& sprite);
   void RenderAnimation(Shader& program, AnimationComponent& animation,
-                       SpriteComponent& sprite, ZombieType type);
+                       SpriteComponent& sprite, std::string_view type) {
+    auto& animations = animations_->GetAnimations(type);
+    auto& frames = animations.at(animation.current_animation);
+    auto& frame = frames.at(animation.current_frame);
+
+    sprite.sprite.data.origin = frame.origin;
+
+    frame.elapsed += Time::kFixedDeltaTime;
+
+    if (frame.elapsed >= frame.duration) {
+      frame.elapsed = 0;
+
+      ++animation.current_frame;
+      if (animation.current_frame >= static_cast<int>(frames.size())) {
+        animation.current_frame = 0;
+      }
+
+      RenderSprite(program, sprite);
+    }
+  }
 
   void Draw();
   void Draw(const Entity& entity);
@@ -41,6 +62,7 @@ class Renderer {
   Platform* platform_;
   ComponentManager* ec_;
   ResourceManager* resource_manager_;
+  std::unique_ptr<Animations> animations_;
 };
 
 }  // namespace musashi

@@ -9,7 +9,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
-#include "game/object.h"
+#include "musashi/object.h"
 #include "renderer/mesh.h"
 #include "renderer/sprite.h"
 

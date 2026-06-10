@@ -1,9 +1,8 @@
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef MUSASHI_H_
+#define MUSASHI_H_
 
 #include "physics.h"
 #include "state.h"
-#include "world.h"
 
 #include <string>
 
@@ -16,14 +15,14 @@
 
 namespace musashi {
 
-struct GameSpecification {
-  std::string game_name = "Test Game";
+struct SimulatorSpecifications {
+  std::string game_name = "Simulator";
   WindowSpecification window_specs;
 };
 
-struct GameDependencies {
-  GameDependencies(Logger& logger, Renderer& renderer, Platform& platform,
-                   ComponentManager& ec, Physics& physics)
+struct SimulatorDependencies {
+  SimulatorDependencies(Logger& logger, Renderer& renderer, Platform& platform,
+                        ComponentManager& ec, Physics& physics)
       : logger(logger),
         platform(platform),
         renderer(renderer),
@@ -36,12 +35,12 @@ struct GameDependencies {
   Physics& physics;
 };
 
-class Game {
+class Musashi {
  public:
-  explicit Game(GameDependencies& dependencies,
-                ResourceManager& resource_manager,
-                const GameSpecification& specs = GameSpecification());
-  ~Game() noexcept;
+  explicit Musashi(
+      SimulatorDependencies& dependencies, ResourceManager& resource_manager,
+      const SimulatorSpecifications& specs = SimulatorSpecifications());
+  ~Musashi() noexcept;
 
   void Init();
   void Run();
@@ -51,9 +50,9 @@ class Game {
  private:
   Time time_;
   bool running_{false};
-  GameDependencies* dependencies_;
+  SimulatorDependencies* dependencies_;
   ResourceManager* resource_manager_;
-  GameSpecification specifications_;
+  SimulatorSpecifications specifications_;
   std::shared_ptr<World> world_;
   std::unique_ptr<State> state_;
 };
