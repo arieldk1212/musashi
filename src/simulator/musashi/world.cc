@@ -1,8 +1,12 @@
 #include "world.h"
 
+#include <memory>
 #include <string>
 
 #include "entity/components.h"
+#include "musashi/block.h"
+#include "renderer/mesh.h"
+#include "renderer/resource_manager.h"
 
 namespace musashi {
 
@@ -14,12 +18,8 @@ World::World(Logger* logger, ComponentManager* ec,
   Init();
 }
 
-void World::InitLevel() {}
-
-void World::InitTiles() {}
-
 void World::Init() {
-  InitTiles();
+  InitTerrain();
 
   InitPlayer("Wood");
   player_->Init();
@@ -36,29 +36,16 @@ void World::InitPlayer(const std::string& name) {
   logger_->Trace("Main Player Created");
 }
 
+void World::InitTerrain(size_t terrain_size) {
+  EntityBuilder<Block> block_builder(*ec_);
+
+  for (int i = 0; i < terrain_size; ++i) {
+    InitChunk(block_builder);
+  }
+}
+
 // Commented for reference
 // void World::InitZombie(ZombieType type, int i) {
-//   EntityBuilder<Zombie> zombie_builder(*ec_);
-
-//   TransformComponent transform;
-//   transform.position = RandomSpawnPosition();
-//   transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
-
-//   QuadComponent quad;
-//   quad.position = transform.position;
-//   quad.scale = transform.scale;
-//   quad.mesh = std::make_unique<Mesh>(Quad2D::kData, Quad2D::kIndices);
-
-//   AnimationComponent animation;
-//   animation.current_animation = ObjectAnimation::kHit;
-
-//   SpriteComponent sprite;
-//   sprite.sprite.source = resource_manager_->GetTexture(
-//       ResourceManager::TextureName::kZombiesSheet);
-//   sprite.sprite.data.slot = 0;
-//   sprite.sprite.data.name = "uZombie";
-//   sprite.sprite.data.size = {130, 126};
-//   sprite.sprite.data.origin = GetZombieTypeStaticMap().at(type);
 
 //   const auto& name = GetZombieTypeNameMap().at(type) + std::to_string(++i);
 //   auto zombie = zombie_builder.Create(name)

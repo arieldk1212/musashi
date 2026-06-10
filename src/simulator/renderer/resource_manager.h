@@ -17,9 +17,7 @@ class ResourceManager {
       : logger_(&logger) {}
 
   enum class ShaderName : uint8_t { kObjectShader };
-  enum class TextureName : uint8_t {
-    kZombiesSheet,
-  };
+  enum class TextureName : uint8_t { kMinecraft };
 
   using Program = Shader;
   using ProgramName = ShaderName;
@@ -29,8 +27,7 @@ class ResourceManager {
                "assets/shaders/object/vert.glsl",
                "assets/shaders/object/frag.glsl");
     UseProgram(ResourceManager::ShaderName::kObjectShader);
-    AddTexture(TextureName::kZombiesSheet,
-               "assets/sprites/zombies/sprite_sheet.png");
+    AddTexture(TextureName::kMinecraft, "assets/sprites/minecraft.png");
   }
   void ClearResources() {
     textures_.clear();

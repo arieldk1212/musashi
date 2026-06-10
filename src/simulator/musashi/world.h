@@ -1,6 +1,7 @@
 #ifndef WORLD_H_
 #define WORLD_H_
 
+#include "block.h"
 #include "player.h"
 
 #include <memory>
@@ -18,13 +19,38 @@ class World {
         ResourceManager* resource_manager);
 
   void Init();
-  void InitLevel();
-  void InitTiles();
   void InitPlayer(const std::string& name);
+  template <typename T>
+  void InitChunk(const EntityBuilder<T>& builder) {
+    glm::vec3 current_position = glm::vec3(0.0f, 0.0f, 1.0f);
+
+    TransformComponent transform;
+    transform.position = current_position;
+    transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
+
+    QuadComponent quad;
+    quad.position = transform.position;
+    quad.scale = transform.scale;
+    quad.mesh = std::make_unique<Mesh>(Quad3D::kData, Quad3D::kIndices);
+
+    SpriteComponent sprite;
+    sprite.sprite.source =
+        resource_manager_->GetTexture(ResourceManager::TextureName::kMinecraft);
+    sprite.sprite.data.slot = 0;
+    sprite.sprite.data.name = "uTexture";
+    sprite.sprite.data.size = {};
+    sprite.sprite.data.origin = {};
+
+    AnimationComponent animation;
+
+    auto block = builder.Create("Block");
+  }
+  void InitTerrain(size_t terrain_size = 10);
 
  private:
   Logger* logger_;
   ComponentManager* ec_;
+  std::vector<Chunk> chunks_;
   std::unique_ptr<Player> player_;
   ResourceManager* resource_manager_;
 };

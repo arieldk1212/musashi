@@ -37,12 +37,19 @@ class VertexData {
 };
 
 struct Mesh {
+  // TODO: Make this generic to 3D/2D
   VertexData vertex;
   std::array<Vertex, 4> data;
   std::array<uint32_t, 6> indices;
 
   Mesh(const std::array<Vertex, 4>& data,
        const std::array<uint32_t, 6>& indices)
+      : data(data),
+        indices(indices) {
+    vertex.Init(data, indices);
+  }
+  Mesh(const std::array<Vertex, 8>& data,
+       const std::array<uint32_t, 36>& indices)
       : data(data),
         indices(indices) {
     vertex.Init(data, indices);
