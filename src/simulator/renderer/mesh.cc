@@ -1,35 +1,9 @@
 #include "mesh.h"
 
-#include <glad/glad.h>
-
 namespace musashi {
 
 VertexData::~VertexData() {
   Destroy();
-}
-
-void VertexData::Init(const std::array<Vertex, 4>& vertices,
-                      const std::array<uint32_t, 6>& indices) {
-  vertices_count_ = static_cast<uint32_t>(vertices.size());
-
-  glGenVertexArrays(1, &vao_);
-  glGenBuffers(1, &vbo_);
-  glGenBuffers(1, &ibo_);
-
-  glBindVertexArray(vao_);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-
-  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex),
-               vertices.data(), GL_STATIC_DRAW);
-
-  if (indices.size() > 0) {
-    index_count_ = static_cast<uint32_t>(indices.size());
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t),
-                 indices.data(), GL_STATIC_DRAW);
-  }
-
-  SetupLayout();
 }
 
 void VertexData::Bind() const {

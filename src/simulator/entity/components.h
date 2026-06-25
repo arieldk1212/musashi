@@ -85,7 +85,7 @@ struct QuadComponent : public Component {
   glm::vec3 position;
   glm::vec3 scale;
   glm::vec3 color;
-  std::unique_ptr<Mesh> mesh{nullptr};
+  std::unique_ptr<Mesh<>> mesh{nullptr};  // TODO: Fix to compile-time
 
   static ComponentType Type() { return ComponentType::kQuadComponent; };
 };

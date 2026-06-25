@@ -3,6 +3,7 @@
 
 #include <array>
 
+#include <glad/glad.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
@@ -18,8 +19,29 @@ class VertexData {
   VertexData() = default;
   ~VertexData();
 
-  void Init(const std::array<Vertex, 4>& vertices,
-            const std::array<uint32_t, 6>& indices = {});
+  template <size_t VerticesSize, size_t IndicesSize>
+  void Init(const std::array<Vertex, VerticesSize>& vertices,
+            const std::array<uint32_t, IndicesSize>& indices = {}) {
+    vertices_count_ = static_cast<uint32_t>(vertices.size());
+    glGenVertexArrays(1, &vao_);
+    glGenBuffers(1, &vbo_);
+    glGenBuffers(1, &ibo_);
+
+    glBindVertexArray(vao_);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex),
+                 vertices.data(), GL_STATIC_DRAW);
+
+    if (indices.size() > 0) {
+      index_count_ = static_cast<uint32_t>(indices.size());
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t),
+                   indices.data(), GL_STATIC_DRAW);
+    }
+
+    SetupLayout();
+  }
 
   void Bind() const;
   void Draw() const;
@@ -36,20 +58,14 @@ class VertexData {
   uint32_t vertices_count_{0};
 };
 
+template <size_t VerticesSize, size_t IndicesSize>
 struct Mesh {
-  // TODO: Make this generic to 3D/2D
   VertexData vertex;
-  std::array<Vertex, 4> data;
-  std::array<uint32_t, 6> indices;
+  std::array<Vertex, VerticesSize> data;
+  std::array<uint32_t, IndicesSize> indices;
 
-  Mesh(const std::array<Vertex, 4>& data,
-       const std::array<uint32_t, 6>& indices)
-      : data(data),
-        indices(indices) {
-    vertex.Init(data, indices);
-  }
-  Mesh(const std::array<Vertex, 8>& data,
-       const std::array<uint32_t, 36>& indices)
+  Mesh(const std::array<Vertex, VerticesSize>& data,
+       const std::array<uint32_t, IndicesSize>& indices)
       : data(data),
         indices(indices) {
     vertex.Init(data, indices);

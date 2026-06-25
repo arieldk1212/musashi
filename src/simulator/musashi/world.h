@@ -31,7 +31,9 @@ class World {
     QuadComponent quad;
     quad.position = transform.position;
     quad.scale = transform.scale;
-    quad.mesh = std::make_unique<Mesh>(Quad3D::kData, Quad3D::kIndices);
+    quad.mesh =
+        std::make_unique<Mesh<Quad3D::kData.size(), Quad3D::kIndices.size()>>(
+            Quad3D::kData, Quad3D::kIndices);
 
     SpriteComponent sprite;
     sprite.sprite.source =
