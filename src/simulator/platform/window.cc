@@ -44,7 +44,7 @@ void Window::Create() {
     assert(false);
   }
 
-  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+  glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
   SetVSync(true);
 
   glfwSetWindowSize(window_, specifications_.width, specifications_.height);

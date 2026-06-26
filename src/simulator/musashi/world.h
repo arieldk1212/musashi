@@ -52,9 +52,9 @@ class World {
  private:
   Logger* logger_;
   ComponentManager* ec_;
-  std::vector<Chunk> chunks_;
   std::unique_ptr<Player> player_;
   ResourceManager* resource_manager_;
+  std::unique_ptr<Terrain<5, 5>> terrain_;
 };
 
 }  // namespace musashi
