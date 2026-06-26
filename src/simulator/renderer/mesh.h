@@ -58,8 +58,15 @@ class VertexData {
   uint32_t vertices_count_{0};
 };
 
+struct IMesh {
+  virtual ~IMesh() = default;
+
+  virtual void Init() = 0;
+  virtual VertexData& GetVertex() = 0;
+};
+
 template <size_t VerticesSize, size_t IndicesSize>
-struct Mesh {
+struct Mesh : public IMesh {
   VertexData vertex;
   std::array<Vertex, VerticesSize> data;
   std::array<uint32_t, IndicesSize> indices;
@@ -68,8 +75,11 @@ struct Mesh {
        const std::array<uint32_t, IndicesSize>& indices)
       : data(data),
         indices(indices) {
-    vertex.Init(data, indices);
+    Init();
   }
+
+  void Init() override { vertex.Init(data, indices); }
+  VertexData& GetVertex() override { return vertex; }
 };
 
 struct Quad2D {

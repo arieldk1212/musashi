@@ -58,8 +58,8 @@ void Renderer::Draw(const Entity& entity) {
   has_quad = ec_->HasComponent<QuadComponent>(entity.name);
   if (has_quad) {
     auto& quad = ec_->GetComponent<QuadComponent>(entity.name);
-    quad.mesh->vertex.Bind();
-    quad.mesh->vertex.Draw();
+    quad.mesh->GetVertex().Bind();
+    quad.mesh->GetVertex().Draw();
   }
 }
 

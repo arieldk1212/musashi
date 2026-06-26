@@ -21,7 +21,7 @@ class World {
   void Init();
   void InitPlayer(const std::string& name);
   template <typename T>
-  void InitChunk(const EntityBuilder<T>& builder) {
+  void InitChunk(EntityBuilder<T>& builder) {
     glm::vec3 current_position = glm::vec3(0.0f, 0.0f, 1.0f);
 
     TransformComponent transform;
