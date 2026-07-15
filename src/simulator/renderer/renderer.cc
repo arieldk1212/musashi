@@ -3,6 +3,7 @@
 #include "entity/components.h"
 #include "entity/entity_manager.h"
 #include "renderer/resource_manager.h"
+#include "util/time.h"
 
 namespace musashi {
 
@@ -49,6 +50,28 @@ void Renderer::Render(std::shared_ptr<World> world) {
 
 void Renderer::RenderSprite(Shader& program, SpriteComponent& sprite) {
   AttachSprite(program, sprite);
+}
+
+void Renderer::RenderAnimation(Shader& program, AnimationComponent& animation,
+                               SpriteComponent& sprite, std::string_view type) {
+  auto& animations = animations_->GetAnimations(type);
+  auto& frames = animations.at(animation.current_animation);
+  auto& frame = frames.at(animation.current_frame);
+
+  sprite.sprite.data.origin = frame.origin;
+
+  frame.elapsed += Time::kFixedDeltaTime;
+
+  if (frame.elapsed >= frame.duration) {
+    frame.elapsed = 0;
+
+    ++animation.current_frame;
+    if (animation.current_frame >= static_cast<int>(frames.size())) {
+      animation.current_frame = 0;
+    }
+
+    RenderSprite(program, sprite);
+  }
 }
 
 void Renderer::Draw() {}

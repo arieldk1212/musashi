@@ -3,7 +3,6 @@
 
 #include "rnd.h"
 
-#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
 namespace musashi {

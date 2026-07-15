@@ -10,7 +10,7 @@ namespace musashi {
 
 static constexpr size_t kUnsignedSize = sizeof(unsigned);
 
-static glm::vec2 GenerateRandomGradient(float ix, float iy) {
+static inline glm::vec2 GenerateRandomGradient(float ix, float iy) {
   constexpr unsigned kW = 8 * sizeof(unsigned);
   constexpr unsigned kS = kW / 2;
   unsigned a = ix;

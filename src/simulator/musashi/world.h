@@ -54,7 +54,7 @@ class World {
   ComponentManager* ec_;
   std::unique_ptr<Player> player_;
   ResourceManager* resource_manager_;
-  std::unique_ptr<Terrain<5, 5>> terrain_;
+  std::unique_ptr<Terrain<>> terrain_;
 };
 
 }  // namespace musashi

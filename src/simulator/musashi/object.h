@@ -37,7 +37,7 @@ class Animations {
 
   void AddAnimationsPack(std::string pack, const AnimationObject& animations);
   void RemoveAnimationsPack(std::string_view pack);
-  AnimationObject& GetAnimations(std::string_view pack);
+  AnimationObject& GetAnimations(std::string_view pack) {}
 
  private:
   AnimationPack* animations_;

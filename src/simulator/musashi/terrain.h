@@ -1,10 +1,14 @@
-#ifndef BLOCK_H_
-#define BLOCK_H_
+#ifndef TERRAIN_H_
+#define TERRAIN_H_
 
 #include "entity/entity_manager.h"
 #include "musashi/object.h"
 
 namespace musashi {
+
+static constexpr uint8_t kDefaultLayerSize{10};
+static constexpr uint8_t kDefaultChunkSize{10};
+static constexpr uint8_t kDefaultChunksSize{100};
 
 enum class BlockState : uint8_t { kGrass, kStone, kDirt };
 
@@ -19,28 +23,28 @@ struct Block : public Object {
   [[nodiscard]] EntityId GetObjectId() const override { return entity.id; }
 };
 
+template <size_t LayerSize = kDefaultLayerSize>
 struct Layer {
   std::vector<std::vector<Block>> layer;
+  Layer() { layer.reserve(LayerSize); }
 };
 
+template <size_t ChunkSize, size_t LayerSize>
 struct Chunk {
   uint16_t id;
-  std::vector<Layer> chunk;
+  std::vector<Layer<LayerSize>> chunk;
+  Chunk() { chunk.reserve(ChunkSize); }
 };
 
-template <size_t ChunksSize, size_t ChunkSize>
+template <size_t ChunksSize = kDefaultChunksSize,
+          size_t ChunkSize = kDefaultChunkSize,
+          size_t LayerSize = kDefaultLayerSize>
 class Terrain {
  public:
-  Terrain() {
-    chunks_.reserve(ChunksSize);
-    for (auto& chunk : chunks_) {
-      chunk.chunk.reserve(ChunkSize);
-    }
-  }
+  Terrain() { chunks_.reserve(ChunksSize); }
 
  private:
-  size_t number_of_chunks_;
-  std::vector<Chunk> chunks_;
+  std::vector<Chunk<ChunkSize, LayerSize>> chunks_;
 };
 
 // 1. Terrain Shaping - Empty blocks (stones, caves).
