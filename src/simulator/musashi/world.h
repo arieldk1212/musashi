@@ -1,8 +1,8 @@
 #ifndef WORLD_H_
 #define WORLD_H_
 
-#include "block.h"
 #include "player.h"
+#include "terrain.h"
 
 #include <memory>
 #include <string>
