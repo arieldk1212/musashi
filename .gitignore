@@ -49,3 +49,4 @@ vcpkg_installed
 CMakeFiles
 CMakeCache.txt
 cmake-build-debug
+profile.json.gz

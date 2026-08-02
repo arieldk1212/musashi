@@ -1,8 +1,8 @@
-# glad
-add_library(glad STATIC ${PROJECT_SOURCE_DIR}/vendor/glad/src/glad.c)
-target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/vendor/glad/include)
+# Glad
+add_library(glad STATIC ${PROJECT_SOURCE_DIR}/third_party/glad/src/glad.c)
+target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/third_party/glad/include)
 
-# imgui
+# ImGUI
 set(IMGUI_SOURCES
     ${PROJECT_SOURCE_DIR}/vendor/imgui/imgui.cpp
     ${PROJECT_SOURCE_DIR}/vendor/imgui/imgui_draw.cpp
@@ -18,12 +18,12 @@ target_include_directories(imgui PUBLIC
 )
 target_link_libraries(imgui PUBLIC glfw)
 
-# dead verse - engine (musashi) + game
-file(GLOB_RECURSE SOURCES "dead_verse/*.cc")
-add_library(game STATIC ${SOURCES} ${PROJECT_SOURCE_DIR}/vendor/stb_image.cc)
-target_include_directories(game PUBLIC ${PROJECT_SOURCE_DIR}/src/dead_verse ${PROJECT_SOURCE_DIR})
-target_link_libraries(game PUBLIC glfw imgui glad glm::glm)
+# Simulator - Engine (musashi) + Simulation
+file(GLOB_RECURSE SOURCES "simulator/*.cc")
+add_library(simulator STATIC ${SOURCES} ${PROJECT_SOURCE_DIR}/vendor/stb_image.cc)
+target_include_directories(simulator PUBLIC ${PROJECT_SOURCE_DIR}/src/simulator ${PROJECT_SOURCE_DIR})
+target_link_libraries(simulator PUBLIC glfw imgui glad glm::glm)
 
-# main
+# Main
 add_executable(main main.cc)
-target_link_libraries(main PUBLIC game)
+target_link_libraries(main PUBLIC simulator)
