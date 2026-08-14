@@ -3,7 +3,7 @@
 #include "simulator/ui/ui.h"
 
 int main() {
-  static constexpr musashi::SimulatorSpecifications kSpecs = {
+  static const musashi::SimulatorSpecifications kSpecs = {
       .game_name = "Musashi Simulator",
       .window_specs = {.is_resizeable = true, .width = 1700, .height = 1100}};
 

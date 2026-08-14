@@ -4,7 +4,6 @@
 #include <string>
 
 #include "entity/components.h"
-#include "musashi/block.h"
 #include "renderer/mesh.h"
 #include "renderer/resource_manager.h"
 
